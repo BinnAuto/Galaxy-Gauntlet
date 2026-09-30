@@ -1,0 +1,59 @@
+using GalaxyGauntlet.scripts.MapEntities.Shared;
+using System;
+
+namespace GalaxyGauntlet.scripts.MapEntities
+{
+	public class BlueTankMonster(Vector2I coordinate) : MapMob(coordinate)
+	{
+		public override int DataCode => Constants.ByteCodes.Entities.BlueTank;
+
+		public override string Name => "Blue Tank";
+
+		private bool _isStopped = false;
+
+		public override Vector2I TextureCoordinate
+		{
+			get
+			{
+				return Orientation switch
+				{
+					EntityOrientation.North => Constants.SpriteCoordinates.BlueTank_N,
+					EntityOrientation.East => Constants.SpriteCoordinates.BlueTank_E,
+					EntityOrientation.South => Constants.SpriteCoordinates.BlueTank_S,
+					EntityOrientation.West => Constants.SpriteCoordinates.BlueTank_W,
+					_ => throw new System.NotImplementedException()
+				};
+			}
+		}
+
+
+        public override void ProcessTick(DateTime timestamp)
+        {
+			if(CheckIfOnTrap(Forward))
+			{
+				return;
+			}
+
+            if(_isStopped)
+			{
+				return;
+			}
+
+			var forwardMove = ProposeMove(Forward);
+			if(forwardMove == Coordinate)
+			{
+				_isStopped = true;
+				return;
+			}
+
+			SetCoordinate(forwardMove);
+        }
+
+
+		public void AboutFace()
+		{
+			_isStopped = false;
+			ReverseOrientation();
+		}
+	}
+}

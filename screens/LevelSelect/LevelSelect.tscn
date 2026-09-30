@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cyehm4cp4i66i"]
+
+[ext_resource type="Script" uid="uid://dlcq7vl5d1i6n" path="res://screens/LevelSelect/LevelSelect.cs" id="1_b1i2e"]
+[ext_resource type="StyleBox" uid="uid://7ww86h6bkwfw" path="res://styles/button_style.tres" id="2_aqbcw"]
+[ext_resource type="StyleBox" uid="uid://b42mxcwhl5h20" path="res://styles/button_pressed_style.tres" id="3_1aba1"]
+[ext_resource type="StyleBox" uid="uid://dhoqfgal04ahv" path="res://styles/button_hover_style.tres" id="4_xa088"]
+
+[node name="LevelSelect" type="Node2D" unique_id=1784930774]
+script = ExtResource("1_b1i2e")
+
+[node name="Control" type="Control" parent="." unique_id=1761813379]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 366.0
+offset_top = 8.0
+offset_right = 406.00003
+offset_bottom = 48.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control" unique_id=1456929989]
+layout_mode = 0
+offset_top = 81.0
+offset_right = 453.0
+offset_bottom = 450.0
+
+[node name="GridContainer" type="GridContainer" parent="Control/ScrollContainer" unique_id=315390617]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/v_separation = -3
+
+[node name="ButtonRef" type="Button" parent="." unique_id=466550020]
+offset_left = -72.0
+offset_top = -48.0
+offset_right = -52.0
+offset_bottom = -32.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = ExtResource("2_aqbcw")
+theme_override_styles/pressed = ExtResource("3_1aba1")
+theme_override_styles/hover = ExtResource("4_xa088")

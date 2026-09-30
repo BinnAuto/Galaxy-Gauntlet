@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://chjvby67edg5j"]
+
+[ext_resource type="PackedScene" uid="uid://b3pk27uc7a2ci" path="res://prefabs/MapDisplay/MapDisplay.tscn" id="1_75xg4"]
+[ext_resource type="Script" uid="uid://c3mkr4y2306kn" path="res://screens/GameplayScreen/GameplayScreen.cs" id="1_ed854"]
+[ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="3_bfflv"]
+
+[node name="GameplayScreen" type="Node2D" unique_id=43287349]
+script = ExtResource("1_ed854")
+
+[node name="MapDisplay" parent="." unique_id=2092090514 instance=ExtResource("1_75xg4")]
+position = Vector2(192, 192)
+
+[node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("3_bfflv")]
+visible = false
+
+[node name="LevelName" type="Label" parent="." unique_id=1859698104]
+offset_left = 847.0
+offset_top = 61.0
+offset_right = 888.0
+offset_bottom = 84.0
+text = "Level"
+
+[node name="ChipCount" type="Label" parent="." unique_id=6881082]
+offset_left = 849.0
+offset_top = 109.0
+offset_right = 978.0
+offset_bottom = 132.0
+text = "Chips Remaining"
+
+[node name="Timer" type="Label" parent="." unique_id=1650194281]
+offset_left = 849.0
+offset_top = 156.0
+offset_right = 894.0
+offset_bottom = 179.0
+text = "Timer"

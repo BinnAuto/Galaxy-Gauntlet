@@ -1,0 +1,13 @@
+{
+  "level_overrides": [
+    {
+      "level_name": "Lesson 6",
+      "ignore_chips": [
+        "(23, 12)",
+        "(23, 13)",
+        "(23, 14)",
+        "(23, 15)"
+      ]
+    }
+  ]
+}

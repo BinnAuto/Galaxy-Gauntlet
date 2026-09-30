@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://ctl3cqls4r1iw"]
+
+[ext_resource type="Script" uid="uid://cu1emxo8p1k8t" path="res://prefabs/UIButton/UIButton.cs" id="1_fsmop"]
+[ext_resource type="StyleBox" uid="uid://7ww86h6bkwfw" path="res://styles/button_style.tres" id="2_fsmop"]
+[ext_resource type="StyleBox" uid="uid://dhoqfgal04ahv" path="res://styles/button_hover_style.tres" id="3_fsmop"]
+[ext_resource type="StyleBox" uid="uid://b42mxcwhl5h20" path="res://styles/button_pressed_style.tres" id="3_tlk6o"]
+
+[node name="UIButton" type="Control" unique_id=1721704438]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 8.0
+offset_bottom = 8.0
+script = ExtResource("1_fsmop")
+
+[node name="Button" type="Button" parent="." unique_id=153546846]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 16.0
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 15
+theme_override_styles/normal = ExtResource("2_fsmop")
+theme_override_styles/pressed = ExtResource("3_tlk6o")
+theme_override_styles/hover = ExtResource("3_fsmop")

@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://cqa0x8q27fvpj"]
+
+[ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="1_3mka8"]
+[ext_resource type="Script" uid="uid://bkptry58kbkna" path="res://prefabs/DialogWindow/DialogWindow.cs" id="1_raps5"]
+[ext_resource type="StyleBox" uid="uid://c2aqfpbc0gmio" path="res://styles/dialog_window_content_style.tres" id="2_rb7h6"]
+
+[node name="DialogWindow" type="Node2D" unique_id=110603288]
+script = ExtResource("1_raps5")
+
+[node name="InputBlocker" type="Button" parent="." unique_id=437590167]
+modulate = Color(1, 1, 1, 0)
+offset_left = -1.0
+offset_top = 10.0
+offset_right = 7.0
+offset_bottom = 18.0
+metadata/_edit_use_anchors_ = true
+
+[node name="Content" type="Label" parent="." unique_id=1705221938]
+offset_left = 5.0
+offset_top = 30.0
+offset_right = 155.0
+offset_bottom = 86.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = ExtResource("2_rb7h6")
+horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="Title" type="Label" parent="." unique_id=865132285]
+offset_left = 3.0
+offset_right = 141.0
+offset_bottom = 28.0
+theme_override_font_sizes/font_size = 20
+text = "Galaxy Gauntlet"
+horizontal_alignment = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="YesNoButtonContainer" type="Node2D" parent="." unique_id=322065525]
+position = Vector2(72, 121)
+
+[node name="YesButton" parent="YesNoButtonContainer" unique_id=454565355 instance=ExtResource("1_3mka8")]
+modulate = Color(0.15294118, 1, 0.10980392, 1)
+offset_left = -64.0
+offset_top = -22.0
+offset_right = -56.0
+offset_bottom = -14.0
+ButtonText = "Yes"
+FontSize = 16
+
+[node name="NoButton" parent="YesNoButtonContainer" unique_id=224655190 instance=ExtResource("1_3mka8")]
+modulate = Color(1, 0.15294118, 0.10980392, 1)
+offset_left = 11.0
+offset_top = -22.0
+offset_right = 19.0
+offset_bottom = -14.0
+ButtonText = "No"
+FontSize = 16
+
+[node name="OKButtonContainer" type="Node2D" parent="." unique_id=386955233]
+position = Vector2(72, 121)
+
+[node name="OKButton" parent="OKButtonContainer" unique_id=2098577509 instance=ExtResource("1_3mka8")]
+offset_left = -26.0
+offset_top = -22.0
+offset_right = -18.0
+offset_bottom = -14.0
+ButtonText = "OK"
+FontSize = 16

@@ -1,0 +1,13 @@
+using GalaxyGauntlet.scripts.MapEntities.Shared;
+
+namespace GalaxyGauntlet.scripts.MapEntities
+{
+    public class IceBlockEntity(Vector2I coordinate) : MapMob(coordinate)
+    {
+        public override int DataCode => Constants.ByteCodes.Entities.IceBlock;
+
+        public override string Name => "Ice Block";
+
+        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.IceBlock;
+    }
+}

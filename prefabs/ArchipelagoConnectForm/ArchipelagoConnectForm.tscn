@@ -1,0 +1,155 @@
+[gd_scene format=3 uid="uid://dfbrdwt6fdgtn"]
+
+[ext_resource type="StyleBox" uid="uid://c2aqfpbc0gmio" path="res://styles/dialog_window_content_style.tres" id="1_1ot4y"]
+[ext_resource type="Script" uid="uid://bcert83p1mrnt" path="res://prefabs/ArchipelagoConnectForm/ArchipelagoConnectForm.cs" id="1_3hfvw"]
+[ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="2_vuf2q"]
+
+[node name="ArchipelagoConnectForm" type="Node2D" unique_id=210946263]
+script = ExtResource("1_3hfvw")
+
+[node name="DialogWindow" type="Label" parent="." unique_id=782216978]
+offset_left = 18.0
+offset_top = 33.0
+offset_right = 591.0
+offset_bottom = 467.0
+theme_override_styles/normal = ExtResource("1_1ot4y")
+
+[node name="GameName" type="Node2D" parent="." unique_id=385356974]
+
+[node name="Label" type="Label" parent="GameName" unique_id=1774583342]
+offset_left = 19.0
+offset_top = 39.0
+offset_right = 150.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Game Name"
+
+[node name="GameName" type="LineEdit" parent="GameName" unique_id=1341270236]
+offset_left = 22.0
+offset_top = 70.0
+offset_right = 584.0
+offset_bottom = 110.0
+focus_neighbor_bottom = NodePath("../../Server/Server")
+focus_next = NodePath("../../Server/Server")
+theme_override_font_sizes/font_size = 23
+text = "Chip's Challenge"
+
+[node name="Server" type="Node2D" parent="." unique_id=765294679]
+position = Vector2(0, 80)
+
+[node name="Label" type="Label" parent="Server" unique_id=365260105]
+offset_left = 19.0
+offset_top = 39.0
+offset_right = 150.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Server"
+metadata/_edit_use_anchors_ = true
+
+[node name="Server" type="LineEdit" parent="Server" unique_id=1122033589]
+offset_left = 22.0
+offset_top = 70.0
+offset_right = 584.0
+offset_bottom = 110.0
+focus_neighbor_top = NodePath("../../GameName/GameName")
+focus_neighbor_bottom = NodePath("../../Port/Port")
+focus_next = NodePath("../../Port/Port")
+focus_previous = NodePath("../../GameName/GameName")
+theme_override_font_sizes/font_size = 23
+text = "archipelago.gg"
+
+[node name="Port" type="Node2D" parent="." unique_id=1916263511]
+position = Vector2(0, 160)
+
+[node name="Label" type="Label" parent="Port" unique_id=1328443902]
+offset_left = 19.0
+offset_top = 39.0
+offset_right = 150.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Port"
+metadata/_edit_use_anchors_ = true
+
+[node name="Port" type="LineEdit" parent="Port" unique_id=1199582877]
+offset_left = 22.0
+offset_top = 70.0
+offset_right = 584.0
+offset_bottom = 110.0
+focus_neighbor_top = NodePath("../../Server/Server")
+focus_neighbor_bottom = NodePath("../../SlotName/SlotName")
+focus_next = NodePath("../../SlotName/SlotName")
+focus_previous = NodePath("../../Server/Server")
+theme_override_font_sizes/font_size = 23
+
+[node name="SlotName" type="Node2D" parent="." unique_id=817069419]
+position = Vector2(0, 240)
+
+[node name="Label" type="Label" parent="SlotName" unique_id=675578305]
+offset_left = 19.0
+offset_top = 39.0
+offset_right = 150.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Slot Name"
+metadata/_edit_use_anchors_ = true
+
+[node name="SlotName" type="LineEdit" parent="SlotName" unique_id=1888983885]
+offset_left = 22.0
+offset_top = 70.0
+offset_right = 584.0
+offset_bottom = 110.0
+focus_neighbor_top = NodePath("../../Port/Port")
+focus_neighbor_bottom = NodePath("../../Password/Password")
+focus_next = NodePath("../../Password/Password")
+focus_previous = NodePath("../../Port/Port")
+theme_override_font_sizes/font_size = 23
+
+[node name="Password" type="Node2D" parent="." unique_id=332639050]
+position = Vector2(0, 320)
+
+[node name="Label" type="Label" parent="Password" unique_id=1201655042]
+offset_left = 19.0
+offset_top = 39.0
+offset_right = 150.0
+offset_bottom = 70.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "Password"
+metadata/_edit_use_anchors_ = true
+
+[node name="Password" type="LineEdit" parent="Password" unique_id=267512919]
+offset_left = 22.0
+offset_top = 70.0
+offset_right = 584.0
+offset_bottom = 110.0
+focus_neighbor_top = NodePath("../../SlotName/SlotName")
+focus_previous = NodePath("../../SlotName/SlotName")
+theme_override_font_sizes/font_size = 23
+
+[node name="ConnectButton" parent="." unique_id=1721704438 instance=ExtResource("2_vuf2q")]
+offset_left = 110.0
+offset_top = 443.0
+offset_right = 118.0
+offset_bottom = 451.0
+ButtonText = "Connect"
+FontSize = 30
+
+[node name="CancelButton" parent="." unique_id=1811736799 instance=ExtResource("2_vuf2q")]
+offset_left = 365.0
+offset_top = 443.0
+offset_right = 373.0
+offset_bottom = 451.0
+ButtonText = "Cancel"
+FontSize = 30
+
+[node name="ErrorText" type="Label" parent="." unique_id=676465478]
+offset_left = 26.0
+offset_top = 505.0
+offset_right = 583.0
+offset_bottom = 528.0
+theme_override_colors/font_color = Color(0.42745098, 0, 0, 1)
+horizontal_alignment = 1
