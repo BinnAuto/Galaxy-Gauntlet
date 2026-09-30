@@ -28,6 +28,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 		public override bool CanWalkOnGravel => true;
 
+
 		public override void ProcessTick(DateTime timestamp)
 		{
 			_lastProcessTime = timestamp;
@@ -159,6 +160,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 		public override Vector2I ProposeMove(Vector2I direction)
 		{
+			return base.ProposeMove(direction);
+			
 			var processedCoordinate = SanitizeInput(direction);
 			if (processedCoordinate is null)
 			{

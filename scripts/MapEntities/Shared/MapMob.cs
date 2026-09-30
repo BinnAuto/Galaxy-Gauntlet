@@ -1,4 +1,5 @@
 using System;
+using System.Reflection.Metadata.Ecma335;
 
 namespace GalaxyGauntlet.scripts.MapEntities.Shared
 {
@@ -246,6 +247,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
+			#region Exit from Thin Wall tile
+			
 			var currentTile = GameData.GetMapTile(Coordinate);
 			if(currentTile is ThinWallOrCanopyTile currentThinWall
 				&& false == currentThinWall.AllowExit(direction))
@@ -253,12 +256,16 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
-			Vector2I newCoordinate = processedCoordinate.Value;
+            #endregion
+
+            Vector2I newCoordinate = processedCoordinate.Value;
 			var destinationTile = GameData.GetMapTile(newCoordinate);
 			var destinationItem = GameData.GetMapItem(newCoordinate);
 			var destinationMob = GameData.GetMapMob(newCoordinate);
 
-			if(destinationTile is WallTile
+            #region Hard Stop tiles
+
+            if (destinationTile is WallTile
 				|| destinationTile is BlueWallTile
 				|| (destinationTile is DirtTile && false == CanWalkOnDirt)
 				|| (destinationTile is GravelTile && false == CanWalkOnGravel)
@@ -268,15 +275,19 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				|| destinationItem is GreenDoorItem
 				|| (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
 				|| destinationTile is ExitTile
+				|| destinationTile is CloneMachineTile
 			)
 			{
 				return Coordinate;
 			}
 
-			if(destinationTile is WaterTile)
+            #endregion
+
+            if (destinationTile is WaterTile)
 			{
 				if(this is DirtBlockEntity)
 				{
+					// Dirt blocks turn water into dirt
 					GameData.SetMapTile(newCoordinate, new DirtTile(newCoordinate));
 					RemoveSelf();
 					return newCoordinate;
@@ -302,6 +313,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return newCoordinate;
 			}
 
+			#region Entry into Thin Wall tile
+
 			if(destinationTile is ThinWallOrCanopyTile destinationThinWall)
 			{
 				return destinationThinWall.AllowEntry(direction)
@@ -309,7 +322,22 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					: Coordinate;
 			}
 
-			if(destinationItem is SocketItem
+            #endregion
+
+			if(destinationItem is SocketItem)
+			{
+				if(this is Player && GameData.ChipRequirementMet)
+				{
+					GameData.RemoveMapItem(newCoordinate);
+					return newCoordinate;
+				}
+
+				return Coordinate;
+			}
+
+            #region Hard Stop items
+
+            if (destinationItem is SocketItem
 				|| destinationItem is ChipItem
 				|| destinationItem is RecessedWallItem
 			)
@@ -317,7 +345,68 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
-			if(destinationMob is DirtBlockEntity
+			#endregion
+
+			#region Blue Teleporter 
+
+			if (destinationItem is BlueTeleporterItem blueTeleporter)
+			{
+				var oldCoordinate = Coordinate.Clone();
+				var teleporterCoordinate = blueTeleporter.Coordinate;
+				var currentCheckpoint = Coordinate + direction;
+				while(true)
+				{
+					var teleportExit = blueTeleporter.SearchForExit(currentCheckpoint);
+					if(teleportExit == teleporterCoordinate)
+					{
+						// EXIT: Search has covered the entire map
+						if(this is Player)
+						{
+							// Player will slide over or bounce from the teleporter
+							Coordinate = teleporterCoordinate;
+							newCoordinate = ProposeMove(direction);
+							if(newCoordinate == Coordinate)
+							{
+								ReverseOrientation();
+								return oldCoordinate;
+							}
+
+							GameData.RemoveMapPlayer(oldCoordinate);
+							return newCoordinate;
+						}
+						return oldCoordinate;
+						// TODO: Update this for specific entity behaviors where
+						// they do not slide or bounce
+					}
+
+					Coordinate = teleportExit;
+					var teleportExitStep = ProposeMove(direction);
+					if(teleportExitStep != teleportExit)
+					{
+						// EXIT: Step is valid, teleport complete
+						if(this is Player)
+						{
+							GameData.RemoveMapPlayer(oldCoordinate);
+						}
+						else
+						{
+							GameData.RemoveMapMob(oldCoordinate);
+						}
+						newCoordinate = teleportExitStep;
+						return newCoordinate;
+					}
+
+					// Exit step is invalid. Reset and look for the next exit.
+					Coordinate = oldCoordinate;
+					currentCheckpoint = teleportExit;
+				}
+			}
+
+            #endregion
+
+            #region Hard Stop mobs
+
+            if (destinationMob is DirtBlockEntity
 				|| destinationMob is IceBlockEntity
 				|| destinationMob is BlueTankMonster
 				|| destinationMob is BugMonster
@@ -329,10 +418,17 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
+			#endregion
+
 			if(destinationMob is RedBombMonster redBomb)
 			{
-				redBomb.RemoveSelf();
-				RemoveSelf();
+				if(this is not Player)
+				{
+					redBomb.RemoveSelf();
+					RemoveSelf();
+				}
+
+				GameData.DeathMessage = Constants.DeathMessages.Bombs;
 				return newCoordinate;
 			}
 
