@@ -88,5 +88,15 @@ namespace GalaxyGauntlet.scripts.MapEntities
                 return Coordinate;
             }
         }
+
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            DirtBlockEntity result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
     }
 }

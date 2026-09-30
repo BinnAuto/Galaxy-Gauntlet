@@ -108,6 +108,7 @@ public partial class GameplayScreen : Node
 				_previousProcessTime = now;
 				GameData.PingPongStep = (GameData.PingPongStep + 1) % 2;
 				GameData.SquareStep = (GameData.SquareStep + 1) % 4;
+				ProcessButtonPresses();
 			}
 			CheckForInitializationByPlayer();
 		}
@@ -119,7 +120,6 @@ public partial class GameplayScreen : Node
 			{
 				// Process entities that move 10 times per second (slip list)
 				GameData.ProcessMobList(slipList, now);
-				ProcessButtonPresses();
 			}
 			_previousSlipListProcessTime = now;
 		}

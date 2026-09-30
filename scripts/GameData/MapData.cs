@@ -146,7 +146,17 @@ namespace GalaxyGauntlet.scripts
                     if (mob.NeedsTileSpecification)
                     {
                         i++;
-                        mob.LowerLayer = (MapTile)MapEntity.GetMapEntity(MapData[i], mapCoordinate);
+                        var mapEntity = MapEntity.GetMapEntity(MapData[i], mapCoordinate);
+                        if(mapEntity is MapButtonItem mapButton)
+                        {
+                            MapItems[x, y] = mapButton;
+                            ButtonsToProcess.Add(mapButton);
+                            mob.LowerLayer = new FloorTile(mapCoordinate);
+                        }
+                        else
+                        {
+                            mob.LowerLayer = (MapTile)mapEntity;
+                        }
                     }
                     if(mob is not DirtBlockEntity
                         && mob is not Player

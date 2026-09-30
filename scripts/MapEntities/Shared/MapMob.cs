@@ -76,7 +76,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 		public virtual MapMob CreateCopy()
 		{
-			throw new NotImplementedException($"Cannot create copy of {Name}");
+			Exception e = new NotImplementedException($"Cannot create copy of {Name}");
+			FileLogger.LogException("Entity clone failed", e);
+			throw e;
 		}
 
 
