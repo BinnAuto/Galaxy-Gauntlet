@@ -40,19 +40,26 @@ public partial class ArchipelagoConnectForm : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		GameName = (LineEdit)GetNode(nameof(GameName) + "/" + nameof(GameName));
-		Server = (LineEdit)GetNode(nameof(Server) + "/" + nameof(Server));
-		Port = (LineEdit)GetNode(nameof(Port) + "/" + nameof(Port));
-		SlotName = (LineEdit)GetNode(nameof(SlotName) + "/" + nameof(SlotName));
-		Password = (LineEdit)GetNode(nameof(Password) + "/" + nameof(Password));
+		try
+		{
+			GameName = (LineEdit)GetNode(nameof(GameName) + "/" + nameof(GameName));
+			Server = (LineEdit)GetNode(nameof(Server) + "/" + nameof(Server));
+			Port = (LineEdit)GetNode(nameof(Port) + "/" + nameof(Port));
+			SlotName = (LineEdit)GetNode(nameof(SlotName) + "/" + nameof(SlotName));
+			Password = (LineEdit)GetNode(nameof(Password) + "/" + nameof(Password));
 		
-		ConnectButton = (UIButton)GetNode(nameof(ConnectButton));
-		ConnectButton.Pressed += async () => { await OnConnect(); };
+			ConnectButton = (UIButton)GetNode(nameof(ConnectButton));
+			ConnectButton.Pressed += async () => { await OnConnect(); };
 
-		CancelButton = (UIButton)GetNode(nameof(CancelButton));
-		CancelButton.Pressed += OnCancel;
+			CancelButton = (UIButton)GetNode(nameof(CancelButton));
+			CancelButton.Pressed += OnCancel;
 
-		ErrorText = (Label)GetNode(nameof(ErrorText));
+			ErrorText = (Label)GetNode(nameof(ErrorText));
+		}
+		catch(Exception e)
+		{
+			FileLogger.LogException("Error readying Archipelago connect form", e);
+		}
 	}
 
 

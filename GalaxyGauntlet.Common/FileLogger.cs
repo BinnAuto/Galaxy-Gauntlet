@@ -1,3 +1,5 @@
+using Godot;
+
 namespace GalaxyGauntlet.Common
 {
     public static class FileLogger
@@ -53,6 +55,13 @@ namespace GalaxyGauntlet.Common
         }
 
 
+        public static void LogException(string message, Exception e)
+        {
+            LogMessage($"{message}: {e.Message}");
+            QuietLogMessage(e.StackTrace);
+        }
+
+
         /// <summary>
         /// Writes a message to the log and repeats it to the console
         /// </summary>
@@ -60,6 +69,7 @@ namespace GalaxyGauntlet.Common
         {
             QuietLogMessage(message);
             Console.WriteLine(message);
+            GD.Print(message);
         }
     }
 }

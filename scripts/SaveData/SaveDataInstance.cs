@@ -37,7 +37,7 @@ namespace GalaxyGauntlet.scripts.SaveData
 
         public void WriteSlotData(SaveSlot saveSlot)
         {
-            GD.Print("Writing slot data");
+            FileLogger.QuietLogMessage("Writing slot data...");
             int slotIndex = FindSlotIndex(saveSlot.SlotName);
             if (slotIndex == -1)
             {
@@ -47,7 +47,6 @@ namespace GalaxyGauntlet.scripts.SaveData
             {
                 SaveSlots[slotIndex] = saveSlot;
             }
-            GD.Print("Saving data");
             SaveData.Save();
         }
 

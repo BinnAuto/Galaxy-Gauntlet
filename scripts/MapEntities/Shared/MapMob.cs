@@ -154,17 +154,15 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				var currentTile = GameData.GetMapTile(Coordinate);
 				if(currentTile is CloneMachineTile)
 				{
-					// SAFETYNET: This is a display mob, it should not move.
-					// This mob should have never been put in the process list.
-					GD.Print("WARNING: Clone machine display mob has been put in the process list."); 
+					FileLogger.QuietLogMessage($"SAFETY NET: Display mob in clone machines should not move");
 					return;
 				}
 
 				ProposeMove(Forward);
 			}
-			catch
+			catch(Exception e)
 			{
-
+				FileLogger.LogException($"Error processing {Name} tick", e);
 			}
 			finally
 			{
@@ -331,7 +329,6 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 			if(destinationMob is RedBombMonster redBomb)
 			{
-				GD.Print("Kaboom");
 				redBomb.RemoveSelf();
 				RemoveSelf();
 				return newCoordinate;

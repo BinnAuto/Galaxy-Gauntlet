@@ -45,9 +45,9 @@ namespace GalaxyGauntlet.scripts
         {
             try
             {
+                FileLogger.QuietLogMessage($"Loading level file {filePath}");
                 InitializeValues();
                 _fileBytes = File.ReadAllBytes(filePath);
-
                 bool doContinue = true;
                 while(doContinue)
                 {
@@ -70,6 +70,7 @@ namespace GalaxyGauntlet.scripts
 
                         case "TITL":
                             GameData.LevelName = GetMapTitle();
+                            FileLogger.QuietLogMessage($"Level name: {GameData.LevelName}");
                             break;
 
                         case "CLUE":
@@ -90,18 +91,19 @@ namespace GalaxyGauntlet.scripts
 
                         case "END":
                             doContinue = false;
-                            return;
+                            break;
 
                         default:
+                            FileLogger.QuietLogMessage($"Unrecognized file header {sectionHeader}");
                             doContinue = false;
                             break;
                     }
                 }
+                FileLogger.QuietLogMessage("File load complete");
             }
             catch (Exception e)
             {
-                GD.Print($"Error processing file at byte {_currentIndex + 1}: {e.Message}");
-                GD.Print(e.StackTrace);
+                FileLogger.LogException($"Error processing file at byte {_currentIndex + 1}", e);
             }
         }
 
@@ -157,11 +159,13 @@ namespace GalaxyGauntlet.scripts
 
         private static void LoadOptions()
         {
+            FileLogger.QuietLogMessage("Processing level OPTN segment...");
             int optionLength = GetSectionLength();
             byte[] optionBytes = GetNextBytes(optionLength);
             byte[] timeBytes = optionBytes.SkipAndTake(0, 2);
             GameData.TimeLimit = ConvertToInt(timeBytes);
-            GD.Print($"Timer: {GameData.TimeLimit}");
+            FileLogger.QuietLogMessage($"Level timer: {GameData.TimeLimit}");
+            FileLogger.QuietLogMessage("OPTN segment processed");
         }
 
         #endregion
@@ -182,7 +186,7 @@ namespace GalaxyGauntlet.scripts
         }
 
 
-        private static void PrintArray(byte[] input)
+        private static void DebugPrintArray(byte[] input)
         {
             string print = input.Select(e => $"{e:x2}").ToArray().Join(", ");
             GD.Print(print);

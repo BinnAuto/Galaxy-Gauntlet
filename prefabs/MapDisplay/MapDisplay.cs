@@ -1,5 +1,6 @@
 using GalaxyGauntlet.scripts;
 using GalaxyGauntlet.scripts.MapEntities;
+using System;
 
 public partial class MapDisplay : Node
 {
@@ -13,11 +14,18 @@ public partial class MapDisplay : Node
 
 	public override void _Ready()
 	{
-		FloorTiles = (TileMapLayer)GetNode(nameof(FloorTiles));
-		ItemTiles = (TileMapLayer)GetNode(nameof(ItemTiles));
-		PlayerTiles = (TileMapLayer)GetNode(nameof(PlayerTiles));
-		MobTiles = (TileMapLayer)GetNode(nameof(MobTiles));
-		SceneryTiles = (TileMapLayer)GetNode(nameof(SceneryTiles));
+		try
+		{
+			FloorTiles = (TileMapLayer)GetNode(nameof(FloorTiles));
+			ItemTiles = (TileMapLayer)GetNode(nameof(ItemTiles));
+			PlayerTiles = (TileMapLayer)GetNode(nameof(PlayerTiles));
+			MobTiles = (TileMapLayer)GetNode(nameof(MobTiles));
+			SceneryTiles = (TileMapLayer)GetNode(nameof(SceneryTiles));
+		}
+		catch(Exception e)
+		{
+			FileLogger.LogException("Error readying map display", e);
+		}
 	}
 
 	#endregion

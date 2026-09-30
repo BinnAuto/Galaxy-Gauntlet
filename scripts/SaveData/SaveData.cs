@@ -75,7 +75,6 @@ namespace GalaxyGauntlet.scripts.SaveData
         public static void Save()
         {
             string saveData = SCGlobal.ToJson(Instance);
-            GD.Print(saveData);
             using var file = Godot.FileAccess.Open(SaveDataPath, Godot.FileAccess.ModeFlags.Write);
             file.StoreString(saveData);
         }

@@ -1,3 +1,5 @@
+using System;
+
 [Tool]
 public partial class UIButton : Control
 {
@@ -43,11 +45,18 @@ public partial class UIButton : Control
 
 	public override void _Ready()
 	{
-		Button = (Button)GetNode(nameof(Button));
-		SetButtonText(ButtonText);
-		Button.Pressed += OnButtonPressed;
-		Button.MouseEntered += OnButtonHovered;
-		Button.AddThemeFontSizeOverride("font_size", FontSize);
+		try
+		{
+			Button = (Button)GetNode(nameof(Button));
+			SetButtonText(ButtonText);
+			Button.Pressed += OnButtonPressed;
+			Button.MouseEntered += OnButtonHovered;
+			Button.AddThemeFontSizeOverride("font_size", FontSize);
+		}
+		catch(Exception e)
+		{
+			FileLogger.LogException("Error readying UI Button", e);
+		}
 	}
 
 

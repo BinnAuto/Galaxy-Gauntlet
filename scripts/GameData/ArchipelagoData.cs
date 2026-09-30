@@ -97,10 +97,11 @@ namespace GalaxyGauntlet.scripts
                 }
 
                 await ScoutAPLocations();
-                GD.Print("Connected!");
+                FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                FileLogger.LogException("Error attempting to connect to Archipelago server", e);
                 Session = null;
                 throw;
             }
@@ -126,22 +127,20 @@ namespace GalaxyGauntlet.scripts
 
                 if(false == ProcessingDeathLink)
                 {
-                    GD.Print("Sending death link");
+                    FileLogger.QuietLogMessage("Sending deathlink message");
                     DeathLinkData deathLinkData = new(SlotName);
                     DeathLinkService.SendDeathLink(deathLinkData);
                 }
             }
             catch(Exception e)
             {
-                GD.Print(e.Message);
-                GD.Print(e.StackTrace);
+                FileLogger.LogException("Error sending deathlink message", e);
             }
         }
 
 
         public static async Task ScoutAPLocations()
         {
-            GD.Print("Scouting locations...");
             long[] locationIDs = [.. Session.Locations.AllLocations];
             ScoutedItems = await Session.Locations.ScoutLocationsAsync(locationIDs);
         }
@@ -257,20 +256,20 @@ namespace GalaxyGauntlet.scripts
 
         private static void OnAPSocketError(Exception e, string message)
         {
-            GD.Print($"Socket error: {e.Message}");
+            FileLogger.QuietLogMessage($"Socket error: {e.Message}");
         }
 
 
         private static void OnAPSocketClosed(string reason)
         {
-            GD.Print("Socket closed");
+            FileLogger.QuietLogMessage("Socket closed");
             IsConnected = false;
         }
 
 
         private static void OnAPSocketOpened()
         {
-            GD.Print("Socket opened");
+            FileLogger.QuietLogMessage("Socket opened");
             IsConnected = true;
         }
 
@@ -293,16 +292,15 @@ namespace GalaxyGauntlet.scripts
 
         private static void OnDeathLinkReceived(DeathLinkData deathLink)
         {
-            GD.Print("Deathlink packet received");
-            if(DeathLinkEnabled)
+            FileLogger.QuietLogMessage("Deathlinkn packet received");
+            if(false == DeathLinkEnabled)
             {
-                ProcessingDeathLink = true;
-                DeathMessage = $"Ooops! {deathLink.Source} has died!";
+                FileLogger.QuietLogMessage("Deathlink is disabled");
+                return;
             }
-            else
-            {
-                GD.Print("Deathlink disabled");
-            }
+
+            ProcessingDeathLink = true;
+            DeathMessage = $"Ooops! {deathLink.Source} has died!";
         }
 
         #endregion

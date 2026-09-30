@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts;
+using System;
 
 public partial class LevelSelect : Node2D
 {
@@ -9,14 +10,21 @@ public partial class LevelSelect : Node2D
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		Node Control = GetNode(nameof(Control));
-		Node ScrollContainer = Control.GetNode(nameof(ScrollContainer));
-		GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
-		GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
-			? 1 : 3;
-		ButtonRef = (Button)GetNode(nameof(ButtonRef));
+		try
+		{
+			Node Control = GetNode(nameof(Control));
+			Node ScrollContainer = Control.GetNode(nameof(ScrollContainer));
+			GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
+			GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
+				? 1 : 3;
+			ButtonRef = (Button)GetNode(nameof(ButtonRef));
 
-		BuildButtonList();
+			BuildButtonList();
+		}
+		catch(Exception e)
+		{
+			FileLogger.LogException("Error readying Level Select screen", e);
+		}
 	}
 
 
@@ -33,7 +41,7 @@ public partial class LevelSelect : Node2D
 			if(GameData.GameMode == GameMode.QuickPlay)
 			{
 				button.Text = levelName;
-				button.Pressed += () => OnLoadLevel(tempLevel);
+				button.Pressed += () => OnLevelSelect(tempLevel);
 				GridContainer.AddChild(button);
 				continue;
 			}
@@ -46,7 +54,7 @@ public partial class LevelSelect : Node2D
 			}
 
 			button.Text = levelName;
-			button.Pressed += () => OnLoadLevel(tempLevel);
+			button.Pressed += () => OnLevelSelect(tempLevel);
 			GridContainer.AddChild(button);
 
 			// Complete label
@@ -76,11 +84,10 @@ public partial class LevelSelect : Node2D
 	}
 
 
-	private void OnLoadLevel(int levelIndex)
+	private void OnLevelSelect(int levelIndex)
 	{
 		GameData.CurrentLevelNumber = levelIndex;
 		GameData.ResetLevelData();
-		GD.Print($"Loading level {levelIndex}");
 		string gameplayScreenPath = "res://screens/GameplayScreen/GameplayScreen.tscn";
 		GetTree().ChangeSceneToFile(gameplayScreenPath);
 	}

@@ -49,7 +49,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
                 checkPosition -= new Vector2I(1, 0);
             }
-            GD.Print("Safety net hit");
             return startingPoint; // Is this needed?
         }
     }

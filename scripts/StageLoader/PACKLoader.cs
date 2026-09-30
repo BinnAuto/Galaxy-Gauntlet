@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.scripts
     {
         public static void LoadPACKStage()
         {
-            GD.Print("Unpacking map data");
+            FileLogger.QuietLogMessage("Processing level PACK segment...");
             int sectionLength = GetSectionLength();
             byte[] packBytes = _fileBytes.SkipAndTake(_currentIndex, sectionLength);
             int currentPackIndex = 0;
@@ -18,6 +18,7 @@ namespace GalaxyGauntlet.scripts
             int firstDataBlockLength = packBytes[currentPackIndex++];
             if(firstDataBlockLength < 2)
             {
+                FileLogger.QuietLogMessage($"Unexpected first data block length {firstDataBlockLength}");
                 return;
             }
 
@@ -39,10 +40,11 @@ namespace GalaxyGauntlet.scripts
                 }
             }
             GameData.ChipsRequired = requiredChips;
+            FileLogger.QuietLogMessage("PACK segment processed");
         }
 
 
-        private static void PrintMap()
+        private static void DebugPrintMap()
         {
             bool doContinue = true;
             int skipAmount = 0;

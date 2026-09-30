@@ -112,7 +112,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			if(currentTile is MapIceTile iceTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
 			{
-				GD.Print("Ice");
 				GameData.MoveToSlipList(this);
 				Orientation = iceTile.SetOrientation(Orientation);
 				newCoordinate = ProposeMove(Forward);

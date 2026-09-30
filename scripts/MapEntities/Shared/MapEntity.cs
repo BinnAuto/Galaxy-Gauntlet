@@ -100,11 +100,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
             };
             if(result is DebugEntity)
             {
-                GD.Print($"WARNING: Entity code 0x{code:X2} not recognized.");
+                FileLogger.QuietLogMessage($"WARNING: Entity code 0x{code:X2} not recognized.");
             }
             if(result.DataCode != code)
             {
-                GD.Print($"WARNING: {result.Name} data code {result.DataCode} does not match expected code of 0x{code:X2}");
+                FileLogger.QuietLogMessage($"WARNING: {result.Name} data code {result.DataCode} does not match expected code of 0x{code:X2}");
             }
             return result;
         }

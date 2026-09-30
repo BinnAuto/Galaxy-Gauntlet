@@ -44,25 +44,32 @@ public partial class DialogWindow : Node2D
 
 	public override void _Ready()
 	{
-		Visible = false;
-		InputBlocker = (Button)GetNode(nameof(InputBlocker));
+		try
+		{
+			Visible = false;
+			InputBlocker = (Button)GetNode(nameof(InputBlocker));
 
-		Content = (Label)GetNode(nameof(Content));
+			Content = (Label)GetNode(nameof(Content));
 
-		Title = (Label)GetNode(nameof(Title));
-		Title.Text = Constants.GameName;
+			Title = (Label)GetNode(nameof(Title));
+			Title.Text = Constants.GameName;
 
-		YesNoButtonContainer = (Node2D)GetNode(nameof(YesNoButtonContainer));
-		YesButton = (UIButton)YesNoButtonContainer.GetNode(nameof(YesButton));
-		YesButton.Pressed += OnYesButtonPressed;
-		NoButton = (UIButton)YesNoButtonContainer.GetNode(nameof(NoButton));
-		NoButton.Pressed += OnNoButtonPressed;
-		YesNoButtonContainer.Visible = false;
+			YesNoButtonContainer = (Node2D)GetNode(nameof(YesNoButtonContainer));
+			YesButton = (UIButton)YesNoButtonContainer.GetNode(nameof(YesButton));
+			YesButton.Pressed += OnYesButtonPressed;
+			NoButton = (UIButton)YesNoButtonContainer.GetNode(nameof(NoButton));
+			NoButton.Pressed += OnNoButtonPressed;
+			YesNoButtonContainer.Visible = false;
 
-		OKButtonContainer = (Node2D)GetNode(nameof(OKButtonContainer));
-		OKButton = (UIButton)OKButtonContainer.GetNode(nameof(OKButton));
-		OKButton.Pressed += OnOKButtonPressed;
-		OKButtonContainer.Visible = false;
+			OKButtonContainer = (Node2D)GetNode(nameof(OKButtonContainer));
+			OKButton = (UIButton)OKButtonContainer.GetNode(nameof(OKButton));
+			OKButton.Pressed += OnOKButtonPressed;
+			OKButtonContainer.Visible = false;
+		}
+		catch(System.Exception e)
+		{
+			FileLogger.LogException("Error readying Dialog window", e);
+		}
 	}
 
 

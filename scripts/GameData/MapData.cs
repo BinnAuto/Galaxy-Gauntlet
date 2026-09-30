@@ -64,7 +64,6 @@ namespace GalaxyGauntlet.scripts
             string mapPath = $"./levels/map{CurrentLevelNumber:000}.c2m";
             LevelLoader.LoadLevel(mapPath);
             RerenderMap = true;
-            GD.Print("Level loaded");
         }
 
 
@@ -75,7 +74,7 @@ namespace GalaxyGauntlet.scripts
         {
             if (MapData.Length == 0)
             {
-                GD.Print("No map data to process.");
+                FileLogger.QuietLogMessage("No map data to process.");
                 return;
             }
 
@@ -180,8 +179,6 @@ namespace GalaxyGauntlet.scripts
                 }
                 if (y >= MapDimensions.Y)
                 {
-                    GD.Print("Safety net hit");
-                    // SAFETYNET: Ideally the map's data should exactly fill the map dimensions it had defined
                     return;
                 }
             }
@@ -328,7 +325,6 @@ namespace GalaxyGauntlet.scripts
             var coordinate = mob.Coordinate;
             if (MapMobs[coordinate.X, coordinate.Y] != null)
             {
-                GD.Print("Mob already exists at coordinate");
                 return;
             }
 
@@ -399,7 +395,6 @@ namespace GalaxyGauntlet.scripts
             }
             catch(IndexOutOfRangeException)
             {
-                GD.Print("Attempt to access coordinate outside of map boundary");
                 return new WallTile(coordinate);
             }
         }

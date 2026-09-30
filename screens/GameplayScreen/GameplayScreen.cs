@@ -27,19 +27,26 @@ public partial class GameplayScreen : Node
 
 	public override void _Ready()
 	{
-		MapDisplay = (MapDisplay)GetNode(nameof(MapDisplay));
+		try
+		{
+			MapDisplay = (MapDisplay)GetNode(nameof(MapDisplay));
 
-		DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
 
-		LevelName = (Label)GetNode(nameof(LevelName));
+			LevelName = (Label)GetNode(nameof(LevelName));
 
-		ChipCount = (Label)GetNode(nameof(ChipCount));
+			ChipCount = (Label)GetNode(nameof(ChipCount));
 
-		Timer = (Label)GetNode(nameof(Timer));
+			Timer = (Label)GetNode(nameof(Timer));
 
-		GameData.LoadCurrentLevel();
-		_timer = GameData.TimeLimit + 0.99999;
-		UpdateLabels();
+			GameData.LoadCurrentLevel();
+			_timer = GameData.TimeLimit + 0.99999;
+			UpdateLabels();
+		}
+		catch (Exception e)
+		{
+			FileLogger.LogException("Error readying Gameplay screen", e);
+		}
 	}
 
 
@@ -53,7 +60,6 @@ public partial class GameplayScreen : Node
 
 		if(Input.IsActionJustPressed("level_reset"))
 		{
-			GD.Print("Reset");
 			RestartLevel();
 			return;
 		}

@@ -1,5 +1,6 @@
 using GalaxyGauntlet.scripts;
 using GalaxyGauntlet.scripts.SaveData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -28,36 +29,44 @@ public partial class TitleMenu : Node
 
     public override void _Ready()
 	{
-        NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
-		NewGameButton.Pressed += OnNewGame;
+		try
+		{
+			NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
+			NewGameButton.Pressed += OnNewGame;
 
-		ContinueButton = (UIButton)GetNode(nameof(ContinueButton));
-		ContinueButton.Pressed += OnContinue;
-		ContinueButton.Visible = false;
+			ContinueButton = (UIButton)GetNode(nameof(ContinueButton));
+			ContinueButton.Pressed += OnContinue;
+			ContinueButton.Visible = false;
 
-		QuickPlayButton = (UIButton)GetNode(nameof(QuickPlayButton));
-		QuickPlayButton.Pressed += () => ToLevelSelect(GameMode.QuickPlay);
+			QuickPlayButton = (UIButton)GetNode(nameof(QuickPlayButton));
+			QuickPlayButton.Pressed += () => ToLevelSelect(GameMode.QuickPlay);
 
-        ArchipelagoButton = (UIButton)GetNode(nameof(ArchipelagoButton));
-		ArchipelagoButton.Pressed += () => { Archipelago.Visible = true; };
+			ArchipelagoButton = (UIButton)GetNode(nameof(ArchipelagoButton));
+			ArchipelagoButton.Pressed += () => { Archipelago.Visible = true; };
 
-        SettingsButton = (UIButton)GetNode(nameof(SettingsButton));
+			SettingsButton = (UIButton)GetNode(nameof(SettingsButton));
 
-		ExitButton = (UIButton)GetNode(nameof(ExitButton));
-		ExitButton.Pressed += OnExit;
+			ExitButton = (UIButton)GetNode(nameof(ExitButton));
+			ExitButton.Pressed += OnExit;
 
-		DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
 
-		Archipelago = (Node2D)GetNode(nameof(Archipelago));
+			Archipelago = (Node2D)GetNode(nameof(Archipelago));
 
-		ArchipelagoConnectForm = (ArchipelagoConnectForm)Archipelago.GetNode(nameof(ArchipelagoConnectForm));
-        ArchipelagoConnectForm.Connected += OnArchipelagoConnected;
-		ArchipelagoConnectForm.Cancelled += () => { Archipelago.Visible = false; };
+			ArchipelagoConnectForm = (ArchipelagoConnectForm)Archipelago.GetNode(nameof(ArchipelagoConnectForm));
+			ArchipelagoConnectForm.Connected += OnArchipelagoConnected;
+			ArchipelagoConnectForm.Cancelled += () => { Archipelago.Visible = false; };
 
-        Directory.CreateDirectory("./levels");
-        SaveData.Load();
-		ContinueButton.Visible = SaveData.SaveSlotExists(SaveData.AutosaveSlotName);
-	}
+			Directory.CreateDirectory("./levels");
+			SaveData.Load();
+			ContinueButton.Visible = SaveData.SaveSlotExists(SaveData.AutosaveSlotName);
+			FileLogger.QuietLogMessage("Title screen _Ready complete");
+        }
+        catch (Exception e)
+        {
+            FileLogger.LogException("Error readying Title Menu screen", e);
+        }
+    }
 
 	#endregion
 
@@ -142,6 +151,7 @@ public partial class TitleMenu : Node
 	{
         Archipelago.Visible = false;
 		string apLevelHash = GameData.GetAPSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.LevelHash);
+		FileLogger.QuietLogMessage($"APWorld level hash: {apLevelHash}");
 		if(string.IsNullOrEmpty(apLevelHash))
 		{
 			DialogWindow.ClearAllButtonEvents();
@@ -159,7 +169,7 @@ public partial class TitleMenu : Node
 			return;
 		}
 		string localLevelHash = GetLevelSetHash();
-        GD.Print($"Local level hash: {localLevelHash}");
+        FileLogger.QuietLogMessage($"Local level hash: {localLevelHash}");
         if (localLevelHash != apLevelHash)
 		{
 			DialogWindow.ClearAllButtonEvents();
