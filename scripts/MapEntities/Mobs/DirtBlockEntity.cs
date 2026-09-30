@@ -8,8 +8,15 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override string Name => "Dirt Block";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.DirtBlock;
-
+        public override Vector2I TextureCoordinate
+        {
+            get
+            {
+                return GameData.XRayMode
+                    ? Constants.SpriteCoordinates.DirtBlock_XRay
+                    : Constants.SpriteCoordinates.DirtBlock;
+            }
+        }
 
         public override Vector2I ProposeMove(Vector2I direction)
         {

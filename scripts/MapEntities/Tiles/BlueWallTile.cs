@@ -22,6 +22,19 @@ namespace GalaxyGauntlet.scripts.MapEntities
             }
         }
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.BlueWall;
+        public override Vector2I TextureCoordinate
+        {
+            get
+            {
+                if(IsReal)
+                {
+                    return Constants.SpriteCoordinates.BlueWall;
+                }
+
+                return GameData.XRayMode
+                    ? Constants.SpriteCoordinates.Floor
+                    : Constants.SpriteCoordinates.BlueWall;
+            }
+        }
     }
 }

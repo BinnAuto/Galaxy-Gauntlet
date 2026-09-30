@@ -8,6 +8,14 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override string Name => "Ice Block";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.IceBlock;
+        public override Vector2I TextureCoordinate
+        {
+            get
+            {
+                return GameData.XRayMode
+                    ? Constants.SpriteCoordinates.IceBlock_XRay
+                    : Constants.SpriteCoordinates.IceBlock;
+            }
+        }
     }
 }

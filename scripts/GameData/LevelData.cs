@@ -54,6 +54,15 @@ namespace GalaxyGauntlet.scripts
         }
 
 
+        public static bool XRayMode
+        {
+            get
+            {
+                return PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
+            }
+        }
+
+
         public static int TimerDisplay
         {
             get

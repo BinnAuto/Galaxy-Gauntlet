@@ -8,6 +8,14 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override string Name => "Hidden Wall";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.Floor;
+        public override Vector2I TextureCoordinate
+        {
+            get
+            {
+                return GameData.XRayMode
+                    ? Constants.SpriteCoordinates.Wall
+                    : Constants.SpriteCoordinates.Floor;
+            }
+        }
     }
 }

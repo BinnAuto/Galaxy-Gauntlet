@@ -295,6 +295,8 @@ namespace GalaxyGauntlet.Common
             public static Vector2I ForceFloor_R = new(1, 19);
             public static Vector2I GrayButton = new(2, 19);
             public static Vector2I Socket_Open = new(3, 19);
+            public static Vector2I DirtBlock_XRay = new(4, 19);
+            public static Vector2I IceBlock_XRay = new(5, 19);
         }
 
         public static class DeathMessages
