@@ -22,7 +22,7 @@ Once this folder is created, official Chip's Challenge level files can be obtain
 
 ## Archipelago
 #### Files and implementation
-An example settings YAML and an early APWorld for the game "Chip's Challenge Test" can be found in the ``archipelago`` folder. This AP World only contains logic for the first ten levels in Chip's Challenge. Be sure to read the Settings.yaml file as it contains explanations for the settings specific to this game.
+An example settings YAML and an early APWorld for the game "Chip's Challenge Test" can be found in this repo under the ``archipelago`` folder. This AP World only contains logic for the first ten levels in Chip's Challenge. Be sure to read the Settings.yaml file as it contains explanations for the settings specific to this game.
 
 There is no separate client. Galaxy Gauntlet allows you to connect to the Archipelago server directly from the title screen.
 
