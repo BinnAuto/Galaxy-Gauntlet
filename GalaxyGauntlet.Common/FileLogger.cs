@@ -69,7 +69,6 @@ namespace GalaxyGauntlet.Common
         {
             QuietLogMessage(message);
             Console.WriteLine(message);
-            GD.Print(message);
         }
     }
 }
