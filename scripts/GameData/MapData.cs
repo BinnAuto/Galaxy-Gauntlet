@@ -123,6 +123,7 @@ namespace GalaxyGauntlet.scripts
                             DirtBlockEntity dirtBlock = new(mapCoordinate);
                             i++;
                             dirtBlock.Orientation = (EntityOrientation)MapData[i++];
+                            MobsToProcess.Add(dirtBlock);
                             MapMobs[x, y] = dirtBlock;
                         }
                         item.LowerLayer = (MapTile)MapEntity.GetMapEntity(MapData[i], mapCoordinate);
@@ -158,11 +159,9 @@ namespace GalaxyGauntlet.scripts
                             mob.LowerLayer = (MapTile)mapEntity;
                         }
                     }
-                    if(mob is not DirtBlockEntity
-                        && mob is not Player
+                    if(mob is not Player
                         && mob.LowerLayer is not CloneMachineTile)
                     {
-                        // Dirt blocks do not get processed.
                         // Entities in the clone machine do not get processed.
                         MobsToProcess.Add(mob);
                     }
@@ -233,7 +232,7 @@ namespace GalaxyGauntlet.scripts
                 {
                     mob.ProcessTick(timestamp);
                 }
-                if(false == GameData.PlayerAlive)
+                if(false == PlayerAlive)
                 {
                     break;
                 }
@@ -244,7 +243,7 @@ namespace GalaxyGauntlet.scripts
         /// <summary>
         /// Moves a mob from the regular processing queue to the slip list queue
         /// </summary>
-        public static void MoveToSlipList(MapMob mob)
+        public static void AddToSlipList(MapMob mob)
         {
             MobsToProcess = [..MobsToProcess.Where(e => e.MobID != mob.MobID)];
             if(MobSlipList.Any(e => e.MobID == mob.MobID))
@@ -339,10 +338,7 @@ namespace GalaxyGauntlet.scripts
             }
 
             MapMobs[coordinate.X, coordinate.Y] = mob;
-            if(mob is not DirtBlockEntity)
-            {
-                MobsToProcess.Add(mob);
-            }
+            MobsToProcess.Add(mob);
             RerenderMap = true;
         }
 

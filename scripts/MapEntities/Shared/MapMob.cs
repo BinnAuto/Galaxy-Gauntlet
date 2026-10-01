@@ -1,5 +1,4 @@
 using System;
-using System.Reflection.Metadata.Ecma335;
 
 namespace GalaxyGauntlet.scripts.MapEntities.Shared
 {
@@ -22,7 +21,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 		#region Movement Behavior
 
-		public virtual bool CanWalkOnDirt => false;
+		public virtual bool CanMoveSelf => true;
 
 		public virtual bool CanWalkOnGravel => false;
 
@@ -154,6 +153,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 		{
 			try
 			{
+				if (CheckIfOnTrap(Forward))
+				{
+					return;
+				}
+				
 				var currentTile = GameData.GetMapTile(Coordinate);
 				if(currentTile is CloneMachineTile)
 				{
@@ -161,7 +165,53 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					return;
 				}
 
-				ProposeMove(Forward);
+				bool isPlayer = (this is Player);
+				
+				#region Force Floor
+				
+				if (currentTile is MapForceFloorTile forceFloor
+					&& (false == isPlayer || false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
+				{
+					GameData.AddToSlipList(this);
+					var forceFloorInfluence = forceFloor.GetInfluence();
+					var forceCoordinate = ProposeMove(forceFloorInfluence);
+					SetOrientationAndCoordinate(forceFloorInfluence, forceCoordinate);
+					return;
+				}
+
+				#endregion
+
+				#region Ice Floor
+
+				if(currentTile is MapIceTile iceTile
+					&& (false == isPlayer || false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates)))
+				{
+					GameData.AddToSlipList(this);
+					Orientation = iceTile.SetOrientation(Orientation);
+					var iceCoordinate = ProposeMove(Forward);
+					if(iceCoordinate == Coordinate)
+					{
+						ReverseOrientation();
+						Orientation = iceTile.SetOrientation(Orientation);
+						iceCoordinate = ProposeMove(Forward);
+					}
+					SetCoordinate(iceCoordinate);
+					return;
+				}
+
+				#endregion
+
+				GameData.RemoveFromSlipList(this);
+
+				if(CanMoveSelf)
+				{
+					var forward = Forward;
+					var newCoordinate = ProposeMove(forward);
+					if(newCoordinate != Coordinate)
+					{
+						SetOrientationAndCoordinate(forward, newCoordinate);
+					}
+				}
 			}
 			catch(Exception e)
 			{
@@ -203,35 +253,14 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 		}
 
 
-		#region Specific Entity Check Methods
-		public bool CheckIfOnTrap(Vector2I direction)
-		{
-			var currentItem = GameData.GetMapItem(Coordinate);
-			if(currentItem is TrapItem trapItem && trapItem.IsActive)
-			{
-				SetOrientation(direction);
-				return true;
-			}
-
-			return false;
-		}
-
-
-		public static void CheckForPlayer(Vector2I coordinate)
-		{
-			var mapMob = GameData.GetMapPlayer(coordinate);
-			if(mapMob is Player)
-			{
-				GameData.DeathMessage = Constants.DeathMessages.Monsters;
-			}
-		}
-
-		#endregion
-
-
 		public virtual Vector2I ProposeMove(Vector2I direction)
 		{
 			if(false == CanProcess)
+			{
+				return Coordinate;
+			}
+
+			if (CheckIfOnTrap(Forward))
 			{
 				return Coordinate;
 			}
@@ -242,10 +271,12 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
-			if (CheckIfOnTrap(direction))
-			{
-				return Coordinate;
-			}
+			bool isPlayer = (this is Player);
+
+			Vector2I newCoordinate = processedCoordinate.Value;
+			var destinationTile = GameData.GetMapTile(newCoordinate);
+			var destinationItem = GameData.GetMapItem(newCoordinate);
+			var destinationMob = GameData.GetMapMob(newCoordinate);
 
 			#region Exit from Thin Wall tile
 			
@@ -256,40 +287,22 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
-            #endregion
+			#endregion
 
-            Vector2I newCoordinate = processedCoordinate.Value;
-			var destinationTile = GameData.GetMapTile(newCoordinate);
-			var destinationItem = GameData.GetMapItem(newCoordinate);
-			var destinationMob = GameData.GetMapMob(newCoordinate);
+			#region Water Tile 
 
-            #region Hard Stop tiles
-
-            if (destinationTile is WallTile
-				|| destinationTile is BlueWallTile
-				|| (destinationTile is DirtTile && false == CanWalkOnDirt)
-				|| (destinationTile is GravelTile && false == CanWalkOnGravel)
-				|| destinationItem is RedDoorItem
-				|| destinationItem is BlueDoorItem
-				|| destinationItem is YellowDoorItem
-				|| destinationItem is GreenDoorItem
-				|| (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
-				|| destinationTile is ExitTile
-				|| destinationTile is CloneMachineTile
-			)
-			{
-				return Coordinate;
-			}
-
-            #endregion
-
-            if (destinationTile is WaterTile)
+			if (destinationTile is WaterTile)
 			{
 				if(this is DirtBlockEntity)
 				{
 					// Dirt blocks turn water into dirt
 					GameData.SetMapTile(newCoordinate, new DirtTile(newCoordinate));
 					RemoveSelf();
+					return newCoordinate;
+				}
+				if(isPlayer && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers))
+				{
+					GameData.DeathMessage = Constants.DeathMessages.Water;
 					return newCoordinate;
 				}
 				if(DiesToWater)
@@ -299,11 +312,20 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return newCoordinate;
 			}
 
-			if(destinationTile is FireTile)
+			#endregion
+
+			#region Fire Tile
+
+			if (destinationTile is FireTile)
 			{
 				if(AvoidsFire)
 				{
 					return Coordinate;
+				}
+				if(isPlayer && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots))
+				{
+					GameData.DeathMessage = Constants.DeathMessages.Fire;
+					return newCoordinate;
 				}
 				if(DiesToFire)
 				{
@@ -313,20 +335,152 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return newCoordinate;
 			}
 
+			#endregion
+
+			#region Monsters 
+
+			if (destinationMob is BugMonster
+				|| destinationMob is FireballMonster
+				|| destinationMob is WalkerMonster
+				|| destinationMob is GliderMonster
+				|| destinationMob is ParameciumMonster
+				|| destinationMob is BallMonster
+				|| destinationMob is BlobMonster
+				|| destinationMob is BlueTankMonster
+				|| destinationMob is TeethMonster
+			)
+			{
+				if(isPlayer)
+				{
+					GameData.DeathMessage = Constants.DeathMessages.Monsters;
+					return newCoordinate;
+				}
+
+				return Coordinate;
+			}
+
+			#endregion
+
+			#region Key Doors
+
+			if (destinationItem is MapDoorItem doorItem)
+			{
+				if (false == isPlayer)
+				{
+					return Coordinate;
+				}
+
+				if (false == doorItem.CanOpenDoor())
+				{
+					return Coordinate;
+				}
+
+				// Player opens door
+				GameData.RemoveMapItem(newCoordinate);
+				GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+				return newCoordinate;
+			}
+
+			#endregion
+
+			#region Blue Wall
+
+			if (destinationTile is BlueWallTile blueWall)
+			{
+				if(false == isPlayer)
+				{
+					return Coordinate;
+				}
+
+				if(blueWall.IsReal)
+				{
+					GameData.SetMapTile(newCoordinate, new WallTile(newCoordinate));
+					return Coordinate;
+				}
+				else
+				{
+					GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+					return newCoordinate;
+				}
+			}
+
+			#endregion
+
+			#region Hidden Wall 
+
+			if(destinationTile is HiddenWallTile)
+			{
+				if(isPlayer)
+				{
+					GameData.SetMapTile(newCoordinate, new WallTile(newCoordinate));
+				}
+				return Coordinate;
+			}
+
+			#endregion
+
+			#region Dirt Tile
+
+			if(destinationTile is DirtTile)
+			{
+				if(isPlayer)
+				{
+					GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+					return newCoordinate;
+				}
+
+				return Coordinate;
+			}
+
+			#endregion
+
+			#region Exit Tile
+
+			if(destinationTile is ExitTile)
+			{
+				return isPlayer
+					? newCoordinate
+					: Coordinate;
+			}
+
+			#endregion
+
+			#region Hard Stop tiles
+
+			if (destinationTile is WallTile
+				|| (destinationTile is GravelTile && false == CanWalkOnGravel)
+				|| destinationItem is RedDoorItem
+				|| destinationItem is BlueDoorItem
+				|| destinationItem is YellowDoorItem
+				|| destinationItem is GreenDoorItem
+				|| (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
+				|| destinationTile is ExitTile
+				|| destinationTile is CloneMachineTile
+				|| destinationTile is HiddenWallTile
+				|| destinationTile is InvisibleWallTile
+			)
+			{
+				return Coordinate;
+			}
+
+			#endregion
+
 			#region Entry into Thin Wall tile
 
-			if(destinationTile is ThinWallOrCanopyTile destinationThinWall)
+			if (destinationTile is ThinWallOrCanopyTile destinationThinWall)
 			{
 				return destinationThinWall.AllowEntry(direction)
 					? newCoordinate
 					: Coordinate;
 			}
 
-            #endregion
+			#endregion
 
+			#region Socket
+			
 			if(destinationItem is SocketItem)
 			{
-				if(this is Player && GameData.ChipRequirementMet)
+				if(isPlayer && GameData.ChipRequirementMet)
 				{
 					GameData.RemoveMapItem(newCoordinate);
 					return newCoordinate;
@@ -335,14 +489,30 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return Coordinate;
 			}
 
-            #region Hard Stop items
+			#endregion
 
-            if (destinationItem is SocketItem
-				|| destinationItem is ChipItem
-				|| destinationItem is RecessedWallItem
-			)
+			#region Chip
+
+			if(destinationItem is ChipItem
+				&& false == isPlayer)
 			{
 				return Coordinate;
+			}
+
+			#endregion
+
+			#region Recessed Wall
+
+			if (destinationItem is RecessedWallItem)
+			{
+				if(false == isPlayer)
+				{
+					return Coordinate;
+				}
+
+				GameData.RemoveMapItem(newCoordinate);
+				GameData.SetMapTile(newCoordinate, new WallTile(newCoordinate));
+				return newCoordinate;
 			}
 
 			#endregion
@@ -360,7 +530,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					if(teleportExit == teleporterCoordinate)
 					{
 						// EXIT: Search has covered the entire map
-						if(this is Player)
+						if(isPlayer)
 						{
 							// Player will slide over or bounce from the teleporter
 							Coordinate = teleporterCoordinate;
@@ -384,7 +554,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					if(teleportExitStep != teleportExit)
 					{
 						// EXIT: Step is valid, teleport complete
-						if(this is Player)
+						if(isPlayer)
 						{
 							GameData.RemoveMapPlayer(oldCoordinate);
 						}
@@ -402,37 +572,102 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				}
 			}
 
-            #endregion
+			#endregion
 
-            #region Hard Stop mobs
+			#region Hard Stop mobs
 
-            if (destinationMob is DirtBlockEntity
-				|| destinationMob is IceBlockEntity
-				|| destinationMob is BlueTankMonster
-				|| destinationMob is BugMonster
-				|| destinationMob is TeethMonster
-				|| destinationMob is GliderMonster
-				|| destinationMob is WalkerMonster
-			)
+			if (destinationMob is IceBlockEntity)
 			{
 				return Coordinate;
 			}
 
 			#endregion
 
-			if(destinationMob is RedBombMonster redBomb)
+			#region Dirt Block
+
+			if(destinationMob is DirtBlockEntity dirtBlock)
 			{
-				if(this is not Player)
+				if(false == isPlayer)
 				{
-					redBomb.RemoveSelf();
-					RemoveSelf();
+					return Coordinate;
 				}
 
-				GameData.DeathMessage = Constants.DeathMessages.Bombs;
+				var dirtBlockCoordinate = dirtBlock.ProposeMove(direction);
+				if(dirtBlockCoordinate == newCoordinate)
+				{
+					return Coordinate;
+				}
+
+				dirtBlock.SetCoordinate(dirtBlockCoordinate);
 				return newCoordinate;
 			}
 
+			#endregion
+
+			#region Red Bomb
+
+			if (destinationMob is RedBombMonster redBomb)
+			{
+				if(isPlayer)
+				{
+					GameData.DeathMessage = Constants.DeathMessages.Bombs;
+					return newCoordinate;
+				}
+
+				redBomb.RemoveSelf();
+				RemoveSelf();
+			}
+
+			#endregion
+
+			#region Tool Thief
+
+			if(destinationItem is ToolThief)
+			{
+				if(isPlayer)
+				{
+					GameData.StealEquipment();
+					return newCoordinate;
+				}
+
+				return Coordinate; // TODO: Can non-players walk over thieves?
+			}
+
+			#endregion
+
 			return newCoordinate;
 		}
+
+
+
+		#region Specific Entity Check Methods
+
+		/// <summary>
+		/// Checks if the mob is currently on an active trap, preventing
+		/// it from moving.
+		/// </summary>
+		public bool CheckIfOnTrap(Vector2I direction)
+		{
+			var currentItem = GameData.GetMapItem(Coordinate);
+			if (currentItem is TrapItem trapItem && trapItem.IsActive)
+			{
+				SetOrientation(direction);
+				return true;
+			}
+
+			return false;
+		}
+
+
+		public static void CheckForPlayer(Vector2I coordinate)
+		{
+			var mapMob = GameData.GetMapPlayer(coordinate);
+			if (mapMob is Player)
+			{
+				GameData.DeathMessage = Constants.DeathMessages.Monsters;
+			}
+		}
+
+		#endregion
 	}
 }

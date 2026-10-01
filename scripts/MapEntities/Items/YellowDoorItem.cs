@@ -9,5 +9,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
         public override string Name => "Yellow Door";
 
         public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.YellowDoor;
+
+
+        public override bool CanOpenDoor()
+        {
+            return GameData.ConsumeItem(Constants.ByteCodes.Entities.YellowKey);
+        }
     }
 }

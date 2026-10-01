@@ -29,24 +29,17 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override void ProcessTick(DateTime timestamp)
         {
-			if(CheckIfOnTrap(Forward))
-			{
-				return;
-			}
-
             if(_isStopped)
 			{
 				return;
 			}
 
-			var forwardMove = ProposeMove(Forward);
-			if(forwardMove == Coordinate)
+			var previousCoordinate = Coordinate.Clone();
+			base.ProcessTick(timestamp);
+			if(previousCoordinate == Coordinate)
 			{
 				_isStopped = true;
-				return;
 			}
-
-			SetCoordinate(forwardMove);
         }
 
 

@@ -87,6 +87,7 @@ public partial class LevelSelect : Node2D
 	private void OnLevelSelect(int levelIndex)
 	{
 		GameData.CurrentLevelNumber = levelIndex;
+		GameData.LevelRestarts = 0;
 		GameData.ResetLevelData();
 		string gameplayScreenPath = "res://screens/GameplayScreen/GameplayScreen.tscn";
 		GetTree().ChangeSceneToFile(gameplayScreenPath);

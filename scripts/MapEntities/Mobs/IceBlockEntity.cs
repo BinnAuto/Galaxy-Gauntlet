@@ -8,6 +8,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override string Name => "Ice Block";
 
+        public override bool CanMoveSelf => false;
+
         public override Vector2I TextureCoordinate
         {
             get
