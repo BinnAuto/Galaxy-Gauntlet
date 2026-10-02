@@ -24,7 +24,18 @@ namespace GalaxyGauntlet.scripts.MapEntities
 					_ => throw new NotImplementedException()
 				};
 			}
-		}
+        }
+
+
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            BlueTankMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
 
 
         public override void ProcessTick()

@@ -19,5 +19,16 @@ namespace GalaxyGauntlet.scripts.MapEntities
                     : Constants.SpriteCoordinates.IceBlock;
             }
         }
+
+
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            IceBlockEntity result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
     }
 }

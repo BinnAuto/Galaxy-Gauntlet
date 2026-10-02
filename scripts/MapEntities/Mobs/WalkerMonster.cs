@@ -26,6 +26,17 @@ namespace GalaxyGauntlet.scripts.MapEntities
         }
 
 
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            WalkerMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
+
+
         public override void ProcessTick()
         {
             var forward = Forward;

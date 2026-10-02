@@ -1,5 +1,4 @@
 using GalaxyGauntlet.scripts.MapEntities.Shared;
-using System;
 
 namespace GalaxyGauntlet.scripts.MapEntities
 {

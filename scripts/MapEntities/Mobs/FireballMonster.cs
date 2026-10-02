@@ -27,6 +27,17 @@ namespace GalaxyGauntlet.scripts.MapEntities
         }
 
 
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            FireballMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
+
+
         public override void ProcessTick()
         {
             var currentTile = GameData.GetMapTile(Coordinate);
@@ -95,17 +106,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 SetOrientationAndCoordinate(backwards, backwardCoordinate);
             }
-        }
-
-
-        public override MapMob CreateCopy()
-        {
-            var entityCoordinate = Coordinate.Clone();
-            FireballMonster result = new(entityCoordinate)
-            {
-                Orientation = Orientation
-            };
-            return result;
         }
     }
 }

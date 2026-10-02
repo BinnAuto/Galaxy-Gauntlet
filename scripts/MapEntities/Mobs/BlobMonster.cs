@@ -11,6 +11,16 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.Blob;
 
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            BlobMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
+
 
         public override void ProcessTick()
         {

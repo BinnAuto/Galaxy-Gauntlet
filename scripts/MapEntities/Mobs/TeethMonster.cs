@@ -25,6 +25,17 @@ namespace GalaxyGauntlet.scripts.MapEntities
         }
 
 
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            TeethMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
+
+
         public override void ProcessTick()
         {
             if(GameData.PingPongStep == 0)

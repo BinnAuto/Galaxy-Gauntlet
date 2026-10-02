@@ -27,6 +27,17 @@ namespace GalaxyGauntlet.scripts.MapEntities
         }
 
 
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            GliderMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
+
+
         public override void ProcessTick()
         {
             if(CheckIfOnTrap(Forward))

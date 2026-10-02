@@ -25,5 +25,16 @@ namespace GalaxyGauntlet.scripts.MapEntities
             forwardCoordinate = ProposeMove(Forward);
             SetCoordinate(forwardCoordinate);
         }
+
+
+        public override MapMob CreateCopy()
+        {
+            var entityCoordinate = Coordinate.Clone();
+            BallMonster result = new(entityCoordinate)
+            {
+                Orientation = Orientation
+            };
+            return result;
+        }
     }
 }
