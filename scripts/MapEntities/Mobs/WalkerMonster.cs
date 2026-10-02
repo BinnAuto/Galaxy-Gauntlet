@@ -1,7 +1,6 @@
 using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace GalaxyGauntlet.scripts.MapEntities
 {
@@ -62,7 +61,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
                 if(newCoordinate != Coordinate)
                 {
                     Orientation = orientations[index];
-                    SetCoordinate(newCoordinate);
                     return;
                 }
                 else
