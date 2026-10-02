@@ -25,6 +25,8 @@ public partial class TitleMenu : Node
 
 	private ArchipelagoConnectForm ArchipelagoConnectForm;
 
+	private Label Version;
+
     #region Godot Overrides
 
     public override void _Ready()
@@ -57,7 +59,10 @@ public partial class TitleMenu : Node
 			ArchipelagoConnectForm.Connected += OnArchipelagoConnected;
 			ArchipelagoConnectForm.Cancelled += () => { Archipelago.Visible = false; };
 
-			Directory.CreateDirectory("./levels");
+			Version = (Label)GetNode(nameof(Version));
+			Version.Text = $"v{Constants.GameVersion}";
+
+            Directory.CreateDirectory("./levels");
 			SaveData.Load();
 			ContinueButton.Visible = SaveData.SaveSlotExists(SaveData.AutosaveSlotName);
 			FileLogger.QuietLogMessage("Title screen _Ready complete");

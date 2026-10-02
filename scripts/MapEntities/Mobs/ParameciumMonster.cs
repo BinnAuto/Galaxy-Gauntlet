@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts.MapEntities.Shared;
+using System;
 
 namespace GalaxyGauntlet.scripts.MapEntities
 {
@@ -18,7 +19,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
                     EntityOrientation.East => Constants.SpriteCoordinates.Paramecium_E,
                     EntityOrientation.South => Constants.SpriteCoordinates.Paramecium_S,
                     EntityOrientation.West => Constants.SpriteCoordinates.Paramecium_W,
-                    _ => throw new System.NotImplementedException()
+                    _ => throw new NotImplementedException()
                 };
             }
         }

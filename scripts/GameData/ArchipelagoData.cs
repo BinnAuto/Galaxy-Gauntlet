@@ -29,6 +29,7 @@ namespace GalaxyGauntlet.scripts
         private static DeathLinkService DeathLinkService = null;
         public static bool IsConnected { get; private set; } = false;
         public static bool DeathLinkEnabled = false;
+        public static bool LynxBehavior = false;
         public static bool ProcessingDeathLink = false;
         private static List<long> LocationIDsChecked = [];
         public static List<string> ItemsReceived = [];

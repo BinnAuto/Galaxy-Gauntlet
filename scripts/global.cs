@@ -2,6 +2,7 @@ global using Godot;
 global using GalaxyGauntlet.Common;
 global using System.IO;
 using System.Collections.Generic;
+using GalaxyGauntlet.scripts;
 
 public static class Global
 {
@@ -14,6 +15,20 @@ public static class Global
     public static Vector2 GetLabelSize(this Label label)
     {
         return label.GetLabelSize(true);
+    }
+
+
+
+
+    public static Vector2I ToVector(this EntityOrientation cardinalDirection)
+    {
+        return cardinalDirection switch
+        {
+            EntityOrientation.North => new(0, -1),
+            EntityOrientation.South => new(0, 1),
+            EntityOrientation.East => new(1, 0),
+            EntityOrientation.West or _ => new(-1, 0)
+        };
     }
 
 

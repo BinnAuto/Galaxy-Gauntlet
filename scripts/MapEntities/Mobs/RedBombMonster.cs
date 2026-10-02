@@ -15,7 +15,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.RedBomb;
 
-        public override void ProcessTick(DateTime timestamp)
+        public override void ProcessTick()
         {
             // Do nothing. Ever.
         }

@@ -129,14 +129,13 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                     case Constants.ByteCodes.Entities.MirrorPlayer:
                     case Constants.ByteCodes.Entities.MirrorMelinda:
                     case Constants.ByteCodes.Entities.Rover:
+                    case Constants.ByteCodes.Entities.ThinWallOrCanopy:
                         i += 2;
                         break;
 
-                    // Thin walls
-                    case 0x1b:
-                    case 0x1c:
-                    case 0x1d:
-
+                    case Constants.ByteCodes.Entities.ThinWall_E:
+                    case Constants.ByteCodes.Entities.ThinWall_S:
+                    case Constants.ByteCodes.Entities.ThinWall_SE:
                     case Constants.ByteCodes.Entities.RedBomb:
                     case Constants.ByteCodes.Entities.TimeBonus:
                     case Constants.ByteCodes.Entities.Stopwatch:
@@ -149,47 +148,20 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                         break;
 
                     case Constants.ByteCodes.Entities.RedKey:
-                        levelData.AddItem("Red Key");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.BlueKey:
-                        levelData.AddItem("Blue Key");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.YellowKey:
-                        levelData.AddItem("Yellow Key");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.GreenKey:
-                        levelData.AddItem("Green Key");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.IceSkates:
-                        levelData.AddItem("Ice Skates");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.SuctionBoots:
-                        levelData.AddItem("Suction Boots");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.FireBoots:
-                        levelData.AddItem("Fire Boots");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.Flippers:
-                        levelData.AddItem("Flippers");
-                        i++;
-                        break;
-
                     case Constants.ByteCodes.Entities.HikingBoots:
-                        // levelData.AddItem("Hiking Boots");
+                        levelData.AddItem(mapByte);
+                        i++;
+                        if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock)
+                        {
+                            i += 2; // Dirt block "orientation" and lower layer
+                        }
                         break;
 
                     default:

@@ -31,9 +31,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 		public override bool CanWalkOnGravel => true;
 
 
-		public override void ProcessTick(DateTime timestamp)
+		public override void ProcessTick()
 		{
-			_lastProcessTime = timestamp;
 			if(false == GameData.AcceptingPlayerInput)
 			{
 				return;
@@ -73,7 +72,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			)
 			{
 				GameData.RemoveMapItem(Coordinate);
-				GameData.PlayerItems.Add(currentItem);
+				GameData.AddItem(currentItem);
 			}
 
 			if (currentItem is ChipItem chip1)
@@ -150,7 +149,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			)
 			{
 				GameData.RemoveMapItem(Coordinate);
-				GameData.PlayerItems.Add(item);
+				GameData.AddItem(item);
 			}
 
 			if(item is ChipItem chip2)

@@ -25,7 +25,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         }
 
 
-        public override void ProcessTick(DateTime timestamp)
+        public override void ProcessTick()
         {
             if(GameData.PingPongStep == 0)
             {

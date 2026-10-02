@@ -21,13 +21,13 @@ namespace GalaxyGauntlet.scripts.MapEntities
 					EntityOrientation.East => Constants.SpriteCoordinates.BlueTank_E,
 					EntityOrientation.South => Constants.SpriteCoordinates.BlueTank_S,
 					EntityOrientation.West => Constants.SpriteCoordinates.BlueTank_W,
-					_ => throw new System.NotImplementedException()
+					_ => throw new NotImplementedException()
 				};
 			}
 		}
 
 
-        public override void ProcessTick(DateTime timestamp)
+        public override void ProcessTick()
         {
             if(_isStopped)
 			{
@@ -35,7 +35,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			}
 
 			var previousCoordinate = Coordinate.Clone();
-			base.ProcessTick(timestamp);
+			base.ProcessTick();
 			if(previousCoordinate == Coordinate)
 			{
 				_isStopped = true;

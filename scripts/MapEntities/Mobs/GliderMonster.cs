@@ -21,13 +21,13 @@ namespace GalaxyGauntlet.scripts.MapEntities
                     EntityOrientation.East => Constants.SpriteCoordinates.Glider_E,
                     EntityOrientation.South => Constants.SpriteCoordinates.Glider_S,
                     EntityOrientation.West => Constants.SpriteCoordinates.Glider_W,
-                    _ => throw new System.NotImplementedException()
+                    _ => throw new NotImplementedException()
                 };
             }
         }
 
 
-        public override void ProcessTick(DateTime timestamp)
+        public override void ProcessTick()
         {
             if(CheckIfOnTrap(Forward))
             {

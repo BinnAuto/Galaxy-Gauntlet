@@ -119,6 +119,7 @@ namespace GalaxyGauntlet.scripts
                         i++;
                         if (MapData[i] == Constants.ByteCodes.Entities.DirtBlock)
                         {
+                            // Item is hidden under a dirt block.
                             // Chip's Challenge treats dirt blocks like tiles, but it's better to treat it like a mob.
                             DirtBlockEntity dirtBlock = new(mapCoordinate);
                             i++;
@@ -230,7 +231,7 @@ namespace GalaxyGauntlet.scripts
             {
                 if(mob.CanProcess)
                 {
-                    mob.ProcessTick(timestamp);
+                    mob.ProcessTick();
                 }
                 if(false == PlayerAlive)
                 {

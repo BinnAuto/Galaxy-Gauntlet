@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://djerq5lgmdnbm"]
+
+[ext_resource type="Script" uid="uid://d4ffrpmd3qlvl" path="res://prefabs/InventoryDisplay/InventoryDisplay.cs" id="1_i4om0"]
+[ext_resource type="Texture2D" uid="uid://cp3h1r0d0anvy" path="res://images/map_tiles/main_master.png" id="2_0p73g"]
+
+[node name="InventoryDisplay" type="Node2D" unique_id=266836377]
+script = ExtResource("1_i4om0")
+
+[node name="RedKey" type="Sprite2D" parent="." unique_id=829806386]
+visible = false
+texture_filter = 1
+position = Vector2(20, 20)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 62
+
+[node name="Count" type="Label" parent="RedKey" unique_id=94378567]
+offset_left = 3.0
+offset_top = -20.0
+offset_right = 26.0
+offset_bottom = -3.0
+theme_override_font_sizes/font_size = 12
+text = "10"
+
+[node name="BlueKey" type="Sprite2D" parent="." unique_id=1558696770]
+visible = false
+texture_filter = 1
+position = Vector2(62, 20)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 64
+
+[node name="Count" type="Label" parent="BlueKey" unique_id=134370951]
+offset_left = 3.0
+offset_top = -20.0
+offset_right = 26.0
+offset_bottom = -3.0
+theme_override_font_sizes/font_size = 12
+text = "10"
+
+[node name="YellowKey" type="Sprite2D" parent="." unique_id=1316551376]
+visible = false
+texture_filter = 1
+position = Vector2(104, 20)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 66
+
+[node name="Count" type="Label" parent="YellowKey" unique_id=1311901891]
+offset_left = 3.0
+offset_top = -20.0
+offset_right = 26.0
+offset_bottom = -3.0
+theme_override_font_sizes/font_size = 12
+text = "10"
+
+[node name="GreenKey" type="Sprite2D" parent="." unique_id=1161818841]
+visible = false
+texture_filter = 1
+position = Vector2(146, 20)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 68
+
+[node name="Count" type="Label" parent="GreenKey" unique_id=1093565390]
+offset_left = 3.0
+offset_top = -20.0
+offset_right = 26.0
+offset_bottom = -3.0
+theme_override_font_sizes/font_size = 12
+text = "10"
+
+[node name="IceSkates" type="Sprite2D" parent="." unique_id=946942183]
+visible = false
+texture_filter = 1
+position = Vector2(20, 62)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 102
+
+[node name="SuctionBoots" type="Sprite2D" parent="." unique_id=2058806859]
+visible = false
+texture_filter = 1
+position = Vector2(62, 62)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 104
+
+[node name="FireBoots" type="Sprite2D" parent="." unique_id=1627371973]
+visible = false
+texture_filter = 1
+position = Vector2(104, 62)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 100
+
+[node name="Flippers" type="Sprite2D" parent="." unique_id=1253877429]
+visible = false
+texture_filter = 1
+position = Vector2(146, 62)
+texture = ExtResource("2_0p73g")
+hframes = 6
+vframes = 20
+frame = 106

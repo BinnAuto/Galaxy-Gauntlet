@@ -12,8 +12,6 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 		public bool CanProcess = true;
 
-		protected DateTime _lastProcessTime = DateTime.Parse("01/01/2000");
-
 		public MapTile LowerLayer = new FloorTile(coordinate);
 
 		public EntityOrientation Orientation = EntityOrientation.North;
@@ -149,7 +147,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			SetCoordinate(coordinate);
 		}
 
-		public virtual void ProcessTick(DateTime timestamp)
+		public virtual void ProcessTick()
 		{
 			try
 			{
@@ -216,10 +214,6 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			catch(Exception e)
 			{
 				FileLogger.LogException($"Error processing {Name} tick", e);
-			}
-			finally
-			{
-				_lastProcessTime = timestamp;
 			}
 		}
 

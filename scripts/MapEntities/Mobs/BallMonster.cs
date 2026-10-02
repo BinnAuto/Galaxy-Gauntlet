@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.Ball;
 
 
-        public override void ProcessTick(DateTime timestamp)
+        public override void ProcessTick()
         {
             var forwardCoordinate = ProposeMove(Forward);
             if(forwardCoordinate != Coordinate)

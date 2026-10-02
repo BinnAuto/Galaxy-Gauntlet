@@ -1,3 +1,4 @@
+using GalaxyGauntlet.Common;
 using System.Text.Json.Serialization;
 
 namespace GalaxyGauntlet.APWorldGen
@@ -27,9 +28,22 @@ namespace GalaxyGauntlet.APWorldGen
         public string[] ChipLocations { get; set; } = [];
 
 
-        public void AddItem(string item)
+        public void AddItem(int byteCode)
         {
-            if(ItemsPresent.Contains(item))
+            string item = byteCode switch
+            {
+                Constants.ByteCodes.Entities.RedKey => "Red Key",
+                Constants.ByteCodes.Entities.BlueKey => "Blue Key",
+                Constants.ByteCodes.Entities.YellowKey => "Yellow Key",
+                Constants.ByteCodes.Entities.GreenKey => "Green Key",
+                Constants.ByteCodes.Entities.IceSkates => "Ice Skates",
+                Constants.ByteCodes.Entities.SuctionBoots => "Suction Boots",
+                Constants.ByteCodes.Entities.FireBoots => "Fire Boots",
+                Constants.ByteCodes.Entities.Flippers => "Flippers",
+                Constants.ByteCodes.Entities.HikingBoots => "Hiking Boots",
+                _ => throw new($"Item code {byteCode} not recognized")
+            };
+            if (ItemsPresent.Contains(item))
             {
                 return;
             }

@@ -27,7 +27,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         }
 
 
-        public override void ProcessTick(DateTime timestamp)
+        public override void ProcessTick()
         {
             var leftTurn = Left;
             var leftTurnCoordinate = ProposeMove(leftTurn);
