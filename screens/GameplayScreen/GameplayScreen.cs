@@ -99,7 +99,7 @@ public partial class GameplayScreen : Node
 
 		DateTime now = DateTime.Now;
 		var timeSinceMobProcess = (now - _previousProcessTime).TotalSeconds;
-		if (timeSinceMobProcess >= 0.2)
+		if (timeSinceMobProcess >= 0.2 / GameData.TimeModifierNumeric)
 		{
 			// Process entities that move 5 times or less per second
 			if (GameData.ProcessMobs)
@@ -114,7 +114,7 @@ public partial class GameplayScreen : Node
 		}
 
 		var timeSinceSlipListProcess = (now - _previousSlipListProcessTime).TotalSeconds;
-		if (timeSinceSlipListProcess >= 0.1)
+		if (timeSinceSlipListProcess >= 0.1 / GameData.TimeModifierNumeric)
 		{
 			if (GameData.ProcessMobs)
 			{
@@ -155,7 +155,7 @@ public partial class GameplayScreen : Node
 		// TODO: Set timer display
 		if(GameData.TimerEnabled)
 		{
-			_timer -= delta;
+			_timer -= (delta * GameData.TimeModifierNumeric);
 		}
 		if(_timer < 0)
 		{

@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://b0l44g3u1jlr4"]
+
+[ext_resource type="Script" uid="uid://bmbrybsnqttxa" path="res://prefabs/UISlider/UISlider.cs" id="1_e8fp1"]
+
+[node name="UiSlider" type="Node2D" unique_id=14717822]
+script = ExtResource("1_e8fp1")
+
+[node name="TitleLabel" type="Label" parent="." unique_id=15817271]
+offset_left = 17.0
+offset_top = 19.0
+offset_right = 57.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 30
+text = "_slider_"
+
+[node name="Slider" type="HSlider" parent="." unique_id=874144024]
+offset_left = 15.0
+offset_top = 71.0
+offset_right = 297.0
+offset_bottom = 87.0
+value = 50.0
+
+[node name="ValueLabel" type="Label" parent="." unique_id=908655414]
+offset_left = 20.0
+offset_top = 97.0
+offset_right = 292.0
+offset_bottom = 120.0
+theme_override_font_sizes/font_size = 20
+text = "50"
+horizontal_alignment = 1

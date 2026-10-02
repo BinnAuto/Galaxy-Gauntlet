@@ -13,8 +13,8 @@ script = ExtResource("1_f0irt")
 
 [node name="Pixel" type="Sprite2D" parent="." unique_id=1362500036]
 modulate = Color(0, 0, 0, 1)
-position = Vector2(577.125, 321.875)
-scale = Vector2(1164.2499, 658.25)
+position = Vector2(577.125, 322.375)
+scale = Vector2(1164.2499, 659.25)
 texture = ExtResource("2_gtykd")
 
 [node name="Logo" type="Sprite2D" parent="." unique_id=1972284062]
@@ -63,7 +63,6 @@ ButtonText = "Archipelago"
 FontSize = 30
 
 [node name="SettingsButton" parent="." unique_id=795807806 instance=ExtResource("5_m4xi5")]
-visible = false
 offset_left = 480.0
 offset_top = 559.0
 offset_right = 488.0

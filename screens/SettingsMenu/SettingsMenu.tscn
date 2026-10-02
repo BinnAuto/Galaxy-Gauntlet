@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://kwl5ocefatl8"]
+
+[ext_resource type="Script" uid="uid://bc4yk765j842k" path="res://screens/SettingsMenu/SettingsMenu.cs" id="1_id505"]
+[ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="2_hpobl"]
+[ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_p6gnr"]
+[ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_8gnst"]
+[ext_resource type="PackedScene" uid="uid://b0l44g3u1jlr4" path="res://prefabs/UISlider/UISlider.tscn" id="5_8gnst"]
+
+[node name="SettingsMenu" type="Node2D" unique_id=249067466]
+script = ExtResource("1_id505")
+
+[node name="Pixel" type="Sprite2D" parent="." unique_id=1780515851]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(577.125, 321.875)
+scale = Vector2(1164.2499, 658.25)
+texture = ExtResource("2_p6gnr")
+
+[node name="Gradient" type="Sprite2D" parent="." unique_id=1887221572]
+modulate = Color(0, 0, 0.38039216, 1)
+texture_filter = 2
+position = Vector2(579, 514)
+scale = Vector2(1168, 515.75)
+texture = ExtResource("3_8gnst")
+
+[node name="CancelButton" parent="." unique_id=1721704438 instance=ExtResource("2_hpobl")]
+offset_left = 428.0
+offset_top = 563.0
+offset_right = 436.0
+offset_bottom = 571.0
+ButtonText = "Cancel"
+FontSize = 30
+
+[node name="SaveButton" parent="." unique_id=907938018 instance=ExtResource("2_hpobl")]
+modulate = Color(0.15294118, 1, 0.10980392, 1)
+offset_left = 638.0
+offset_top = 563.0
+offset_right = 646.0
+offset_bottom = 571.0
+ButtonText = "Save"
+FontSize = 30
+
+[node name="TimeModifier" parent="." unique_id=14717822 instance=ExtResource("5_8gnst")]
+LabelText = "Time Modifier"
+InitialValue = 100.0
+Minimum = 80.0
+Maximum = 150.0
+Step = 10.0
+ValueLabelSuffix = "%"

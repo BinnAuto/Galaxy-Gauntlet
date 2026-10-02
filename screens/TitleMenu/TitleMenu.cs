@@ -32,8 +32,10 @@ public partial class TitleMenu : Node
     public override void _Ready()
 	{
 		try
-		{
-			NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
+        {
+            GameData.LoadSettings();
+
+            NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
 			NewGameButton.Pressed += OnNewGame;
 
 			ContinueButton = (UIButton)GetNode(nameof(ContinueButton));
@@ -47,8 +49,9 @@ public partial class TitleMenu : Node
 			ArchipelagoButton.Pressed += () => { Archipelago.Visible = true; };
 
 			SettingsButton = (UIButton)GetNode(nameof(SettingsButton));
+			SettingsButton.Pressed += OnSettingsButtonPressed;
 
-			ExitButton = (UIButton)GetNode(nameof(ExitButton));
+            ExitButton = (UIButton)GetNode(nameof(ExitButton));
 			ExitButton.Pressed += OnExit;
 
 			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
@@ -69,6 +72,8 @@ public partial class TitleMenu : Node
         }
         catch (Exception e)
         {
+			GD.Print(e.Message);
+			GD.Print(e.StackTrace);
             FileLogger.LogException("Error readying Title Menu screen", e);
         }
     }
@@ -216,6 +221,13 @@ public partial class TitleMenu : Node
         string gameplayScreenPath = "res://screens/GameplayScreen/GameplayScreen.tscn";
         GetTree().ChangeSceneToFile(gameplayScreenPath);
     }
+
+
+	private void OnSettingsButtonPressed()
+	{
+		string settingsScreenPath = "res://screens/SettingsMenu/SettingsMenu.tscn";
+		GetTree().ChangeSceneToFile(settingsScreenPath);
+	}
 
 	#endregion
 
