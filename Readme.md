@@ -6,13 +6,9 @@ Galaxy Gauntlet is an emulation of the Chip's Challenge logic engine written in 
 
 ## Setup
 
-#### Cloning the repository
+#### Downloading the latest release
 
-Currently this repo has no releases, and is offered only as a Godot project. The code can be pulled down by running this in your command line pointed at the folder you want the project to reside.
-
-``git clone https://github.com/BinnAuto/Galaxy-Gauntlet.git``
-
-The game can be played either through the Godot debugger itself, or by creating a Windows export using the existing export preset. The game can be exported for other platforms by setting up the appropriate export preset in the Godot project.
+The game executable, AP World, and sample settings YAML can be downloaded from the [releases page](https://github.com/BinnAuto/Galaxy-Gauntlet/releases). It is recommended to get the most recent release version.
 
 #### Importing levels
 
@@ -22,7 +18,7 @@ Once this folder is created, official Chip's Challenge level files can be obtain
 
 ## Archipelago
 #### Files and implementation
-An example settings YAML and an early APWorld for the game "Chip's Challenge Test" can be found in this repo under the ``archipelago`` folder. This AP World only contains logic for the first ten levels in Chip's Challenge. Be sure to read the Settings.yaml file as it contains explanations for the settings specific to this game.
+An example settings YAML and AP World for the game can be found in the [releases page](https://github.com/BinnAuto/Galaxy-Gauntlet/releases). The latest AP World only contains logic for the first twenty levels in Chip's Challenge.
 
 There is no separate client. Galaxy Gauntlet allows you to connect to the Archipelago server directly from the title screen.
 
