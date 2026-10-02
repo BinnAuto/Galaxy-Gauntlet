@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts.MapEntities.Shared;
+using System.Collections.Generic;
 
 namespace GalaxyGauntlet.scripts.MapEntities
 {
@@ -9,5 +10,51 @@ namespace GalaxyGauntlet.scripts.MapEntities
         public override string Name => "Blob";
 
         public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.Blob;
+
+
+        public override void ProcessTick()
+        {
+            if (GameData.PingPongStep == 0)
+            {
+                // Blob moves 2.5 times per second instead of the default 5
+                return;
+            }
+
+            List<EntityOrientation> orientations = [
+                EntityOrientation.North,
+                EntityOrientation.South,
+                EntityOrientation.East,
+                EntityOrientation.West
+            ];
+            int listSize = orientations.Count;
+            RandomNumberGenerator rng = new();
+            while(listSize > 0)
+            {
+                int index = rng.RandiRange(0, orientations.Count - 1);
+                Vector2I direction = orientations[index].ToVector();
+                var newCoordinate = ProposeMove(direction);
+                if (newCoordinate != Coordinate)
+                {
+                    SetOrientationAndCoordinate(direction, newCoordinate);
+                    return;
+                }
+                else
+                {
+                    orientations.RemoveAt(index);
+                    if (orientations.Count == 0)
+                    {
+                        // No move
+                        return;
+                    }
+                }
+                if (GameData.LynxBehavior)
+                {
+                    // Blobs in Lynx implementations only search
+                    // one orientation per game tick, as opposed to
+                    // MS which searches as many as necessary.
+                    return;
+                }
+            }
+        }
     }
 }

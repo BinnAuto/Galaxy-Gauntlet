@@ -23,5 +23,34 @@ namespace GalaxyGauntlet.scripts.MapEntities
                 };
             }
         }
+
+
+        public override void ProcessTick()
+        {
+            var rightTurn = Right;
+            var rightTurnCoordinate = ProposeMove(rightTurn);
+            if (rightTurnCoordinate != Coordinate)
+            {
+                SetOrientationAndCoordinate(rightTurn, rightTurnCoordinate);
+                return;
+            }
+
+            var forward = Forward;
+            var forwardCoordinate = ProposeMove(forward);
+            if (forwardCoordinate != Coordinate)
+            {
+                SetOrientationAndCoordinate(forward, forwardCoordinate);
+                return;
+            }
+
+            var leftTurn = Left;
+            var leftTurnCoordinate = ProposeMove(leftTurn);
+            SetOrientation(leftTurn);
+            if (leftTurnCoordinate != Coordinate)
+            {
+                SetOrientationAndCoordinate(leftTurn, leftTurnCoordinate);
+                return;
+            }
+        }
     }
 }
