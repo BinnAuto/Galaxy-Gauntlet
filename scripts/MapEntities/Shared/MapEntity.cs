@@ -1,4 +1,3 @@
-
 namespace GalaxyGauntlet.scripts.MapEntities.Shared
 {
     public class MapEntity(Vector2I coordinate)
@@ -95,6 +94,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
                 Constants.ByteCodes.Entities.CloneMachine_V1
                     or Constants.ByteCodes.Entities.CloneMachine => new CloneMachineTile(coordinate),
                 Constants.ByteCodes.Entities.HintPanel => new HintPanelItem(coordinate),
+                Constants.ByteCodes.Entities.ForceFloor_R => new ForceFloorRTile(coordinate),
                 Constants.ByteCodes.Entities.ThinWallOrCanopy => new ThinWallOrCanopyTile(coordinate, 0),
                 _ => new DebugEntity(coordinate, code, $"unknown_{code}")
             };

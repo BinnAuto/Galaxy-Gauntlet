@@ -131,6 +131,16 @@ namespace GalaxyGauntlet.scripts
                             MobProcessList.Add(dirtBlock);
                             MapMobs[x, y] = dirtBlock;
                         }
+                        // TODO: Generalize to all monsters
+                        if (MapData[i] == Constants.ByteCodes.Entities.Teeth)
+                        {
+                            // Item is hidden under a Teeth
+                            TeethMonster teeth = new(mapCoordinate);
+                            i++;
+                            teeth.Orientation = (EntityOrientation)MapData[i++];
+                            MobProcessList.Add(teeth);
+                            MapMobs[x, y] = teeth;
+                        }
                         item.LowerLayer = (MapTile)MapEntity.GetMapEntity(MapData[i], mapCoordinate);
                     }
                     MapTiles[x, y] = item.LowerLayer;
@@ -157,6 +167,11 @@ namespace GalaxyGauntlet.scripts
                         {
                             MapItems[x, y] = mapButton;
                             ButtonsToProcess.Add(mapButton);
+                            mob.LowerLayer = new FloorTile(mapCoordinate);
+                        }
+                        else if(mapEntity is MapItem mapItem)
+                        {
+                            MapItems[x, y] = mapItem;
                             mob.LowerLayer = new FloorTile(mapCoordinate);
                         }
                         else

@@ -43,9 +43,15 @@ namespace GalaxyGauntlet.scripts.MapEntities
             if(_isStopped)
 			{
 				return;
-			}
+            }
 
-			var previousCoordinate = Coordinate.Clone();
+            if (CheckIfOnTrap(Forward))
+            {
+				// Tanks are not permanently stopped if on a trap
+                return;
+            }
+
+            var previousCoordinate = Coordinate.Clone();
 			base.ProcessTick();
 			if(previousCoordinate == Coordinate)
 			{

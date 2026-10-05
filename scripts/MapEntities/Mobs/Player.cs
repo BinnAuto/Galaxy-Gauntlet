@@ -193,7 +193,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			}
 
 			currentTile = GameData.GetMapTile(Coordinate);
-			if (currentTile is MapIceTile || currentTile is MapForceFloorTile)
+			if((currentTile is MapIceTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
+				|| (currentTile is MapForceFloorTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
 			{
 				GameData.AddToSlipList(this);
 			}
