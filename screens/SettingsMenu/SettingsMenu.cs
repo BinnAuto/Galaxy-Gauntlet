@@ -4,7 +4,7 @@ public partial class SettingsMenu : Node
 {
 	#region Child Nodes
 
-	private UISlider TimeModifier;
+	private UISlider TickRate;
 
 	private UIButton CancelButton;
 
@@ -18,8 +18,8 @@ public partial class SettingsMenu : Node
 	public override void _Ready()
 	{
 		GameData.LoadSettings();
-		TimeModifier = (UISlider)GetNode(nameof(TimeModifier));
-		TimeModifier.Value = GameData.TimeModifier;
+		TickRate = (UISlider)GetNode(nameof(TickRate));
+		TickRate.Value = GameData.TickRate;
 
 		CancelButton = (UIButton)GetNode(nameof(CancelButton));
 		CancelButton.Pressed += OnCancelPressed;
@@ -48,7 +48,7 @@ public partial class SettingsMenu : Node
 
 	private void OnSavePressed()
 	{
-		GameData.TimeModifier = TimeModifier.Value;
+		GameData.TickRate = TickRate.Value;
 		GameData.SaveSettings();
 		ToTitleScreen();
 	}

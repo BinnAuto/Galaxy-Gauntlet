@@ -60,12 +60,12 @@ namespace GalaxyGauntlet.scripts.MapEntities
             if (currentTile is MapIceTile iceTile)
             {
                 GameData.AddToSlipList(this);
-                Orientation = iceTile.SetOrientation(Orientation);
+                Orientation = iceTile.SetEntityOrientation(Orientation);
                 var iceCoordinate = ProposeMove(Forward);
                 if (iceCoordinate == Coordinate)
                 {
                     ReverseOrientation();
-                    Orientation = iceTile.SetOrientation(Orientation);
+                    Orientation = iceTile.SetEntityOrientation(Orientation);
                     iceCoordinate = ProposeMove(Forward);
                 }
                 SetCoordinate(iceCoordinate);

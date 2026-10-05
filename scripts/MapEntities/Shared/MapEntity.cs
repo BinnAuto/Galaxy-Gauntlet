@@ -94,7 +94,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
                     or Constants.ByteCodes.Entities.OpenTrap => new TrapItem(coordinate),
                 Constants.ByteCodes.Entities.CloneMachine_V1
                     or Constants.ByteCodes.Entities.CloneMachine => new CloneMachineTile(coordinate),
-                Constants.ByteCodes.Entities.Hint => new HintTile(coordinate),
+                Constants.ByteCodes.Entities.HintPanel => new HintPanelItem(coordinate),
                 Constants.ByteCodes.Entities.ThinWallOrCanopy => new ThinWallOrCanopyTile(coordinate, 0),
                 _ => new DebugEntity(coordinate, code, $"unknown_{code}")
             };

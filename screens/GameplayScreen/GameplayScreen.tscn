@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://b3pk27uc7a2ci" path="res://prefabs/MapDisplay/MapDisplay.tscn" id="1_75xg4"]
 [ext_resource type="Script" uid="uid://c3mkr4y2306kn" path="res://screens/GameplayScreen/GameplayScreen.cs" id="1_ed854"]
 [ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="3_bfflv"]
-[ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/InventoryDisplay/InventoryDisplay.tscn" id="4_l2pm1"]
+[ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="4_l2pm1"]
 
 [node name="GameplayScreen" type="Node2D" unique_id=43287349]
 script = ExtResource("1_ed854")
@@ -37,3 +37,9 @@ text = "Timer"
 
 [node name="InventoryDisplay" parent="." unique_id=266836377 instance=ExtResource("4_l2pm1")]
 position = Vector2(858, 218)
+
+[node name="HintLabel" type="Label" parent="." unique_id=1183504913]
+offset_left = 851.0
+offset_top = 329.0
+offset_right = 891.0
+offset_bottom = 352.0

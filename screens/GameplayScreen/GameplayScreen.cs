@@ -17,9 +17,15 @@ public partial class GameplayScreen : Node
 
 	private Label Timer;
 
+	private Label HintLabel;
+
+	private DateTime _previousPlayerProcessTime = DateTime.Parse("01/01/2000");
+
+	private DateTime _previousPlayerSlipListProcessTime = DateTime.Parse("01/01/2000");
+
 	private DateTime _previousSlipListProcessTime = DateTime.Parse("01/01/2000");
 
-	private DateTime _previousProcessTime = DateTime.Parse("01/01/2000");
+	private DateTime _previousMobProcessTime = DateTime.Parse("01/01/2000");
 
 	private double _timer = 1;
 
@@ -39,7 +45,13 @@ public partial class GameplayScreen : Node
 
 			Timer = (Label)GetNode(nameof(Timer));
 
+			HintLabel = (Label)GetNode(nameof(HintLabel));
+			HintLabel.Visible = false;
+			HintLabel.Resized += OnHintLabelResized;
+
 			GameData.LoadCurrentLevel();
+			HintLabel.Text = GameData.LevelHint;
+			HintLabel.SetSize(new(200, 300));
 			_timer = GameData.TimeLimit + 0.99999;
 			UpdateLabels();
 		}
@@ -87,6 +99,9 @@ public partial class GameplayScreen : Node
 		LevelName.Text = GameData.LevelName;
 		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.ChipsRequired - GameData.ChipsCollected, 0)}";
 		Timer.Text = $"Time: {(int)_timer}";
+
+		var currentItem = GameData.GetMapItem(GameData.PlayerCoordinate);
+		HintLabel.Visible = (currentItem is HintPanelItem);
 	}
 
 
@@ -94,18 +109,51 @@ public partial class GameplayScreen : Node
 	{
 		// Freeze mob lists before the process swaps mobs between lists,
 		// which can cause double processing.
+		var playerList = GameData.PlayerProcessList;
+		var playerSlipList = GameData.PlayerSliplist;
 		var slipList = GameData.MobSlipList;
-		var mobList = GameData.MobsToProcess;
+		var mobList = GameData.MobProcessList;
 
 		DateTime now = DateTime.Now;
-		var timeSinceMobProcess = (now - _previousProcessTime).TotalSeconds;
-		if (timeSinceMobProcess >= 0.2 / GameData.TimeModifierNumeric)
+		double regularTick = 0.2 / GameData.TickRateNumeric;
+		double slipListTick = regularTick / 2.0;
+
+		var timeSincePlayerProcess = (now - _previousPlayerProcessTime).TotalSeconds;
+		var playerInput = GetPlayerInput();
+		if(playerInput != Vector2I.Zero && timeSincePlayerProcess >= regularTick)
 		{
-			// Process entities that move 5 times or less per second
+			if(playerList.Count != 0)
+			{
+				GD.Print(timeSincePlayerProcess);
+				GameData.ProcessMobList(playerList);
+				_previousPlayerProcessTime = now;
+				_previousPlayerSlipListProcessTime = now;
+			}
+		}
+
+		var timeSincePlayerSlipListProcess = (now - _previousPlayerSlipListProcessTime).TotalSeconds;
+		if(timeSincePlayerSlipListProcess >= slipListTick)
+		{
+			if(playerSlipList.Count != 0)
+			{
+				GameData.ProcessMobList(playerSlipList);
+				_previousPlayerSlipListProcessTime = now;
+			}
+		}
+
+		var timeSinceMobListProcess = (now - _previousMobProcessTime).TotalSeconds;
+		var timeSinceSlipListProcess = (now - _previousSlipListProcessTime).TotalSeconds;
+		if (timeSinceMobListProcess >= regularTick)
+		{
+			// Process monsters that move 5 times or less per second
 			if (GameData.ProcessMobs)
 			{
-				GameData.ProcessMobList(mobList, now);
-				_previousProcessTime = now;
+				if(mobList.Any(e => e is Player))
+				{
+					GD.Print("PLAYER FOUND IN MOB LIST");
+				}
+				GameData.ProcessMobList(mobList);
+				_previousMobProcessTime = now;
 				GameData.PingPongStep = (GameData.PingPongStep + 1) % 2;
 				GameData.SquareStep = (GameData.SquareStep + 1) % 4;
 				ProcessButtonPresses();
@@ -113,13 +161,12 @@ public partial class GameplayScreen : Node
 			CheckForInitializationByPlayer();
 		}
 
-		var timeSinceSlipListProcess = (now - _previousSlipListProcessTime).TotalSeconds;
-		if (timeSinceSlipListProcess >= 0.1 / GameData.TimeModifierNumeric)
+		if (timeSinceSlipListProcess >= slipListTick)
 		{
 			if (GameData.ProcessMobs)
 			{
-				// Process entities that move 10 times per second (slip list)
-				GameData.ProcessMobList(slipList, now);
+				// Process monsters that move 10 times per second (slip list)
+				GameData.ProcessMobList(slipList);
 			}
 			_previousSlipListProcessTime = now;
 		}
@@ -155,7 +202,7 @@ public partial class GameplayScreen : Node
 		// TODO: Set timer display
 		if(GameData.TimerEnabled)
 		{
-			_timer -= (delta * GameData.TimeModifierNumeric);
+			_timer -= (delta * GameData.TickRateNumeric);
 		}
 		if(_timer < 0)
 		{
@@ -176,23 +223,7 @@ public partial class GameplayScreen : Node
 			return;
 		}
 
-		Vector2I input = Vector2I.Zero;
-		if (Input.IsActionPressed("player_up"))
-		{
-			input = new(0, -1);
-		}
-		if (Input.IsActionPressed("player_down"))
-		{
-			input = new(0, 1);
-		}
-		if (Input.IsActionPressed("player_left"))
-		{
-			input = new(-1, 0);
-		}
-		if (Input.IsActionPressed("player_right"))
-		{
-			input = new(1, 0);
-		}
+		Vector2I input = GetPlayerInput();
 		if(input != Vector2.Zero)
 		{
 			GameData.ProcessMobs = true;
@@ -200,10 +231,10 @@ public partial class GameplayScreen : Node
 
 			// The player gets a free starting move
 			DateTime now = DateTime.Now;
-			var player = GameData.MobsToProcess.First(e => e is Player);
-			GameData.ProcessMobList([player], now);
+			var player = GameData.MobProcessList.First(e => e is Player);
+			GameData.ProcessMobList([player]);
 			_previousSlipListProcessTime = now;
-			_previousProcessTime = now;
+			_previousMobProcessTime = now;
 		}
 	}
 
@@ -263,10 +294,7 @@ public partial class GameplayScreen : Node
 		DialogWindow.ClearAllButtonEvents();
 		DialogWindow.ShowDialog("Complete!", DialogButtonType.OK);
 		SaveData.DeleteSaveSlot(SaveData.AutosaveSlotName);
-		DialogWindow.OKButtonPressed += () =>
-		{
-			OnExit();
-		};
+		DialogWindow.OKButtonPressed += OnExit;
 	}
 
 
@@ -293,6 +321,39 @@ public partial class GameplayScreen : Node
 				string levelSelectPath = "res://screens/LevelSelect/LevelSelect.tscn";
 				GetTree().ChangeSceneToFile(levelSelectPath);
 				break;
+		}
+	}
+
+
+	private Vector2I GetPlayerInput()
+	{
+		Vector2I input = Vector2I.Zero;
+		if (Input.IsActionPressed("player_up"))
+		{
+			input = new(0, -1);
+		}
+		if (Input.IsActionPressed("player_down"))
+		{
+			input = new(0, 1);
+		}
+		if (Input.IsActionPressed("player_left"))
+		{
+			input = new(-1, 0);
+		}
+		if (Input.IsActionPressed("player_right"))
+		{
+			input = new(1, 0);
+		}
+		return input;
+	}
+
+
+	private void OnHintLabelResized()
+	{
+		GD.Print("Q");
+		if(HintLabel.Size.X > 200)
+		{
+			HintLabel.SetSize(new(200, HintLabel.Size.Y));
 		}
 	}
 }

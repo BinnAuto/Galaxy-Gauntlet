@@ -144,7 +144,7 @@ namespace GalaxyGauntlet.scripts
         }
 
 
-        private static string GetHint()
+        private static void GetHint()
         {
             int hintLength = GetSectionLength();
             byte[] hintBytes = GetNextBytes(hintLength);
@@ -153,7 +153,7 @@ namespace GalaxyGauntlet.scripts
             {
                 hint = hint.Replace("\r\n", " ");
             }
-            return hint;
+            GameData.LevelHint = hint;
         }
 
 

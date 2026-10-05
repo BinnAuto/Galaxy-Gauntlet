@@ -2,13 +2,13 @@ namespace GalaxyGauntlet.scripts
 {
     public static partial class GameData
     {
-        public static double TimeModifier = 100;
+        public static double TickRate = 100;
 
-        public static double TimeModifierNumeric
+        public static double TickRateNumeric
         {
             get
             {
-                return TimeModifier / 100.0;
+                return TickRate / 100.0;
             }
         }
 
@@ -23,17 +23,15 @@ namespace GalaxyGauntlet.scripts
             var loadResult = ConfigFile.Load(GameConfigFilePath);
             if(loadResult == Error.Ok)
             {
-                TimeModifier = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(TimeModifier), 1);
+                TickRate = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(TickRate), 1);
             }
-            GD.Print($"Loaded time modifier: {TimeModifier}");
             SaveSettings();
         }
 
 
         public static void SaveSettings()
         {
-            ConfigFile.SetValue(GameDataConfigSection, nameof(TimeModifier), TimeModifier);
-            GD.Print($"Saved time modifier: {TimeModifier}");
+            ConfigFile.SetValue(GameDataConfigSection, nameof(TickRate), TickRate);
             ConfigFile.Save(GameConfigFilePath);
         }
     }

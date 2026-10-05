@@ -2,7 +2,6 @@ using GalaxyGauntlet.scripts.MapEntities;
 using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace GalaxyGauntlet.scripts
 {
@@ -34,8 +33,8 @@ namespace GalaxyGauntlet.scripts
 		public static int ChipsRequired = 0;
 		public static int ChipsCollected = 0;
 		public static int CurrentLevelNumber = 1;
-
 		public static string LevelName = string.Empty;
+		public static string LevelHint = string.Empty;
 		public static int LevelRestarts = 0;
 		public static float Timer = 0;
 		public static bool TimerEnabled = false;
@@ -79,6 +78,7 @@ namespace GalaxyGauntlet.scripts
 			PlayerAlive = true;
 			DeathMessage = string.Empty;
 			LevelName = string.Empty;
+			LevelHint = string.Empty;
 			ProcessMobs = false;
 			TimerEnabled = false;
 			AcceptingPlayerInput = true;

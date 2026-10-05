@@ -41,7 +41,6 @@ metadata/_edit_use_anchors_ = true
 position = Vector2(72, 121)
 
 [node name="YesButton" parent="YesNoButtonContainer" unique_id=454565355 instance=ExtResource("1_3mka8")]
-modulate = Color(0.15294118, 1, 0.10980392, 1)
 offset_left = -64.0
 offset_top = -22.0
 offset_right = -56.0
@@ -50,7 +49,6 @@ ButtonText = "Yes"
 FontSize = 16
 
 [node name="NoButton" parent="YesNoButtonContainer" unique_id=224655190 instance=ExtResource("1_3mka8")]
-modulate = Color(1, 0.15294118, 0.10980392, 1)
 offset_left = 11.0
 offset_top = -22.0
 offset_right = 19.0

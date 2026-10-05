@@ -39,10 +39,10 @@ offset_bottom = 571.0
 ButtonText = "Save"
 FontSize = 30
 
-[node name="TimeModifier" parent="." unique_id=14717822 instance=ExtResource("5_8gnst")]
-LabelText = "Time Modifier"
+[node name="TickRate" parent="." unique_id=14717822 instance=ExtResource("5_8gnst")]
+LabelText = "Tick Rate"
 InitialValue = 100.0
 Minimum = 80.0
 Maximum = 150.0
-Step = 10.0
+Step = 5.0
 ValueLabelSuffix = "%"

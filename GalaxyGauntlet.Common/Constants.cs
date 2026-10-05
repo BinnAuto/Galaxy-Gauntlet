@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.Common
     {
         public static string GameName = "Galaxy Gauntlet";
 
-        public static string GameVersion = "0.0.2";
+        public static string GameVersion = "0.0.2.5";
 
         public static class Archipelago
         {
@@ -15,6 +15,18 @@ namespace GalaxyGauntlet.Common
                 public const string PlayerSprite = "player_sprite";
                 public const string LevelHash = "level_hash";
                 public const string DeathLink = "death_link";
+            }
+
+
+            public static class PlayerSpriteIndexes
+            {
+                public const int Player = 0;
+                public const int Teeth = 1;
+                public const int BlueTank = 2;
+                public const int Glider = 3;
+                public const int Bug = 4;
+                public const int Paramecium = 5;
+                public const int Fireball = 6;
             }
         }
 
@@ -90,7 +102,7 @@ namespace GalaxyGauntlet.Common
                 public const int Trap = 0x42;
                 public const int CloneMachine_V1 = 0x43;
                 public const int CloneMachine = 0x44;
-                public const int Hint = 0x45;
+                public const int HintPanel = 0x45;
                 public const int ForceFloor_R = 0x46;
                 public const int GrayButton = 0x47;
                 public const int SwivelDoor_SW = 0x48;
@@ -291,7 +303,7 @@ namespace GalaxyGauntlet.Common
             public static Vector2I ActiveTrap = new(3, 18);
             public static Vector2I CloneMachineTile = new(4, 18);
             public static Vector2I CloneMachineScenery = new(5, 18);
-            public static Vector2I Hint = new(0, 19);
+            public static Vector2I HintPanel = new(0, 19);
             public static Vector2I ForceFloor_R = new(1, 19);
             public static Vector2I GrayButton = new(2, 19);
             public static Vector2I Socket_Open = new(3, 19);

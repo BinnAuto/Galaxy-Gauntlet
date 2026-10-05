@@ -31,6 +31,7 @@ namespace GalaxyGauntlet.scripts
         public static bool DeathLinkEnabled = false;
         public static bool LynxBehavior = false;
         public static bool ProcessingDeathLink = false;
+        public static long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
         private static List<long> LocationIDsChecked = [];
         public static List<string> ItemsReceived = [];
         public static string GameName;
@@ -82,6 +83,14 @@ namespace GalaxyGauntlet.scripts
                 SlotId = Session.Players.ActivePlayer.Slot;
 
                 SlotData = ((LoginSuccessful)loginResult).SlotData;
+                try
+                {
+                    PlayerSpriteIndex = (long)SlotData[Constants.Archipelago.SlotDataKeys.PlayerSprite];
+                }
+                catch(Exception e) {
+                    GD.Print(e.Message);
+                    PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player; 
+                }
 
                 // Configure death link
                 DeathLinkService = Session.CreateDeathLinkService();
@@ -111,8 +120,15 @@ namespace GalaxyGauntlet.scripts
 
         public static async Task DisconnectFromArchipelago()
         {
-            await Session.Socket.DisconnectAsync();
-            ResetArchipelagoData();
+            try
+            {
+                await Session.Socket.DisconnectAsync();
+                ResetArchipelagoData();
+            }
+            catch(Exception e)
+            {
+                FileLogger.LogException("Error disconnecting from Archipelago server", e);
+            }
         }
 
 
@@ -229,6 +245,7 @@ namespace GalaxyGauntlet.scripts
             Session = null;
             DeathLinkService = null;
             LocationIDsChecked = [];
+            PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
             GameName = string.Empty;
             Server = string.Empty;
             Port = null;

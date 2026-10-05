@@ -1,6 +1,6 @@
 using GalaxyGauntlet.scripts;
 
-public partial class InventoryDisplay : Node
+public partial class ItemDisplay : Node
 {
 	private Sprite2D RedKey;
 

@@ -1,9 +1,16 @@
 using GalaxyGauntlet.scripts;
 using System;
+using System.Threading.Tasks;
 
 public partial class LevelSelect : Node2D
 {
 	private GridContainer GridContainer;
+
+	private UIButton ReloadButton;
+
+	private UIButton BackButton;
+
+	private DialogWindow DialogWindow;
 
 	private Button ButtonRef;
 
@@ -19,6 +26,15 @@ public partial class LevelSelect : Node2D
 				? 1 : 3;
 			ButtonRef = (Button)GetNode(nameof(ButtonRef));
 
+			ReloadButton = (UIButton)GetNode(nameof(ReloadButton));
+			ReloadButton.Pressed += BuildButtonList;
+			
+			BackButton = (UIButton)GetNode(nameof(BackButton));
+			BackButton.Pressed += async () => await ToTitleScreen();
+
+			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow.Visible = false;
+
 			BuildButtonList();
 		}
 		catch(Exception e)
@@ -30,6 +46,12 @@ public partial class LevelSelect : Node2D
 
 	private void BuildButtonList()
 	{
+		foreach(var child in GridContainer.GetChildren())
+		{
+			GridContainer.RemoveChild(child);
+			child.QueueFree();
+		}
+
 		string[] levelFiles = Global.GetLevelList();
 		int levelIndex = 1;
 		foreach(string file in levelFiles)
@@ -91,5 +113,33 @@ public partial class LevelSelect : Node2D
 		GameData.ResetLevelData();
 		string gameplayScreenPath = "res://screens/GameplayScreen/GameplayScreen.tscn";
 		GetTree().ChangeSceneToFile(gameplayScreenPath);
+	}
+
+
+	private async Task ToTitleScreen()
+	{
+		if(GameData.GameMode == GameMode.QuickPlay)
+		{
+			string titleMenuPath = "res://screens/TitleMenu/TitleMenu.tscn";
+			GetTree().ChangeSceneToFile(titleMenuPath);
+			return;
+		}
+
+		// Archipelago logic
+		DialogWindow.ClearAllButtonEvents();
+		DialogWindow.ShowDialog("Are you sure you want to disconnect from the Archipelago server?", DialogButtonType.YesNo);
+		DialogWindow.YesButtonPressed += async () =>
+		{
+			await GameData.DisconnectFromArchipelago();
+			ToTitleMenu();
+		};
+		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };
+	}
+
+
+	private void ToTitleMenu()
+	{
+		string titleMenuPath = "res://screens/TitleMenu/TitleMenu.tscn";
+		GetTree().ChangeSceneToFile(titleMenuPath);
 	}
 }

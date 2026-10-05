@@ -19,10 +19,50 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			{
 				return Orientation switch
 				{
-					EntityOrientation.North => Constants.SpriteCoordinates.Player_N,
-					EntityOrientation.East => Constants.SpriteCoordinates.Player_E,
-					EntityOrientation.South => Constants.SpriteCoordinates.Player_S,
-					EntityOrientation.West => Constants.SpriteCoordinates.Player_W,
+					EntityOrientation.North => GameData.PlayerSpriteIndex switch
+					{
+						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_N,
+						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_N,
+						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_N,
+						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_N,
+						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_N,
+						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_N,
+						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_N,
+						_ => Constants.SpriteCoordinates.Player_N
+					},
+					EntityOrientation.East => GameData.PlayerSpriteIndex switch
+					{
+						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_E,
+						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_E,
+						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_E,
+						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_E,
+						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_E,
+						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_E,
+						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_E,
+						_ => Constants.SpriteCoordinates.Player_E
+					},
+					EntityOrientation.South => GameData.PlayerSpriteIndex switch
+					{
+						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_S,
+						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_S,
+						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_S,
+						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_S,
+						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_S,
+						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_S,
+						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_S,
+						_ => Constants.SpriteCoordinates.Player_S
+					},
+					EntityOrientation.West => GameData.PlayerSpriteIndex switch
+					{
+						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_W,
+						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_W,
+						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_W,
+						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_W,
+						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_W,
+						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_W,
+						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_W,
+						_ => Constants.SpriteCoordinates.Player_W
+					},
 					_ => throw new NotImplementedException()
 				};
 			}
@@ -56,8 +96,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				input = new(1, 0);
 			}
 
-			Vector2I newCoordinate = Coordinate;
-
 			#region Process Item collection
 
 			var currentItem = GameData.GetMapItem(Coordinate);
@@ -82,6 +120,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			#endregion
 
+			Vector2I newCoordinate = Coordinate;
 			var currentTile = GameData.GetMapTile(Coordinate);
 
 			#region Force Floor 
@@ -91,10 +130,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				GameData.AddToSlipList(this);
 				var forceFloorInfluence = forceFloor.GetInfluence();
 				var aggregateInput = forceFloorInfluence + input;
-				aggregateInput = new(
-					Mathf.Max(Mathf.Min(aggregateInput.X, 1), -1)
-					, Mathf.Max(Mathf.Min(aggregateInput.Y, 1), -1)
-				);
+				GD.Print($"Input: {aggregateInput}");
 				newCoordinate = ProposeMove(aggregateInput);
 				if(newCoordinate == Coordinate)
 				{
@@ -115,7 +151,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			if(currentTile is MapIceTile iceTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
 			{
 				GameData.AddToSlipList(this);
-				Orientation = iceTile.SetOrientation(Orientation);
+				Orientation = iceTile.SetEntityOrientation(Orientation);
 				newCoordinate = ProposeMove(Forward);
 				if(newCoordinate == Coordinate)
 				{

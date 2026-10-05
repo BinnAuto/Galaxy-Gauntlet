@@ -2,11 +2,28 @@
 
 [ext_resource type="Script" uid="uid://dlcq7vl5d1i6n" path="res://screens/LevelSelect/LevelSelect.cs" id="1_b1i2e"]
 [ext_resource type="StyleBox" uid="uid://7ww86h6bkwfw" path="res://styles/button_style.tres" id="2_aqbcw"]
+[ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_xa088"]
 [ext_resource type="StyleBox" uid="uid://b42mxcwhl5h20" path="res://styles/button_pressed_style.tres" id="3_1aba1"]
+[ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_yl72h"]
 [ext_resource type="StyleBox" uid="uid://dhoqfgal04ahv" path="res://styles/button_hover_style.tres" id="4_xa088"]
+[ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="7_yl72h"]
+[ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="8_c3t5n"]
 
 [node name="LevelSelect" type="Node2D" unique_id=1784930774]
 script = ExtResource("1_b1i2e")
+
+[node name="Pixel" type="Sprite2D" parent="." unique_id=1117513037]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(577.125, 322.375)
+scale = Vector2(1164.2499, 659.25)
+texture = ExtResource("2_xa088")
+
+[node name="Gradient" type="Sprite2D" parent="." unique_id=1393886749]
+modulate = Color(0, 0, 0.38039216, 1)
+texture_filter = 2
+position = Vector2(579, 514)
+scale = Vector2(1168, 515.75)
+texture = ExtResource("3_yl72h")
 
 [node name="Control" type="Control" parent="." unique_id=1761813379]
 layout_mode = 3
@@ -38,3 +55,22 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_styles/normal = ExtResource("2_aqbcw")
 theme_override_styles/pressed = ExtResource("3_1aba1")
 theme_override_styles/hover = ExtResource("4_xa088")
+
+[node name="ReloadButton" parent="." unique_id=1721704438 instance=ExtResource("7_yl72h")]
+offset_left = 930.0
+offset_top = 580.0
+offset_right = 938.0
+offset_bottom = 588.0
+ButtonText = "Reload Levels"
+FontSize = 30
+
+[node name="BackButton" parent="." unique_id=2056632681 instance=ExtResource("7_yl72h")]
+offset_left = 11.0
+offset_top = 580.0
+offset_right = 19.0
+offset_bottom = 588.0
+ButtonText = "Back to Title"
+FontSize = 30
+
+[node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("8_c3t5n")]
+visible = false

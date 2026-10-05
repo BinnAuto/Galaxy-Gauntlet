@@ -185,15 +185,15 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					&& (false == isPlayer || false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates)))
 				{
 					GameData.AddToSlipList(this);
-					Orientation = iceTile.SetOrientation(Orientation);
+					Orientation = iceTile.SetEntityOrientation(Orientation);
 					var iceCoordinate = ProposeMove(Forward);
 					if(iceCoordinate == Coordinate)
 					{
 						ReverseOrientation();
-						Orientation = iceTile.SetOrientation(Orientation);
+						Orientation = iceTile.SetEntityOrientation(Orientation);
 						iceCoordinate = ProposeMove(Forward);
-					}
-					SetCoordinate(iceCoordinate);
+                    }
+                    SetCoordinate(iceCoordinate);
 					return;
 				}
 
@@ -219,15 +219,10 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 
 		/// <summary>
-		/// Limit the directional input to 1-unit maximums, and check if
-		/// resulting move will escape the map boundaries.
+		/// Check if resulting move will escape the map boundaries.
 		/// </summary>
 		public Vector2I? SanitizeInput(Vector2I direction)
 		{
-			// Clamp direction to maximum ABS to 1
-			direction.X = Math.Min(Math.Max(direction.X, -1), 1);
-			direction.Y = Math.Min(Math.Max(direction.Y, -1), 1);
-
 			Vector2I newCoordinate = Coordinate + direction;
 
 			// Check map bounds
@@ -329,11 +324,47 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return newCoordinate;
 			}
 
-			#endregion
+            #endregion
 
-			#region Monsters 
+            #region Key Doors
 
-			if (destinationMob is BugMonster
+            if (destinationItem is MapDoorItem doorItem)
+            {
+                if (false == isPlayer)
+                {
+                    return Coordinate;
+                }
+
+                if (false == doorItem.CanOpenDoor())
+                {
+                    return Coordinate;
+                }
+
+                // Player opens door
+                GameData.RemoveMapItem(newCoordinate);
+                GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+                return newCoordinate;
+            }
+
+            #endregion
+
+            #region Hard Stop tiles
+
+            if (destinationTile is WallTile
+                || destinationTile is CloneMachineTile
+                || destinationTile is InvisibleWallTile
+                || (destinationTile is GravelTile && false == CanWalkOnGravel)
+                || (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
+            )
+            {
+                return Coordinate;
+            }
+
+            #endregion
+
+            #region Monsters 
+
+            if (destinationMob is BugMonster
 				|| destinationMob is FireballMonster
 				|| destinationMob is WalkerMonster
 				|| destinationMob is GliderMonster
@@ -351,28 +382,6 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				}
 
 				return Coordinate;
-			}
-
-			#endregion
-
-			#region Key Doors
-
-			if (destinationItem is MapDoorItem doorItem)
-			{
-				if (false == isPlayer)
-				{
-					return Coordinate;
-				}
-
-				if (false == doorItem.CanOpenDoor())
-				{
-					return Coordinate;
-				}
-
-				// Player opens door
-				GameData.RemoveMapItem(newCoordinate);
-				GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
-				return newCoordinate;
 			}
 
 			#endregion
@@ -435,26 +444,6 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return isPlayer
 					? newCoordinate
 					: Coordinate;
-			}
-
-			#endregion
-
-			#region Hard Stop tiles
-
-			if (destinationTile is WallTile
-				|| (destinationTile is GravelTile && false == CanWalkOnGravel)
-				|| destinationItem is RedDoorItem
-				|| destinationItem is BlueDoorItem
-				|| destinationItem is YellowDoorItem
-				|| destinationItem is GreenDoorItem
-				|| (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
-				|| destinationTile is ExitTile
-				|| destinationTile is CloneMachineTile
-				|| destinationTile is HiddenWallTile
-				|| destinationTile is InvisibleWallTile
-			)
-			{
-				return Coordinate;
 			}
 
 			#endregion
@@ -592,7 +581,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					return Coordinate;
 				}
 
-				dirtBlock.SetCoordinate(dirtBlockCoordinate);
+				dirtBlock.SetOrientationAndCoordinate(direction, dirtBlockCoordinate);
 				return newCoordinate;
 			}
 

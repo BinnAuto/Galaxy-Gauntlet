@@ -19,7 +19,9 @@ namespace GalaxyGauntlet.scripts
         public static MapMob[,] MapPlayers = new MapMob[0, 0];
         public static MapItem[,] MapItems = new MapItem[0, 0];
         public static MapTile[,] MapTiles = new MapTile[0, 0];
-        public static List<MapMob> MobsToProcess = [];
+        public static List<MapMob> PlayerProcessList = [];
+        public static List<MapMob> PlayerSliplist = [];
+        public static List<MapMob> MobProcessList = [];
         public static List<MapMob> MobSlipList = [];
         public static List<MapButtonItem> ButtonsToProcess = [];
 
@@ -45,9 +47,11 @@ namespace GalaxyGauntlet.scripts
             RerenderMap = false;
             MapDimensions = -Vector2I.One;
             NextMobID = 0;
-            MobsToProcess = [];
-            ButtonsToProcess = [];
+            PlayerProcessList = [];
+            PlayerSliplist = [];
+            MobProcessList = [];
             MobSlipList = [];
+            ButtonsToProcess = [];
             MapData = [];
             MapScenery = new MapEntity[0, 0];
             MapMobs = new MapMob[0, 0];
@@ -124,7 +128,7 @@ namespace GalaxyGauntlet.scripts
                             DirtBlockEntity dirtBlock = new(mapCoordinate);
                             i++;
                             dirtBlock.Orientation = (EntityOrientation)MapData[i++];
-                            MobsToProcess.Add(dirtBlock);
+                            MobProcessList.Add(dirtBlock);
                             MapMobs[x, y] = dirtBlock;
                         }
                         item.LowerLayer = (MapTile)MapEntity.GetMapEntity(MapData[i], mapCoordinate);
@@ -164,13 +168,11 @@ namespace GalaxyGauntlet.scripts
                         && mob.LowerLayer is not CloneMachineTile)
                     {
                         // Entities in the clone machine do not get processed.
-                        MobsToProcess.Add(mob);
+                        MobProcessList.Add(mob);
                     }
-                    if (entity is Player)
+                    if (entity is Player player)
                     {
-                        // According to mslogic in Tile World, Chip is the
-                        // first entity that is processed
-                        MobsToProcess = [.. MobsToProcess.Prepend(mob)];
+                        PlayerProcessList.Add(player);
                         MapPlayers[x, y] = mob;
                     }
                     else
@@ -225,7 +227,7 @@ namespace GalaxyGauntlet.scripts
         }
 
 
-        public static void ProcessMobList(List<MapMob> mobs, DateTime timestamp)
+        public static void ProcessMobList(List<MapMob> mobs)
         {
             foreach(var mob in mobs)
             {
@@ -246,18 +248,24 @@ namespace GalaxyGauntlet.scripts
         /// </summary>
         public static void AddToSlipList(MapMob mob)
         {
-            MobsToProcess = [..MobsToProcess.Where(e => e.MobID != mob.MobID)];
-            if(MobSlipList.Any(e => e.MobID == mob.MobID))
-            {
-                return;
-            }
-
             if(mob is Player)
             {
-                MobSlipList = [..MobSlipList.Append(mob)];
+                PlayerProcessList = [..PlayerProcessList.Where(e => e.MobID != mob.MobID)];
+                if(PlayerSliplist.Any(e => e.MobID == mob.MobID))
+                {
+                    return;
+                }
+
+                PlayerSliplist.Add(mob);
             }
             else
             {
+                MobProcessList = [..MobProcessList.Where(e => e.MobID != mob.MobID)];
+                if(MobSlipList.Any(e => e.MobID == mob.MobID))
+                {
+                    return;
+                }
+            
                 MobSlipList.Add(mob);
             }
         }
@@ -268,19 +276,25 @@ namespace GalaxyGauntlet.scripts
         /// </summary>
         public static void RemoveFromSlipList(MapMob mob)
         {
-            MobSlipList = [..MobSlipList.Where(e => e.MobID != mob.MobID)];
-            if(MobsToProcess.Any(e => e.MobID == mob.MobID))
-            {
-                return;
-            }
-
             if(mob is Player)
             {
-                MobsToProcess = [..MobsToProcess.Append(mob)];
+                PlayerSliplist = [..PlayerSliplist.Where(e => e.MobID != mob.MobID)];
+                if(PlayerProcessList.Any(e => e.MobID == mob.MobID))
+                {
+                    return;
+                }
+
+                PlayerProcessList.Add(mob);
             }
             else
             {
-                MobsToProcess.Add(mob);
+                MobSlipList = [..MobSlipList.Where(e => e.MobID != mob.MobID)];
+                if(MobProcessList.Any(e => e.MobID == mob.MobID))
+                {
+                    return;
+                }
+
+                MobProcessList.Add(mob);
             }
         }
 
@@ -339,7 +353,7 @@ namespace GalaxyGauntlet.scripts
             }
 
             MapMobs[coordinate.X, coordinate.Y] = mob;
-            MobsToProcess.Add(mob);
+            MobProcessList.Add(mob);
             RerenderMap = true;
         }
 

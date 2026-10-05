@@ -55,7 +55,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
         }
 
 
-        public EntityOrientation SetOrientation(EntityOrientation incomingOrientation)
+        public EntityOrientation SetEntityOrientation(EntityOrientation incomingOrientation)
         {
             switch(IceTileType)
             {

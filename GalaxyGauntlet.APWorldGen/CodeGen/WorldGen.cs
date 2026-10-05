@@ -25,7 +25,16 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "        \"English\",",
                 "        \"setup_en.md\",",
                 "        \"setup/en\",",
-                $"        [\"{AuthorName.Replace("\"", "\\\"")}\", \"BinnAuto\"]",
+            ];
+            if(false == string.Equals(AuthorName, "BinnAuto", StringComparison.InvariantCultureIgnoreCase))
+            {
+                fileLines.Add($"        [\"{AuthorName.Replace("\"", "\\\"")}\", \"BinnAuto\"]");
+            }
+            else
+            {
+                fileLines.Add($"        [\"BinnAuto\"]");
+            }
+            fileLines.AddRange([
                 "    )",
                 "",
                 $"class {ClassPrefix}World(World):",
@@ -63,11 +72,10 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "        return {}",
                 "",
                 "    def fill_slot_data(self):",
-                $"        slot_options:list[str] = [\"{Constants.Archipelago.SlotDataKeys.PlayerSprite}\", \"{Constants.Archipelago.SlotDataKeys.DeathLink}\"]",
-                "        slot_data = {option_name: getattr(self.options, option_name).value for option_name in slot_options}",
+                "        slot_data = {option_name: getattr(self.options, option_name).value for option_name in self.options.__dict__.keys()}",
                 $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.LevelHash}\"] = \"{stageHash}\"",
                 "        return slot_data"
-            ];
+            ]);
 
             WriteFileContents("world.py", fileLines);
             FileLogger.QuietLogMessage("File created");

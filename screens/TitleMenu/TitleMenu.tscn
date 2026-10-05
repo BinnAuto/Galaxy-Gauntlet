@@ -80,12 +80,12 @@ ButtonText = "Exit"
 FontSize = 30
 
 [node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("6_gtykd")]
+visible = false
 
 [node name="Archipelago" type="Node2D" parent="." unique_id=533125033]
 visible = false
 
 [node name="InputBlocker" type="Button" parent="Archipelago" unique_id=1233289214]
-visible = false
 modulate = Color(1, 1, 1, 0)
 offset_left = -2.0
 offset_top = -2.0

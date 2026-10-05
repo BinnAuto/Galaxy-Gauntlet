@@ -9,6 +9,13 @@ namespace GalaxyGauntlet.scripts
 	}
 
 
+	public enum ItemDisplayMode
+	{
+		Gameplay,
+		Archipelago
+	}
+
+
 	public enum Color
 	{
 		Red,
