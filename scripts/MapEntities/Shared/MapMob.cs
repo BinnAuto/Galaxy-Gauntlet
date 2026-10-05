@@ -145,7 +145,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 		{
 			SetOrientation(direction);
 			SetCoordinate(coordinate);
-		}
+
+        }
 
 		public virtual void ProcessTick()
 		{
@@ -208,6 +209,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					if(newCoordinate != Coordinate)
 					{
 						SetOrientationAndCoordinate(forward, newCoordinate);
+						currentTile = GameData.GetMapTile(Coordinate);
+						if(currentTile is MapIceTile || currentTile is MapForceFloorTile)
+						{
+							GameData.AddToSlipList(this);
+						}
 					}
 				}
 			}
@@ -582,6 +588,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				}
 
 				dirtBlock.SetOrientationAndCoordinate(direction, dirtBlockCoordinate);
+				var dirtBlockTile = GameData.GetMapTile(dirtBlockCoordinate);
+				if(dirtBlockTile is MapIceTile || dirtBlockTile is MapForceFloorTile)
+				{
+					GameData.AddToSlipList(dirtBlock);
+				}
 				return newCoordinate;
 			}
 

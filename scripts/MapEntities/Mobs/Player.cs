@@ -130,7 +130,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				GameData.AddToSlipList(this);
 				var forceFloorInfluence = forceFloor.GetInfluence();
 				var aggregateInput = forceFloorInfluence + input;
-				GD.Print($"Input: {aggregateInput}");
 				newCoordinate = ProposeMove(aggregateInput);
 				if(newCoordinate == Coordinate)
 				{
@@ -172,8 +171,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			}
 
 			SetOrientationAndCoordinate(input, newCoordinate);
-			var item = GameData.GetMapItem(Coordinate);
 
+			var item = GameData.GetMapItem(Coordinate);
 			if((item is RedKeyItem && GameData.RedKeyUnlocked)
 				|| (item is BlueKeyItem && GameData.BlueKeyUnlocked)
 				|| (item is YellowKeyItem && GameData.YellowKeyUnlocked)
@@ -191,6 +190,12 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			if(item is ChipItem chip2)
 			{
 				GameData.OnChipCollected(chip2);
+			}
+
+			currentTile = GameData.GetMapTile(Coordinate);
+			if (currentTile is MapIceTile || currentTile is MapForceFloorTile)
+			{
+				GameData.AddToSlipList(this);
 			}
 		}
 

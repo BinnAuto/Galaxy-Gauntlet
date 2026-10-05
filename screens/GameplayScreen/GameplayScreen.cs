@@ -124,7 +124,6 @@ public partial class GameplayScreen : Node
 		{
 			if(playerList.Count != 0)
 			{
-				GD.Print(timeSincePlayerProcess);
 				GameData.ProcessMobList(playerList);
 				_previousPlayerProcessTime = now;
 				_previousPlayerSlipListProcessTime = now;
@@ -148,10 +147,6 @@ public partial class GameplayScreen : Node
 			// Process monsters that move 5 times or less per second
 			if (GameData.ProcessMobs)
 			{
-				if(mobList.Any(e => e is Player))
-				{
-					GD.Print("PLAYER FOUND IN MOB LIST");
-				}
 				GameData.ProcessMobList(mobList);
 				_previousMobProcessTime = now;
 				GameData.PingPongStep = (GameData.PingPongStep + 1) % 2;
@@ -231,8 +226,6 @@ public partial class GameplayScreen : Node
 
 			// The player gets a free starting move
 			DateTime now = DateTime.Now;
-			var player = GameData.MobProcessList.First(e => e is Player);
-			GameData.ProcessMobList([player]);
 			_previousSlipListProcessTime = now;
 			_previousMobProcessTime = now;
 		}
@@ -350,7 +343,6 @@ public partial class GameplayScreen : Node
 
 	private void OnHintLabelResized()
 	{
-		GD.Print("Q");
 		if(HintLabel.Size.X > 200)
 		{
 			HintLabel.SetSize(new(200, HintLabel.Size.Y));
