@@ -1,9 +1,9 @@
 using GalaxyGauntlet.scripts;
 using GalaxyGauntlet.scripts.MapEntities;
+using GalaxyGauntlet.scripts.MapEntities.Shared;
 using GalaxyGauntlet.scripts.SaveData;
-using Godot.Collections;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 public partial class GameplayScreen : Node
 {
@@ -26,8 +26,6 @@ public partial class GameplayScreen : Node
 	private DateTime _previousSlipListProcessTime = DateTime.Parse("01/01/2000");
 
 	private DateTime _previousMobProcessTime = DateTime.Parse("01/01/2000");
-
-	private double _timer = 1;
 
 	#region Godot Overrides
 
@@ -52,7 +50,7 @@ public partial class GameplayScreen : Node
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.LevelHint;
 			HintLabel.SetSize(new(200, 300));
-			_timer = GameData.TimeLimit + 0.99999;
+			GameData.Timer = GameData.TimeLimit + 0.99999;
 			UpdateLabels();
 		}
 		catch (Exception e)
@@ -77,10 +75,14 @@ public partial class GameplayScreen : Node
 		}
 		if(Input.IsActionJustPressed("player_pause"))
 		{
+			GameData.ProcessMobs = false;
+			GameData.TimerEnabled = false;
+			GameData.AcceptingPlayerInput = false;
 			// TODO: Proper pause processing
 			OnExit();
 		}
 
+		GameData.ConfusionTimer = Mathf.Max(GameData.ConfusionTimer - delta, 0);
 		ProcessGameTick();
 		CheckPlayerStatus();
 		UpdateTimer(delta);
@@ -90,6 +92,12 @@ public partial class GameplayScreen : Node
 			MapDisplay.RenderMapData();
 			OnPlayerDeath();
 		}
+		if(GameData.ProcessMobs && GameData.PendingItems.Count > 0)
+		{
+			GameData.PlayerItems.AddRange(GameData.PendingItems);
+			GameData.PendingItems.Clear();
+			GameData.RerenderItemList = true;
+		}
 	}
 
 	#endregion
@@ -98,7 +106,7 @@ public partial class GameplayScreen : Node
 	{
 		LevelName.Text = GameData.LevelName;
 		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.ChipsRequired - GameData.ChipsCollected, 0)}";
-		Timer.Text = $"Time: {(int)_timer}";
+		Timer.Text = $"Time: {(int)GameData.Timer}";
 
 		var currentItem = GameData.GetMapItem(GameData.PlayerCoordinate);
 		HintLabel.Visible = (currentItem is HintPanelItem);
@@ -112,7 +120,7 @@ public partial class GameplayScreen : Node
 		var playerList = GameData.PlayerProcessList;
 		var playerSlipList = GameData.PlayerSliplist;
 		var slipList = GameData.MobSlipList;
-		var mobList = GameData.MobProcessList;
+		List<MapMob> mobList = [..GameData.MobProcessList];
 
 		DateTime now = DateTime.Now;
 		double regularTick = 0.2 / GameData.TickRateNumeric;
@@ -168,9 +176,8 @@ public partial class GameplayScreen : Node
 	}
 
 
-	private void ProcessButtonPresses()
+	private static void ProcessButtonPresses()
 	{
-		GalaxyGauntlet.scripts.Color c = GalaxyGauntlet.scripts.Color.Green;
 		Dictionary<GalaxyGauntlet.scripts.Color, int> buttonPresses = [];
 		foreach(var button in GameData.ButtonsToProcess)
 		{
@@ -197,13 +204,13 @@ public partial class GameplayScreen : Node
 		// TODO: Set timer display
 		if(GameData.TimerEnabled)
 		{
-			_timer -= (delta * GameData.TickRateNumeric);
+			GameData.Timer -= (delta * GameData.TickRateNumeric);
 		}
-		if(_timer < 0)
+		if(GameData.Timer < 0)
 		{
-			_timer = 0;
+			GameData.Timer = 0;
 		}
-		if(GameData.TimeLimit != 0 && _timer <= 0 && false == DialogWindow.Visible)
+		if(GameData.TimeLimit != 0 && GameData.Timer <= 0 && false == DialogWindow.Visible)
 		{
 			GameData.DeathMessage = Constants.DeathMessages.OutOfTime;
 			OnPlayerDeath();
@@ -295,7 +302,7 @@ public partial class GameplayScreen : Node
 	{
 		GameData.LevelRestarts++;
 		GameData.LoadCurrentLevel();
-		_timer = GameData.TimeLimit + 0.999999;
+		GameData.Timer = GameData.TimeLimit + 0.999999;
 		DialogWindow.Visible = false;
 	}
 
@@ -318,7 +325,7 @@ public partial class GameplayScreen : Node
 	}
 
 
-	private Vector2I GetPlayerInput()
+	private static Vector2I GetPlayerInput()
 	{
 		Vector2I input = Vector2I.Zero;
 		if (Input.IsActionPressed("player_up"))

@@ -52,9 +52,10 @@ public partial class LevelSelect : Node2D
 			child.QueueFree();
 		}
 
-		string[] levelFiles = Global.GetLevelList();
-		int levelIndex = 1;
-		foreach(string file in levelFiles)
+		GameData.LevelSet = Global.GetLevelList();
+		GD.Print($"{GameData.LevelSet.Length} levels found");
+		int levelIndex = 0;
+		foreach(string file in GameData.LevelSet)
 		{
 			int tempLevel = levelIndex;
 			levelIndex++;

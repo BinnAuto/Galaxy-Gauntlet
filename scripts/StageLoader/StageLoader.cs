@@ -12,14 +12,6 @@ namespace GalaxyGauntlet.scripts
 
         private static int _currentIndex = 0;
 
-        private static List<MapEntity> _mapBytes;
-
-        public static List<MapEntity> MapData
-        {
-            get { return _mapBytes; }
-        }
-
-
         public static string GetLevelName(string filePath)
         {
             _currentIndex = 0;
@@ -63,6 +55,7 @@ namespace GalaxyGauntlet.scripts
                         case "KEY": // ??
                         case "REPL": // Replay
                         case "PRPL": // Packed Replay
+                        case "VERS": // Editor version
                             // Ignore
                             length = GetSectionLength();
                             _currentIndex += length;
@@ -99,7 +92,6 @@ namespace GalaxyGauntlet.scripts
                             break;
                     }
                 }
-                FileLogger.QuietLogMessage("File load complete");
             }
             catch (Exception e)
             {
@@ -112,7 +104,6 @@ namespace GalaxyGauntlet.scripts
         {
             GameData.ResetMapData();
             _fileBytes = [];
-            _mapBytes = [];
             _currentIndex = 0;
         }
 

@@ -36,7 +36,7 @@ namespace GalaxyGauntlet.scripts
 		public static string LevelName = string.Empty;
 		public static string LevelHint = string.Empty;
 		public static int LevelRestarts = 0;
-		public static float Timer = 0;
+		public static double Timer = 0;
 		public static bool TimerEnabled = false;
 		public static bool AcceptingPlayerInput = true;
 		public static bool ProcessMobs = false;
@@ -44,7 +44,18 @@ namespace GalaxyGauntlet.scripts
 		public static bool RerenderItemList = false;
 		public static string DeathMessage = string.Empty;
 		public static Vector2I PlayerCoordinate = Vector2I.Zero;
+		public static string[] LevelSet = [];
 		public static List<MapItem> PlayerItems = [];
+
+		// Controlled by Archipelago items
+		public static double ConfusionTimer = 0;
+		public static bool IsConfused
+		{
+			get
+			{
+				return (ConfusionTimer > 0);
+			}
+		}
 
 		public static bool ChipRequirementMet
 		{
@@ -82,6 +93,7 @@ namespace GalaxyGauntlet.scripts
 			ProcessMobs = false;
 			TimerEnabled = false;
 			AcceptingPlayerInput = true;
+			ConfusionTimer = 0;
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;

@@ -1,3 +1,4 @@
+using GalaxyGauntlet.scripts.MapEntities.Mobs;
 using GalaxyGauntlet.scripts.MapEntities.Shared;
 
 namespace GalaxyGauntlet.scripts.MapEntities
@@ -27,10 +28,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             while(true)
             {
                 var tile = GameData.GetMapTile(checkCoordinate);
-                if(tile is CloneMachineTile cloneMachine)
+                if(tile is CloneMachineTile)
                 {
-                    CloneMachineCoordinate = checkCoordinate;
-                    cloneMachine.CloneEntity();
+                    var cloneMob = (CloneMachineEntity)GameData.GetMapMob(checkCoordinate);
+                    cloneMob.CreateClone = true;
                     return;
                 }
 

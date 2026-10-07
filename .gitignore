@@ -373,3 +373,4 @@ FodyWeavers.xsd
 /exports
 /levels/*.c2m
 /images/map_tiles/Layered
+/levels/

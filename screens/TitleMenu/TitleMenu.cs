@@ -237,7 +237,7 @@ public partial class TitleMenu : Node
 		string levelPath = "./levels";
 		Directory.CreateDirectory(levelPath);
 		levelPath = Path.GetFullPath(levelPath);
-		string[] files = Directory.GetFiles("./levels", "*.c2m");
+		string[] files = Global.GetLevelList();
 		if(files.Length == 0)
         {
             DialogWindow.ClearAllButtonEvents();

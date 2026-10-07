@@ -9,19 +9,29 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
 
         public static void LoadLevelOverrides()
         {
-            LevelOverrides = new()
+            try
             {
-                Overrides = []
-            };
-            string overrideFile = "./leveloverrides.json";
-            if(false == File.Exists(overrideFile))
-            {
-                FileLogger.QuietLogMessage($"Override file {overrideFile} not found");
-                return;
-            }
+                LevelOverrides = new()
+                {
+                    Overrides = []
+                };
+                string overrideFile = "./leveloverrides.json";
+                if(false == File.Exists(overrideFile))
+                {
+                    FileLogger.QuietLogMessage($"Override file {overrideFile} not found");
+                    return;
+                }
 
-            string json = File.ReadAllText(overrideFile);
-            LevelOverrides = JsonSerializer.Deserialize<LevelOverrides>(json);
+                string json = File.ReadAllText(overrideFile);
+                LevelOverrides = JsonSerializer.Deserialize<LevelOverrides>(json);
+            }
+            catch(Exception e)
+            {
+                FileLogger.LogMessage($"Error loading level overrides file. Continuing without override configuration.");
+                FileLogger.LogMessage(e.Message);
+                FileLogger.QuietLogMessage(e.StackTrace);
+                LevelOverrides = new() { Overrides = [] };
+            }
         }
     }
 }

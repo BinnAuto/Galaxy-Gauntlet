@@ -38,6 +38,42 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override void ProcessTick()
         {
+            var currentTile = GameData.GetMapTile(Coordinate);
+
+            #region Force Floor
+
+            if (currentTile is MapForceFloorTile forceFloor)
+            {
+                GameData.AddToSlipList(this);
+                var forceFloorInfluence = forceFloor.GetInfluence();
+                var forceCoordinate = ProposeMove(forceFloorInfluence);
+                SetOrientationAndCoordinate(forceFloorInfluence, forceCoordinate);
+                return;
+            }
+
+            #endregion
+
+            #region Ice Floor
+
+            if (currentTile is MapIceTile iceTile)
+            {
+                GameData.AddToSlipList(this);
+                Orientation = iceTile.SetEntityOrientation(Orientation);
+                var iceCoordinate = ProposeMove(Forward);
+                if (iceCoordinate == Coordinate)
+                {
+                    ReverseOrientation();
+                    Orientation = iceTile.SetEntityOrientation(Orientation);
+                    iceCoordinate = ProposeMove(Forward);
+                }
+                SetCoordinate(iceCoordinate);
+                return;
+            }
+
+            #endregion
+
+            GameData.RemoveFromSlipList(this);
+
             var rightTurn = Right;
             var rightTurnCoordinate = ProposeMove(rightTurn);
             if (rightTurnCoordinate != Coordinate)

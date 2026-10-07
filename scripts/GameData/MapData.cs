@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts.MapEntities;
+using GalaxyGauntlet.scripts.MapEntities.Mobs;
 using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace GalaxyGauntlet.scripts
         {
             ResetMapData();
             ResetLevelData();
-            string mapPath = $"./levels/map{CurrentLevelNumber:000}.c2m";
+            string mapPath = LevelSet[CurrentLevelNumber];
             LevelLoader.LoadLevel(mapPath);
             RerenderMap = true;
         }
@@ -178,15 +179,22 @@ namespace GalaxyGauntlet.scripts
                         {
                             mob.LowerLayer = (MapTile)mapEntity;
                         }
+                        if(mob.LowerLayer is CloneMachineTile)
+                        {
+                            mob = new CloneMachineEntity(mapCoordinate, mob.DataCode)
+                            {
+                                LowerLayer = new CloneMachineTile(mapCoordinate),
+                                Orientation = mob.Orientation
+                            };
+                        }
                     }
-                    if(mob is not Player
-                        && mob.LowerLayer is not CloneMachineTile)
+                    if(mob is not Player)
                     {
-                        // Entities in the clone machine do not get processed.
                         MobProcessList.Add(mob);
                     }
                     if (entity is Player player)
                     {
+                        mob.Orientation = EntityOrientation.South;
                         PlayerProcessList.Add(player);
                         MapPlayers[x, y] = mob;
                     }
@@ -358,6 +366,54 @@ namespace GalaxyGauntlet.scripts
 
 
         #region Mobs
+
+        /// <summary>
+        /// Adds a mob at a random valid location in the map
+        /// </summary>
+        public static void AddMobAtRandom(MapMob mob)
+        {
+            int attempts = 0;
+            RandomNumberGenerator rng = new();
+            while(attempts < 1000)
+            {
+                attempts++;
+                Vector2I mapCoordinate = new(
+                    rng.RandiRange(0, MapDimensions.X - 1),
+                    rng.RandiRange(0, MapDimensions.Y - 1)
+                );
+                var mapTile = GetMapTile(mapCoordinate);
+                if(mapTile is not FloorTile
+                    && mapTile is not MapForceFloorTile)
+                {
+                    continue;
+                }
+
+                var mapItem = GetMapItem(mapCoordinate);
+                if(mapItem is not null
+                    && mapItem is not MapButtonItem
+                    && mapItem is not TrapItem)
+                {
+                    continue;
+                }
+
+                var mapMob = GetMapMob(mapCoordinate);
+                if(mapMob is not null)
+                {
+                    continue;
+                }
+
+                var mapPlayer = GetMapPlayer(mapCoordinate);
+                if(mapPlayer is not null)
+                {
+                    continue;
+                }
+
+                mob.Coordinate = mapCoordinate;
+                AddMapMob(mob);
+                break;
+            }
+        }
+
 
         public static void AddMapMob(MapMob mob)
         {

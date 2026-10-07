@@ -29,6 +29,7 @@ namespace GalaxyGauntlet.scripts
 
             byte[] uncompressedMap = PACKDecoder.Decode(packBytes);
             GameData.MapData = uncompressedMap;
+            // DebugPrintMap(uncompressedMap);
 
             // Required chip count is derived from map data
             int requiredChips = 0;
@@ -44,16 +45,16 @@ namespace GalaxyGauntlet.scripts
         }
 
 
-        private static void DebugPrintMap()
+        private static void DebugPrintMap(byte[] uncompressedMap)
         {
             bool doContinue = true;
             int skipAmount = 0;
             int mapDimension = 32;
             while(doContinue)
             {
-                var entitiesToPrint = _mapBytes.SkipAndTake(skipAmount * mapDimension, mapDimension);
-                doContinue = (entitiesToPrint.Count == mapDimension);
-                GD.Print(entitiesToPrint.Select(e => e.DataCode.ToString("x2")).ToArray().Join(", "));
+                var entitiesToPrint = uncompressedMap.SkipAndTake(skipAmount * mapDimension, mapDimension);
+                doContinue = (entitiesToPrint.Length == mapDimension);
+                GD.Print(entitiesToPrint.Select(e => e.ToString("x2")).ToArray().Join(", "));
                 skipAmount++;
             }
         }

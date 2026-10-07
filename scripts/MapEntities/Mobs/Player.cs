@@ -95,6 +95,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			{
 				input = new(1, 0);
 			}
+			if (GameData.IsConfused)
+			{
+				input *= -1;
+			}
 
 			#region Process Item collection
 

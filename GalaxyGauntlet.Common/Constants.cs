@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.Common
     {
         public static string GameName = "Galaxy Gauntlet";
 
-        public static string GameVersion = "0.0.4";
+        public static string GameVersion = "0.0.5";
 
         public static class Archipelago
         {
@@ -15,6 +15,31 @@ namespace GalaxyGauntlet.Common
                 public const string PlayerSprite = "player_sprite";
                 public const string LevelHash = "level_hash";
                 public const string DeathLink = "death_link";
+            }
+
+
+            public static class ItemNames
+            {
+                // Useful items
+                public const string SingleUseRedKey = "Single-Use Red Key";
+                public const string SingleUseBlueKey = "Single-Use Blue Key";
+                public const string SingleUseYellowKey = "Single-Use Yellow Key";
+                public const string SingleUseGreenKey = "Single-Use Green Key";
+                public const string SingleUseIceSkates = "Single-Use Ice Skates";
+                public const string SingleUseFireBoots = "Single-Use Fire Boots";
+                public const string SingleUseSuctionBoots = "Single-Use Suction Boots";
+                public const string SingleUseFlippers = "Single-Use Flippers";
+                public const string Helmet = "Helmet";
+                public const string SecretEye = "Secret Eye";
+                public const string TimeBonus = "Time Bonus";
+
+                // Traps
+                public const string TimePenalty = "Time Penalty";
+                public const string TeethTrap = "Teeth";
+                public const string WalkerTrap = "Walker";
+                public const string ConfusionTrap = "Confusion Trap";
+
+                public const string Filler = "Filler";
             }
 
 

@@ -3,6 +3,8 @@ using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Models;
+using GalaxyGauntlet.scripts.MapEntities;
+using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -34,12 +36,14 @@ namespace GalaxyGauntlet.scripts
         public static long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
         private static List<long> LocationIDsChecked = [];
         public static List<string> ItemsReceived = [];
+        public static List<MapItem> PendingItems = [];
         public static string GameName;
         private static string Server;
         private static int? Port;
         private static string SlotName;
         private static string Password;
         private static int? SlotId;
+        private static bool InitialProcessingComplete = false;
         private static Dictionary<string, object> SlotData = [];
         private static Dictionary<long, ScoutedItemInfo> ScoutedItems = [];
 
@@ -63,8 +67,8 @@ namespace GalaxyGauntlet.scripts
                 Session.Socket.SocketOpened += OnAPSocketOpened;
                 Session.Socket.SocketClosed += OnAPSocketClosed;
                 Session.Socket.ErrorReceived += OnAPSocketError;
-                Session.Items.ItemReceived += OnAPItemReceived;
                 Session.Locations.CheckedLocationsUpdated += OnAPLocationChecked;
+                Session.Items.ItemReceived += OnAPItemReceived;
 
                 var loginResult = Session.TryConnectAndLogin(GameName, slotName, ItemsHandlingFlags.AllItems, password: password, tags: ["AP", "Deathlink"]);
                 if(false == loginResult.Successful)
@@ -83,6 +87,8 @@ namespace GalaxyGauntlet.scripts
                 SlotId = Session.Players.ActivePlayer.Slot;
 
                 SlotData = ((LoginSuccessful)loginResult).SlotData;
+
+                // Get Player Sprite
                 try
                 {
                     PlayerSpriteIndex = (long)SlotData[Constants.Archipelago.SlotDataKeys.PlayerSprite];
@@ -108,6 +114,7 @@ namespace GalaxyGauntlet.scripts
 
                 await ScoutAPLocations();
                 FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
+                InitialProcessingComplete = true;
             }
             catch (Exception e)
             {
@@ -253,6 +260,7 @@ namespace GalaxyGauntlet.scripts
             SlotId = null;
             Password = string.Empty;
             SlotData = [];
+            PendingItems = [];
         }
 
 
@@ -267,6 +275,76 @@ namespace GalaxyGauntlet.scripts
             SuctionBootsUnlocked = PlayerHasAPItem("Suction Boots");
             FlippersUnlocked = PlayerHasAPItem("Flippers");
             RerenderMap = true;
+        }
+
+
+        private static void ProcessNewItem(string itemName)
+        {
+            switch(itemName)
+            {
+                case Constants.Archipelago.ItemNames.SingleUseRedKey:
+                    PendingItems.Add(new RedKeyItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseBlueKey:
+                    PendingItems.Add(new BlueKeyItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseYellowKey:
+                    PendingItems.Add(new YellowKeyItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseGreenKey:
+                    PendingItems.Add(new GreenKeyItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseIceSkates:
+                    PendingItems.Add(new IceSkatesItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseFireBoots:
+                    PendingItems.Add(new FireBootsItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseSuctionBoots:
+                    PendingItems.Add(new SuctionBootsItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseFlippers:
+                    PendingItems.Add(new FlippersItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.ConfusionTrap:
+                    RandomNumberGenerator rng = new();
+                    ConfusionTimer = rng.RandiRange(20, 40);
+                    break;
+
+                case Constants.Archipelago.ItemNames.TimeBonus:
+                    if(TimeLimit == 0)
+                    {
+                        // Turn untimed levels into timed levels
+                        TimeLimit += 10;
+                    }
+                    Timer += 10;
+                    break;
+
+                case Constants.Archipelago.ItemNames.TimePenalty:
+                    Timer -= 10;
+                    break;
+
+                case Constants.Archipelago.ItemNames.TeethTrap:
+                    AddMobAtRandom(new TeethMonster(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.WalkerTrap:
+                    AddMobAtRandom(new WalkerMonster(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.Helmet:
+                case Constants.Archipelago.ItemNames.SecretEye:
+                    // TODO
+                    break;
+            }
         }
 
 
@@ -294,6 +372,25 @@ namespace GalaxyGauntlet.scripts
 
         private static void OnAPItemReceived(ReceivedItemsHelper helper)
         {
+            if(InitialProcessingComplete)
+            {
+                var itemInfo = helper.DequeueItem();
+                while(itemInfo is not null)
+                {
+                    GD.Print($"Item received: {itemInfo.ItemName}");
+                    ProcessNewItem(itemInfo.ItemName);
+                    itemInfo = helper.DequeueItem();
+                }
+            }
+            else
+            {
+                GD.Print("Dumping items");
+                var itemInfo = helper.DequeueItem();
+                while(itemInfo is not null)
+                {
+                    itemInfo = helper.DequeueItem();
+                }
+            }
             ItemsReceived = helper.AllItemsReceived
                 .Select(e => Session.Items.GetItemName(e.ItemId))
                 .ToList();
