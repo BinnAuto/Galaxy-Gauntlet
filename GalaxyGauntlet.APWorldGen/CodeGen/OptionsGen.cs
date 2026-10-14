@@ -85,12 +85,12 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             fileLines.AddRange([
                 "@dataclass",
                 $"class {ClassPrefix}Options(PerGameCommonOptions):",
-                "    player_sprite: PlayerSpriteOption",
-                "    chip_as_check_probability: ChipsAsCheckProbability",
-                "    proportion_of_filler_as_useful_items: ProportionOfFillerAsUsefulItems",
-                "    proportion_of_filler_as_traps: ProportionOfFillerAsTraps",
-                "    maximum_score_goal: ScoreGoal",
-                "    death_link: DeathLink"
+                $"    {Constants.Archipelago.SlotDataKeys.PlayerSprite}: PlayerSpriteOption",
+                $"    chip_as_check_probability: ChipsAsCheckProbability",
+                $"    proportion_of_filler_as_useful_items: ProportionOfFillerAsUsefulItems",
+                $"    proportion_of_filler_as_traps: ProportionOfFillerAsTraps",
+                $"    {Constants.Archipelago.SlotDataKeys.MinimumScoreGoal}: ScoreGoal",
+                $"    {Constants.Archipelago.SlotDataKeys.DeathLink}: DeathLink"
             ]);
             if(IncludeExtendedScoreChecks)
             {

@@ -1,5 +1,6 @@
 using GalaxyGauntlet.scripts;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 public partial class LevelSelect : Node2D
@@ -13,6 +14,12 @@ public partial class LevelSelect : Node2D
 	private DialogWindow DialogWindow;
 
 	private Button ButtonRef;
+
+	private Node2D ArchipelagoDisplay;
+
+	private Label TotalScore;
+
+	private Label LevelsCompleted;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -35,7 +42,21 @@ public partial class LevelSelect : Node2D
 			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
 			DialogWindow.Visible = false;
 
+			ArchipelagoDisplay = (Node2D)GetNode(nameof(ArchipelagoDisplay));
+
+			TotalScore = (Label)ArchipelagoDisplay.GetNode(nameof(TotalScore));
+
+			LevelsCompleted = (Label)ArchipelagoDisplay.GetNode(nameof(LevelsCompleted));
+
 			BuildButtonList();
+
+			ArchipelagoDisplay.Visible = false;
+			if (GameData.GameMode == GameMode.Archipelago)
+			{
+				ArchipelagoDisplay.Visible = true;
+				TotalScore.Text = GameData.TotalScoreInAP.ToString();
+				LevelsCompleted.Text = GameData.TotalLevelsCompletedInAP.ToString();
+			}
 		}
 		catch(Exception e)
 		{
@@ -52,7 +73,12 @@ public partial class LevelSelect : Node2D
 			child.QueueFree();
 		}
 
-		GameData.LevelSet = Global.GetLevelList();
+		GameData.LevelSet = GGG.GetLevelList();
+		if(GameData.GameMode == GameMode.Archipelago)
+		{
+			string[] levelIgnores = GameData.GetAPSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
+			GameData.LevelSet = GameData.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+		}
 		GD.Print($"{GameData.LevelSet.Length} levels found");
 		int levelIndex = 0;
 		foreach(string file in GameData.LevelSet)
@@ -71,7 +97,10 @@ public partial class LevelSelect : Node2D
 
 			#region Archipelago logic
 
-			if(false == GameData.PlayerHasAPItem(levelName))
+			string mapName = $"Map {levelIndex} - {levelName}";
+			string completeLocation = $"Complete {mapName}";
+			string noResetsLocation = $"{completeLocation} (No Resets)";
+			if(false == GameData.PlayerHasAPItem(mapName))
 			{
 				continue;
 			}
@@ -85,7 +114,7 @@ public partial class LevelSelect : Node2D
 			{
 				Text = "        "
 			};
-			if (GameData.IsAPLocationChecked(levelName))
+			if (GameData.IsAPLocationChecked(completeLocation))
 			{
 				levelComplete.Text = "Complete";
 			}
@@ -96,7 +125,7 @@ public partial class LevelSelect : Node2D
 			{
 				Text = "        "
 			};
-			if(GameData.IsAPLocationChecked($"{levelName} (No Resets)"))
+			if(GameData.IsAPLocationChecked(noResetsLocation))
 			{
 				levelFirstTryComplete.Text = " (No Resets)";
 			}
@@ -109,11 +138,10 @@ public partial class LevelSelect : Node2D
 
 	private void OnLevelSelect(int levelIndex)
 	{
-		GameData.CurrentLevelNumber = levelIndex;
+		GameData.CurrentLevelIndex = levelIndex;
 		GameData.LevelRestarts = 0;
 		GameData.ResetLevelData();
-		string gameplayScreenPath = "res://screens/GameplayScreen/GameplayScreen.tscn";
-		GetTree().ChangeSceneToFile(gameplayScreenPath);
+		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
 	}
 
 
@@ -121,8 +149,7 @@ public partial class LevelSelect : Node2D
 	{
 		if(GameData.GameMode == GameMode.QuickPlay)
 		{
-			string titleMenuPath = "res://screens/TitleMenu/TitleMenu.tscn";
-			GetTree().ChangeSceneToFile(titleMenuPath);
+			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
 			return;
 		}
 
@@ -132,15 +159,8 @@ public partial class LevelSelect : Node2D
 		DialogWindow.YesButtonPressed += async () =>
 		{
 			await GameData.DisconnectFromArchipelago();
-			ToTitleMenu();
-		};
+            GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+        };
 		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };
-	}
-
-
-	private void ToTitleMenu()
-	{
-		string titleMenuPath = "res://screens/TitleMenu/TitleMenu.tscn";
-		GetTree().ChangeSceneToFile(titleMenuPath);
 	}
 }

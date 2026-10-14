@@ -23,7 +23,8 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
         {
             get
             {
-                return (int)(0.8 * 250 * LevelNames.Count * (LevelNames.Count + 1));
+                int maximumLevelScore = (int)(0.8 * 250 * LevelNames.Count * (LevelNames.Count + 1));
+                return (int)(1.2f * maximumLevelScore); // Conservative score extension
             }
         }
 
@@ -79,13 +80,14 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
         }
 
 
-        public static void BuildLevelData(byte[] mapData)
+        public static void BuildLevelData(byte[] mapData, int levelNumber)
         {
             FileLogger.QuietLogMessage("Processing map data");
             List<string> chipCoordinates = [];
             APLevelData levelData = new()
             {
-                LevelName = FileLoader.LevelName
+                LevelName = FileLoader.LevelName,
+                LevelNumber = levelNumber
             };
             int x = 0;
             int y = 0;

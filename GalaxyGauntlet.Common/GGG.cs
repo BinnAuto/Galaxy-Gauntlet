@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace GalaxyGauntlet.Common
 {
-    public static class SCGlobal
+    public static class GGG
     {
         public static string ToJson(object value)
         {
@@ -15,6 +15,15 @@ namespace GalaxyGauntlet.Common
             string json = Encoding.UTF8.GetString(mStream.ToArray());
             mStream.Dispose();
             return json;
+        }
+
+
+        public static string[] GetLevelList()
+        {
+            string localLevelPath = "./levels";
+            Directory.CreateDirectory(localLevelPath);
+            string[] files = Directory.GetFiles(localLevelPath, "*.c2m", SearchOption.AllDirectories);
+            return files;
         }
     }
 }

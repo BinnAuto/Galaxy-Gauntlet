@@ -4,7 +4,9 @@ using GalaxyGauntlet.scripts.MapEntities.Shared;
 using GalaxyGauntlet.scripts.SaveData;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 public partial class GameplayScreen : Node
 {
 	private MapDisplay MapDisplay;
@@ -49,9 +51,7 @@ public partial class GameplayScreen : Node
 
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.LevelHint;
-			HintLabel.SetSize(new(200, 300));
 			GameData.Timer = GameData.TimeLimit + 0.99999;
-			UpdateLabels();
 		}
 		catch (Exception e)
 		{
@@ -109,7 +109,7 @@ public partial class GameplayScreen : Node
 		Timer.Text = $"Time: {(int)GameData.Timer}";
 
 		var currentItem = GameData.GetMapItem(GameData.PlayerCoordinate);
-		HintLabel.Visible = (currentItem is HintPanelItem);
+		HintLabel.Visible = (currentItem != null && currentItem is HintPanelItem);
 	}
 
 
@@ -150,9 +150,10 @@ public partial class GameplayScreen : Node
 
 		var timeSinceMobListProcess = (now - _previousMobProcessTime).TotalSeconds;
 		var timeSinceSlipListProcess = (now - _previousSlipListProcessTime).TotalSeconds;
+		
+		// Process monsters that move 5 times or less per second
 		if (timeSinceMobListProcess >= regularTick)
 		{
-			// Process monsters that move 5 times or less per second
 			if (GameData.ProcessMobs)
 			{
 				GameData.ProcessMobList(mobList);
@@ -164,11 +165,11 @@ public partial class GameplayScreen : Node
 			CheckForInitializationByPlayer();
 		}
 
+		// Process monsters that move 10 times per second (slip list)
 		if (timeSinceSlipListProcess >= slipListTick)
 		{
 			if (GameData.ProcessMobs)
 			{
-				// Process monsters that move 10 times per second (slip list)
 				GameData.ProcessMobList(slipList);
 			}
 			_previousSlipListProcessTime = now;
@@ -251,7 +252,8 @@ public partial class GameplayScreen : Node
 		{
 			GameData.OnLevelComplete();
 			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("Win!", DialogButtonType.OK);
+			string dialogText = GetLevelScoreMessage();
+			DialogWindow.ShowDialog(dialogText, DialogButtonType.OK);
 			DialogWindow.OKButtonPressed += OnLevelComplete;
 		}
 	}
@@ -281,10 +283,13 @@ public partial class GameplayScreen : Node
 				break;
 
 			case GameMode.QuickPlay:
+                GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+                break;
+
 			case GameMode.Archipelago:
-				string levelSelectPath = "res://screens/LevelSelect/LevelSelect.tscn";
-				GetTree().ChangeSceneToFile(levelSelectPath);
-				break;
+                // TODO: Score checks and goal condition
+                GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+                break;
 		}
 	}
 
@@ -293,7 +298,7 @@ public partial class GameplayScreen : Node
 	{
 		DialogWindow.ClearAllButtonEvents();
 		DialogWindow.ShowDialog("Complete!", DialogButtonType.OK);
-		SaveData.DeleteSaveSlot(SaveData.AutosaveSlotName);
+		SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Autosave);
 		DialogWindow.OKButtonPressed += OnExit;
 	}
 
@@ -312,14 +317,12 @@ public partial class GameplayScreen : Node
 		switch(GameData.GameMode)
 		{
 			case GameMode.Campaign:
-				string titleMenuPath = "res://screens/TitleMenu/TitleMenu.tscn";
-				GetTree().ChangeSceneToFile(titleMenuPath);
+				GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
 				break;
 
 			case GameMode.QuickPlay:
 			case GameMode.Archipelago:
-				string levelSelectPath = "res://screens/LevelSelect/LevelSelect.tscn";
-				GetTree().ChangeSceneToFile(levelSelectPath);
+				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
 				break;
 		}
 	}
@@ -354,5 +357,62 @@ public partial class GameplayScreen : Node
 		{
 			HintLabel.SetSize(new(200, HintLabel.Size.Y));
 		}
+	}
+
+
+	private static string GetLevelScoreMessage()
+	{
+		string result = GameData.LevelRestarts switch
+		{
+			0 => "Yowser! First Try!",
+			1 or 2 => "Go Bit Buster!",
+			3 or 4 => "Finished! Good Work!",
+			_ => "At last! You did it!"
+		};
+		int timeBonus = GameData.TimeLimit == 0
+			? 0 : (int)GameData.Timer * 10;
+		int levelBonus = 500 * (GameData.CurrentLevelIndex + 1);
+		levelBonus = (int)(levelBonus * Mathf.Pow(0.8f, GameData.LevelRestarts));
+		levelBonus = Mathf.Max(levelBonus, 500);
+
+		switch(GameData.GameMode)
+		{
+			case GameMode.Archipelago:
+			case GameMode.Campaign:
+				string saveSlotName = (GameData.GameMode == GameMode.Archipelago)
+					? Constants.SaveSlotNames.Archipelago
+					: Constants.SaveSlotNames.Autosave;
+				var saveSlot = SaveData.GetSaveSlot(saveSlotName);
+				if(false == saveSlot.HighScores.ContainsKey(GameData.CurrentLevelIndex))
+				{
+					saveSlot.HighScores[GameData.CurrentLevelIndex] = 0;
+				}
+				if(timeBonus + levelBonus > saveSlot.HighScores[GameData.CurrentLevelIndex])
+				{
+					result += $"\nYou have a new high score!";
+					saveSlot.HighScores[GameData.CurrentLevelIndex] = timeBonus + levelBonus;
+				}
+				SaveData.WriteSaveSlot(saveSlot);
+
+				result += $"\nTime Bonus: {timeBonus}";
+				result += $"\nLevel Bonus: {levelBonus}";
+				result += $"\nLevel Score: {timeBonus + levelBonus}";
+				result += $"\nTotal Score: {saveSlot.HighScores.Sum(e => e.Value)}";
+				if(GameData.GameMode == GameMode.Archipelago)
+				{
+					string saveSlotJson = JsonSerializer.Serialize(saveSlot);
+					GD.Print($"JSON: {saveSlotJson}");
+					GameData.SetDataStorage(Constants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
+				}
+				break;
+
+			case GameMode.QuickPlay:
+				result += $"\nTime Bonus: {timeBonus}";
+				result += $"\nLevel Bonus: {levelBonus}";
+				result += $"\nLevel Score: {timeBonus + levelBonus}";
+				break;
+		}
+
+		return result;
 	}
 }

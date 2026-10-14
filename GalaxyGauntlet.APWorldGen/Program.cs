@@ -15,75 +15,30 @@ namespace GalaxyGauntlet.APWorldGen
             {
                 FileLogger.QuietLogMessage("Program start");
 
-                #region Initialize Program
-
+                CheckForLevelDirectory();
                 APWorldCodeGen.LoadLevelOverrides();
-
-                if (false == Directory.Exists(LevelDirectory))
-                {
-                    Directory.CreateDirectory(LevelDirectory);
-                    FileLogger.LogMessage("Level directory created");
-                }
-
-                var files = Directory.GetFiles(LevelDirectory, "*.c2m");
-                if(files.Length == 0)
-                {
-                    throw new($"No c2m files found in levels folder");
-                }
-
-                #endregion
-
-                #region Get name of game from user
-
-                Console.Write("Enter a game name: ");
-                APWorldCodeGen.GameName = Console.ReadLine();
-                while(string.IsNullOrEmpty(APWorldCodeGen.GameName) 
-                    || string.IsNullOrEmpty(APWorldCodeGen.ClassPrefix))
-                {
-                    FileLogger.QuietLogMessage($"Game name entered: {APWorldCodeGen.GameName}");
-                    if(APWorldCodeGen.GameName == "Chip's Challenge"
-                        || APWorldCodeGen.GameName == "Chip's Challenge 2")
-                    {
-                        FileLogger.LogMessage($"The game name \"{APWorldCodeGen.GameName}\" may cause conflicts if other players are playing the base {APWorldCodeGen.GameName} Archipelago. Please enter a different game name.");
-                        continue;
-                    }
-                    Console.Write($"Invalid game name. Enter a game name: ");
-                    APWorldCodeGen.GameName = Console.ReadLine();
-                }
-                FileLogger.QuietLogMessage($"Finalized game name: {APWorldCodeGen.GameName}");
-
-                #endregion
-
-                #region Get author name
-
-                Console.Write("Enter your username, as author of this APWorld: ");
-                APWorldCodeGen.AuthorName = Console.ReadLine();
-                FileLogger.QuietLogMessage($"Finalized author name: {APWorldCodeGen.GameName}");
-
-                #endregion
+                var files = CheckLevelList();
+                PromptAPGameName();
+                PromptAPWorldAuthor();
 
                 List<byte> combinedFileData = [];
-                int fileIndex = 1;
-                string filePath = $"./levels/map{fileIndex:000}.c2m";
-                while(File.Exists(filePath))
+                int levelIndex = 1;
+                foreach(string file in files)
                 {
                     try
                     {
-                        FileLogger.LogMessage($"Processing file {filePath}...");
-                        combinedFileData.AddRange(File.ReadAllBytes(filePath));
-                        byte[] mapData = FileLoader.LoadMapData(filePath);
-                        APWorldCodeGen.BuildLevelData(mapData);
-                        FileLogger.QuietLogMessage($"Level {FileLoader.LevelName} added to list");
-                        fileIndex++;
-                        filePath = $"./levels/map{fileIndex:000}.c2m";
+                        FileLogger.LogMessage($"Processing file {file}...");
+                        byte[] mapData = FileLoader.LoadMapData(file);
+                        APWorldCodeGen.BuildLevelData(mapData, levelIndex);
+                        FileLogger.QuietLogMessage($"Map {levelIndex} - {FileLoader.LevelName} added to list");
+                        combinedFileData.AddRange(File.ReadAllBytes(file));
+                        levelIndex++;
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        FileLogger.LogMessage($"Error processing file {filePath}");
-                        throw;
+                        FileLogger.LogException($"Error processing file {file}", e);
                     }
                 }
-                FileLogger.LogMessage($"File {filePath} not found, assuming end of level sequence");
                 ValidateLevelData();
                 var stageHash = GetFileHash(combinedFileData);
                 APWorldCodeGen.GenerateClassFiles(stageHash);
@@ -102,6 +57,77 @@ namespace GalaxyGauntlet.APWorldGen
         }
 
 
+        private static void CheckForLevelDirectory()
+        {
+            if (false == Directory.Exists(LevelDirectory))
+            {
+                Directory.CreateDirectory(LevelDirectory);
+                FileLogger.LogMessage("Level directory created");
+            }
+        }
+
+
+        private static string[] CheckLevelList()
+        {
+            var result = GGG.GetLevelList();
+            if (result.Length == 0)
+            {
+                throw new($"No c2m files found in levels folder");
+            }
+            // Remove files to ignore
+            result = result
+                .Where(e => false == 
+                    APWorldCodeGen.LevelOverrides.IgnoreFiles.Any(f => 
+                        e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase)))
+                .ToArray();
+
+            return result;
+        }
+
+
+        /// <summary>
+        /// Prompt the user for the name of the game for this AP World
+        /// </summary>
+        private static void PromptAPGameName()
+        {
+            Console.Write("Enter a game name: ");
+            APWorldCodeGen.GameName = Console.ReadLine();
+            while (string.IsNullOrEmpty(APWorldCodeGen.GameName)
+                || string.IsNullOrEmpty(APWorldCodeGen.ClassPrefix))
+            {
+                FileLogger.QuietLogMessage($"Game name entered: {APWorldCodeGen.GameName}");
+                if (APWorldCodeGen.GameName == "Chip's Challenge"
+                    || APWorldCodeGen.GameName == "Chip's Challenge 2")
+                {
+                    FileLogger.LogMessage($"The game name \"{APWorldCodeGen.GameName}\" may cause conflicts if other players are playing the base {APWorldCodeGen.GameName} Archipelago. Please enter a different game name.");
+                    continue;
+                }
+                Console.Write($"Invalid game name. Enter a game name: ");
+                APWorldCodeGen.GameName = Console.ReadLine();
+            }
+            FileLogger.QuietLogMessage($"Finalized game name: {APWorldCodeGen.GameName}");
+        }
+
+
+        /// <summary>
+        /// Prompt the user for the author name of this AP World
+        /// </summary>
+        private static void PromptAPWorldAuthor()
+        {
+            Console.Write("Enter your username, as author of this APWorld: ");
+            APWorldCodeGen.AuthorName = Console.ReadLine();
+            while(string.IsNullOrEmpty(APWorldCodeGen.AuthorName))
+            {
+                Console.Write("Please specify an author: ");
+                APWorldCodeGen.AuthorName = Console.ReadLine();
+            }
+            FileLogger.QuietLogMessage($"Finalized author name: {APWorldCodeGen.GameName}");
+        }
+
+
+        /// <summary>
+        /// Validate that the given level set can be used to generate a proper Archipelago randomizer.
+        /// </summary>
         private static void ValidateLevelData()
         {
             if (APWorldCodeGen.LevelNames.Count < 8)

@@ -1,7 +1,6 @@
 global using Godot;
 global using GalaxyGauntlet.Common;
 global using System.IO;
-using System.Collections.Generic;
 using GalaxyGauntlet.scripts;
 
 public static class Global
@@ -61,27 +60,4 @@ public static class Global
         }
         return result;
     }
-
-
-    public static string[] GetLevelList()
-    {
-        string levelPath = "./levels";
-        Directory.CreateDirectory(levelPath);
-        int levelIndex = 1;
-        List<string> resultList = [];
-        while (true)
-        {
-            string levelFile = $"./levels/map{levelIndex:000}.c2m";
-            string fullPath = Path.GetFullPath(levelFile);
-            if (false == File.Exists(fullPath))
-            {
-                break;
-            }
-
-            resultList.Add(fullPath);
-            levelIndex++;
-        }
-        return resultList.ToArray();
-    }
-
 }

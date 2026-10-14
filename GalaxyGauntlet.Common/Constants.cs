@@ -6,15 +6,34 @@ namespace GalaxyGauntlet.Common
     {
         public static string GameName = "Galaxy Gauntlet";
 
-        public static string GameVersion = "0.0.5";
+        public static string GameVersion = "0.0.6";
+
+        public static class ScenePaths
+        {
+            public const string GameplayScreen = "res://screens/GameplayScreen/GameplayScreen.tscn";
+            public const string LevelSelect = "res://screens/LevelSelect/LevelSelect.tscn";
+            public const string SettingsMenu = "res://screens/SettingsMenu/SettingsMenu.tscn";
+            public const string TitleMenu = "res://screens/TitleMenu/TitleMenu.tscn";
+        }
+
+        public static class SaveSlotNames
+        {
+            public const string Autosave = "autosave";
+            public const string Archipelago = "archipelago";
+        }
 
         public static class Archipelago
         {
+
             public static class SlotDataKeys
             {
                 public const string PlayerSprite = "player_sprite";
                 public const string LevelHash = "level_hash";
                 public const string DeathLink = "death_link";
+                public const string MinimumScoreGoal = "minimum_score_goal";
+                public const string GameVersion = "game_version";
+                public const string IgnoreLevelFiles = "ignore_level_files";
+                public const string SaveData = "save_data";
             }
 
 
@@ -37,7 +56,7 @@ namespace GalaxyGauntlet.Common
                 public const string TimePenalty = "Time Penalty";
                 public const string TeethTrap = "Teeth";
                 public const string WalkerTrap = "Walker";
-                public const string ConfusionTrap = "Confusion Trap";
+                public const string ConfusionTrap = "Confusion";
 
                 public const string Filler = "Filler";
             }

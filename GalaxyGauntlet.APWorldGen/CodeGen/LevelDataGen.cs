@@ -10,8 +10,11 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             List<string> levelData = [
                 "level_data = \\"
             ];
-            List<string> levelItems = [
-                "level_items = {"
+            List<string> ingameItems = [
+                "game_items = {"
+            ];
+            List<string> levelNames = [
+                "level_names = {"
             ];
             List<string> requiredItems = [
                 "required_items = {"
@@ -22,17 +25,18 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
 
             int itemId = 1000000;
             List<string> requiredKeysOrBoots = [];
+            int levelIndex = 1;
             foreach(var level in LevelDataSet.Levels)
             {
                 requiredItems.AddRange([
-                    $"    \"{level.LevelName}\": {itemId++},",
-                    $"    \"{level.LevelName} (No Resets)\": {itemId++},"
+                    $"    \"Complete Map {levelIndex} - {level.LevelName}\": {itemId++},",
+                    $"    \"Complete Map {levelIndex} - {level.LevelName} (No Resets)\": {itemId++},"
                 ]);
                 foreach(var requiredItem in level.ItemsPresent)
                 {
                     if(false == requiredKeysOrBoots.Contains(requiredItem))
                     {
-                        levelItems.AddRange([
+                        ingameItems.AddRange([
                             $"    \"{requiredItem}\": {itemId++},"
                         ]);
                         requiredKeysOrBoots.Add(requiredItem);
@@ -41,28 +45,33 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
 
                 foreach(var chip in level.ChipLocations)
                 {
-                    chipItems.Add($"    \"{level.LevelName} Chip {chip}\": {itemId++},");
+                    chipItems.Add($"    \"Map {levelIndex} - {level.LevelName} Chip {chip}\": {itemId++},");
                 }
+                levelNames.Add($"    \"Map {levelIndex} - {level.LevelName}\": {itemId++},");
+                levelIndex++;
             }
 
-            string json = SCGlobal.ToJson(LevelDataSet);
+            string json = GGG.ToJson(LevelDataSet);
             levelData.Add(json);
 
             // Remove trailing comma off of last item in list
             levelData[^1] = levelData[^1][..^1];
-            levelItems[^1] = levelItems[^1][..^1];
+            ingameItems[^1] = ingameItems[^1][..^1];
+            levelNames[^1] = levelNames[^1][..^1];
             requiredItems[^1] = requiredItems[^1][..^1];
             chipItems[^1] = chipItems[^1][..^1];
 
             // Close dict objects
             levelData.AddRange(["}", ""]);
-            levelItems.AddRange(["}", ""]);
+            ingameItems.AddRange(["}", ""]);
+            levelNames.AddRange(["}", ""]);
             requiredItems.AddRange(["}", ""]);
             chipItems.Add("}");
 
             List<string> fileLines = [];
             fileLines.AddRange(levelData);
-            fileLines.AddRange(levelItems);
+            fileLines.AddRange(ingameItems);
+            fileLines.AddRange(levelNames);
             fileLines.AddRange(requiredItems);
             fileLines.AddRange(chipItems);
             WriteFileContents("level_data.py", fileLines);

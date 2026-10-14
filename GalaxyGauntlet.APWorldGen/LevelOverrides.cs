@@ -6,6 +6,9 @@ namespace GalaxyGauntlet.APWorldGen
     {
         [JsonPropertyName("level_overrides")]
         public LevelOverride[] Overrides { get; set; }
+
+        [JsonPropertyName("ignore_files")]
+        public string[] IgnoreFiles { get; set; }
     }
 
     public class LevelOverride

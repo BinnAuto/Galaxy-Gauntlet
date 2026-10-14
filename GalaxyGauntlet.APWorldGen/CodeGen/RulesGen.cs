@@ -7,7 +7,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
         public static void GenerateRulesClass()
         {
             FileLogger.QuietLogMessage("Creating rules.py...");
-            string firstLevelName = LevelNames[0];
+            string firstLevelName = $"Map 1 - {LevelNames[0]}";
             List<string> fileLines = [
                 "from __future__ import annotations",
                 "from typing import TYPE_CHECKING",
@@ -24,7 +24,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "",
                 $"def set_entrance_rules(world: {ClassPrefix}World) -> None:",
                 "    for level in level_data[\"levels\"]:",
-                "        level_name = level[\"level_name\"]",
+                "        level_name = f\"Map {level[\"level_number\"]} - {level[\"level_name\"]}\"",
                 "        items_required:list[str] = level[\"items_required\"]",
                 "        items_required.append(level_name)",
                 "        entrance_rule = HasAll(*items_required)",
@@ -35,11 +35,11 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    pass",
                 "",
                 $"def set_completion_condition(world: {ClassPrefix}World) -> None:",
-                $"    rule:CanReachLocation = CanReachLocation(\"{firstLevelName}\")",
+                $"    rule:CanReachLocation = CanReachLocation(\"Complete {firstLevelName}\")",
                 "    for level in level_data[\"levels\"]:",
-                "        level_name = level[\"level_name\"]",
-                $"        if level_name != \"{firstLevelName}\":",
-                "            rule = rule & CanReachLocation(level_name)",
+                "        location_name = f\"Complete Map {level[\"level_number\"]} - {level[\"level_name\"]}\"",
+                $"        if location_name != \"Complete {firstLevelName}\":",
+                "            rule = rule & CanReachLocation(location_name)",
                 "    world.set_completion_rule(rule)"
             ];
 

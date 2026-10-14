@@ -5,10 +5,12 @@ using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Models;
 using GalaxyGauntlet.scripts.MapEntities;
 using GalaxyGauntlet.scripts.MapEntities.Shared;
+using GalaxyGauntlet.scripts.SaveData;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using DeathLinkData = Archipelago.MultiClient.Net.BounceFeatures.DeathLink.DeathLink;
 
@@ -36,6 +38,7 @@ namespace GalaxyGauntlet.scripts
         public static long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
         private static List<long> LocationIDsChecked = [];
         public static List<string> ItemsReceived = [];
+        public static string[] APLevelFilesToIgnore = [];
         public static List<MapItem> PendingItems = [];
         public static string GameName;
         private static string Server;
@@ -46,6 +49,34 @@ namespace GalaxyGauntlet.scripts
         private static bool InitialProcessingComplete = false;
         private static Dictionary<string, object> SlotData = [];
         private static Dictionary<long, ScoutedItemInfo> ScoutedItems = [];
+
+        public static int TotalLevelsCompletedInAP
+        {
+            get
+            {
+                var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+                if(archipelagoData is null || archipelagoData.HighScores.Count == 0)
+                {
+                    return 0;
+                }
+
+                return archipelagoData.HighScores.Count;
+            }
+        }
+
+        public static long TotalScoreInAP
+        {
+            get
+            {
+                var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+                if (archipelagoData is null || archipelagoData.HighScores.Count == 0)
+                {
+                    return 0;
+                }
+
+                return archipelagoData.HighScores.Sum(e => e.Value);
+            }
+        }
 
         public static List<string> LocationsChecked
         {
@@ -87,6 +118,23 @@ namespace GalaxyGauntlet.scripts
                 SlotId = Session.Players.ActivePlayer.Slot;
 
                 SlotData = ((LoginSuccessful)loginResult).SlotData;
+
+                // Load Archipelago save
+                var saveData = Session.DataStorage[Constants.Archipelago.SlotDataKeys.SaveData];
+                string saveDataJson = $"{await saveData.GetAsync()}";
+                GD.Print($"Save data: {saveDataJson}");
+                SaveSlot archipelagoSlot = JsonSerializer.Deserialize<SaveSlot>(saveDataJson);
+                SaveData.SaveData.WriteSaveSlot(archipelagoSlot);
+                archipelagoSlot = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+                GD.Print(archipelagoSlot.SlotName);
+
+                // Load list of level files to ignore
+                APLevelFilesToIgnore = [];
+                string ignoreFiles = SlotData[Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
+                if(false == string.IsNullOrEmpty(ignoreFiles))
+                {
+                    APLevelFilesToIgnore = ignoreFiles.Split('|');
+                }
 
                 // Get Player Sprite
                 try
@@ -181,6 +229,12 @@ namespace GalaxyGauntlet.scripts
         }
 
 
+        public static void SetDataStorage(string key, string value)
+        {
+            Session.DataStorage[key] = value;
+        }
+
+
         public static T GetAPSlotDataKey<T>(string key)
         {
             if(false == SlotData.ContainsKey(key))
@@ -189,6 +243,12 @@ namespace GalaxyGauntlet.scripts
             }
 
             return (T)SlotData[key];
+        }
+
+
+        public static long GetLocationId(string locationName)
+        {
+            return Session.Locations.GetLocationIdFromName(GameName, locationName);
         }
 
 
@@ -205,6 +265,7 @@ namespace GalaxyGauntlet.scripts
 
         public static void SendAPLocationCheck(string locationName)
         {
+            GD.Print($"Sending location {locationName}");
             long locationId = GetAPLocationId(locationName);
             if(locationId == -1)
             {
@@ -252,6 +313,7 @@ namespace GalaxyGauntlet.scripts
             Session = null;
             DeathLinkService = null;
             LocationIDsChecked = [];
+            APLevelFilesToIgnore = [];
             PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
             GameName = string.Empty;
             Server = string.Empty;
@@ -261,6 +323,8 @@ namespace GalaxyGauntlet.scripts
             Password = string.Empty;
             SlotData = [];
             PendingItems = [];
+            SaveData.SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Archipelago);
+            SaveData.SaveData.WriteSaveSlot(new SaveData.SaveSlot(Constants.SaveSlotNames.Archipelago));
         }
 
 

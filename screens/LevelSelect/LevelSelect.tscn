@@ -74,3 +74,36 @@ FontSize = 30
 
 [node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("8_c3t5n")]
 visible = false
+
+[node name="ArchipelagoDisplay" type="Node2D" parent="." unique_id=2117108302]
+visible = false
+
+[node name="TotalScoreLabel" type="Label" parent="ArchipelagoDisplay" unique_id=1384599568]
+offset_left = 19.0
+offset_top = 21.0
+offset_right = 160.0
+offset_bottom = 56.0
+theme_override_font_sizes/font_size = 25
+text = "Total Score"
+
+[node name="TotalScore" type="Label" parent="ArchipelagoDisplay" unique_id=1116906299]
+offset_left = 19.0
+offset_top = 58.0
+offset_right = 160.0
+offset_bottom = 93.0
+theme_override_font_sizes/font_size = 25
+
+[node name="LevelsCompletedLabel" type="Label" parent="ArchipelagoDisplay" unique_id=121957005]
+offset_left = 21.0
+offset_top = 120.0
+offset_right = 234.0
+offset_bottom = 155.0
+theme_override_font_sizes/font_size = 25
+text = "Levels Completed"
+
+[node name="LevelsCompleted" type="Label" parent="ArchipelagoDisplay" unique_id=520527996]
+offset_left = 21.0
+offset_top = 157.0
+offset_right = 162.0
+offset_bottom = 192.0
+theme_override_font_sizes/font_size = 25

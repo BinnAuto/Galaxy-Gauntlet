@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.APWorldGen
 {
     public class APWorldLevelDataSet
     {
-        [JsonPropertyName("level_items")]
+        [JsonPropertyName("game_items")]
         public string[] LevelItems { get; set; } = ["Red Key", "Blue Key", "Green Key", "Yellow Key", "Suction Boots", "Fire Boots", "Ice Skates", "Flippers"];
 
         [JsonPropertyName("levels")]
@@ -17,6 +17,9 @@ namespace GalaxyGauntlet.APWorldGen
     {
         [JsonPropertyName("level_name")]
         public string LevelName { get; set; } = string.Empty;
+
+        [JsonPropertyName("level_number")]
+        public int LevelNumber { get; set; }
 
         [JsonPropertyName("items_present")]
         public string[] ItemsPresent { get; set; } = [];

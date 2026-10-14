@@ -68,12 +68,14 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    def get_filler_item_name(self) -> str:",
                 "        return \"Filler\"",
                 "",
-                "    def fill_slot_name(self) -> Mapping[str, Any]:", 
+                "    def fill_slot_name(self) -> Mapping[str, Any]:",
                 "        return {}",
                 "",
                 "    def fill_slot_data(self):",
                 "        slot_data = {option_name: getattr(self.options, option_name).value for option_name in self.options.__dict__.keys()}",
                 $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.LevelHash}\"] = \"{stageHash}\"",
+                $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.GameVersion}\"] = \"{Constants.GameVersion}\"",
+                $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles}\"] = \"{string.Join("|", LevelOverrides.IgnoreFiles)}\"",
                 "        return slot_data"
             ]);
 

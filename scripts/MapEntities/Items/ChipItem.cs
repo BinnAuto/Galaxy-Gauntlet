@@ -43,7 +43,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public string GetArchipelagoLocationName()
         {
-            return $"{GameData.LevelName} Chip {Coordinate}";
+            return $"Map {GameData.CurrentLevelIndex+1} - {GameData.LevelName} Chip {Coordinate}";
         }
     }
 }

@@ -5,8 +5,6 @@ namespace GalaxyGauntlet.scripts.SaveData
 {
     public static class SaveData
     {
-        public static string AutosaveSlotName = "autosave";
-
         public static SaveDataInstance Instance;
 
         private const string SaveDataPath = "user://savedata.gg";
@@ -74,7 +72,7 @@ namespace GalaxyGauntlet.scripts.SaveData
 
         public static void Save()
         {
-            string saveData = SCGlobal.ToJson(Instance);
+            string saveData = GGG.ToJson(Instance);
             using var file = Godot.FileAccess.Open(SaveDataPath, Godot.FileAccess.ModeFlags.Write);
             file.StoreString(saveData);
         }

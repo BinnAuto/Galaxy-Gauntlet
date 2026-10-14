@@ -9,7 +9,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             FileLogger.QuietLogMessage("Creating items.py...");
             List<string> fileLines = [
                 "from __future__ import annotations",
-                "from .level_data import level_data, required_items, level_items",
+                "from .level_data import level_data, level_names, game_items",
                 "from typing import TYPE_CHECKING",
                 "from BaseClasses import Item, ItemClassification",
                 "import random",
@@ -45,7 +45,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 $"    \"{Constants.Archipelago.ItemNames.ConfusionTrap}\": 103",
                 "}",
                 "",
-                "item_name_to_id:dict[str, int] = { key: value for key, value in {**required_items, **level_items, **extra_items, **trap_items, **{\"Filler\": 1}}.items() }",
+                "item_name_to_id:dict[str, int] = { key: value for key, value in {**level_names, **game_items, **extra_items, **trap_items, **{\"Filler\": 1}}.items() }",
                 "",
                 $"def create_item(world:{ClassPrefix}World, item_name:str, classification:ItemClassification, item_id:int) -> {ClassPrefix}Item:",
                 "    item_from_table = all_items.get(item_name)",
@@ -56,7 +56,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "",
                 "    ## Add level unlock items",
                 "    for level in level_data[\"levels\"]:",
-                "        level_name = level[\"level_name\"]",
+                "        level_name = f\"Map {level[\"level_number\"]} - {level[\"level_name\"]}\"",
                 $"        cc_item:{ClassPrefix}Item = {ClassPrefix}Item(level_name, ItemClassification.progression, item_name_to_id[level_name], world.player)",
                 "        all_items[level_name] = cc_item",
                 "        item_name_to_id[cc_item.name] = cc_item.code",

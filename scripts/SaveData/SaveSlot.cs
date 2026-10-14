@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace GalaxyGauntlet.scripts.SaveData
 {
     public class SaveSlot(string slotName)
@@ -9,5 +11,7 @@ namespace GalaxyGauntlet.scripts.SaveData
         public int LevelCount { get; set; } = 0;
 
         public string LevelHash { get; set; }
+
+        public Dictionary<int, long> HighScores { get; set; } = [];
     }
 }

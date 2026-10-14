@@ -31,27 +31,20 @@ public partial class SettingsMenu : Node
 	#endregion
 
 
-	private void ToTitleScreen()
-	{
-		string titleMenuPath = "res://screens/TitleMenu/TitleMenu.tscn";
-		GetTree().ChangeSceneToFile(titleMenuPath);
-	}
-
-
 	#region Event Handlers
 
 	private void OnCancelPressed()
 	{
-		ToTitleScreen();
-	}
+        GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+    }
 
 
 	private void OnSavePressed()
 	{
 		GameData.TickRate = TickRate.Value;
 		GameData.SaveSettings();
-		ToTitleScreen();
-	}
+        GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+    }
 
 	#endregion
 

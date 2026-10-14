@@ -32,7 +32,7 @@ namespace GalaxyGauntlet.scripts
 		public static int MapViewportSize = 9;
 		public static int ChipsRequired = 0;
 		public static int ChipsCollected = 0;
-		public static int CurrentLevelNumber = 1;
+		public static int CurrentLevelIndex = 1;
 		public static string LevelName = string.Empty;
 		public static string LevelHint = string.Empty;
 		public static int LevelRestarts = 0;
@@ -110,10 +110,11 @@ namespace GalaxyGauntlet.scripts
 			TimerEnabled = false;
 			if (GameMode == GameMode.Archipelago)
 			{
-				SendAPLocationCheck(LevelName);
+				string location = $"Complete Map {CurrentLevelIndex + 1} - {LevelName}";
+				SendAPLocationCheck(location);
 				if(LevelRestarts == 0)
 				{
-					string location = $"{LevelName} (No Resets)";
+					location += " (No Resets)";
 					SendAPLocationCheck(location);
 				}
 			}
@@ -122,12 +123,12 @@ namespace GalaxyGauntlet.scripts
 
 		public static bool OnNextLevel()
 		{
-			var autosave = SaveData.SaveData.GetSaveSlot(SaveData.SaveData.AutosaveSlotName);
+			var autosave = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Autosave);
 			LevelRestarts = 0;
-			CurrentLevelNumber++;
-			autosave.CurrentLevelNumber = CurrentLevelNumber;
+			CurrentLevelIndex++;
+			autosave.CurrentLevelNumber = CurrentLevelIndex;
 			SaveData.SaveData.WriteSaveSlot(autosave);
-			if(CurrentLevelNumber > autosave.LevelCount)
+			if(CurrentLevelIndex > autosave.LevelCount)
 			{
 				// All levels have been beaten
 				return true;
