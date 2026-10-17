@@ -14,8 +14,6 @@ public partial class SettingsMenu : Node
 
 	private UIButton SaveButton;
 
-    private AudioStreamPlayer2D Music;
-
     #endregion
 
     private bool _processMasterVolume = false;
@@ -48,9 +46,6 @@ public partial class SettingsMenu : Node
 
 		SaveButton = (UIButton)GetNode(nameof(SaveButton));
 		SaveButton.Pressed += OnSavePressed;
-
-        Music = (AudioStreamPlayer2D)GetNode(nameof(Music));
-        LoadMusic();
     }
 
 
@@ -67,27 +62,6 @@ public partial class SettingsMenu : Node
     }
 
     #endregion
-
-    private void LoadMusic()
-    {
-        // Build missing directories
-        if (false == Directory.Exists("./custom")
-            || false == Directory.Exists("./custom/music")
-            || false == Directory.Exists("./custom/music/menu"))
-        {
-            return;
-        }
-
-        string audioFile = GGG.GetRandomMusicFile("./custom/music/menu");
-        if (string.IsNullOrEmpty(audioFile))
-        {
-            return;
-        }
-
-        var audioStream = GGG.BuildAudioStream(audioFile);
-        Music.Stream = audioStream;
-        Music.Play();
-    }
 
     #region Event Handlers
 

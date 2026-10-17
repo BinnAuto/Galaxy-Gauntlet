@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_p6gnr"]
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_8gnst"]
 [ext_resource type="PackedScene" uid="uid://b0l44g3u1jlr4" path="res://prefabs/UISlider/UISlider.tscn" id="5_8gnst"]
+[ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="6_v1qaq"]
 
 [node name="SettingsMenu" type="Node2D" unique_id=249067466]
 script = ExtResource("1_id505")
@@ -57,5 +58,7 @@ position = Vector2(0, 280)
 LabelText = "Music Volume"
 ValueLabelSuffix = "%"
 
-[node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=625353492]
-bus = &"Music"
+[node name="Music" parent="." unique_id=1124690937 instance=ExtResource("6_v1qaq")]
+SourceFolder = "./custom/music/menu"
+IncludeSharedFiles = false
+CooldownMS = 15

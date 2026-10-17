@@ -29,49 +29,6 @@ namespace GalaxyGauntlet.Common
             return files;
         }
 
-        #region Audio Methods
-
-        public static string GetRandomMusicFile(string directory)
-        {
-            return GetRandomMusicFile(directory, true);
-        }
-
-
-        public static AudioStream BuildAudioStream(string filePath)
-        {
-            // TODO: Add support for WAV and OGG file types
-            AudioStreamMP3 result = new()
-            {
-                Data = File.ReadAllBytes(filePath)
-            };
-            return result;
-        }
-
-
-        public static string GetRandomMusicFile(string directory, bool fallbackToRoot)
-        {
-            // TODO: Add support for WAV and OGG file types
-            string[] files = Directory.GetFiles(directory, "*.mp3");
-            if(files.Length == 0)
-            {
-                if(false == fallbackToRoot)
-                {
-                    return string.Empty;
-                }
-
-                files = Directory.GetFiles("./custom/music", "*.mp3");
-            }
-            if(files.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            RandomNumberGenerator rng = new();
-            int songIndex = rng.RandiRange(0, files.Length - 1);
-            string result = files[songIndex];
-            return result;
-        }
-
 
         public static void SetBusVolume(string busName, double value)
         {
@@ -84,7 +41,5 @@ namespace GalaxyGauntlet.Common
             value *= VolumeMultiplier;
             AudioServer.SetBusVolumeLinear(busIndex, (float)value);
         }
-
-        #endregion
     }
 }

@@ -27,7 +27,6 @@ public partial class TitleMenu : Node
 
 	private Label Version;
 
-	private AudioStreamPlayer2D Music;
 
 	#region Godot Overrides
 
@@ -68,10 +67,6 @@ public partial class TitleMenu : Node
 			Version = (Label)GetNode(nameof(Version));
 			Version.Text = $"v{Constants.GameVersion}";
 
-			Music = (AudioStreamPlayer2D)GetNode(nameof(Music));
-			LoadMusic();
-			Music.Finished += LoadMusic;
-
 			SaveData.Load();
 			ContinueButton.Visible = SaveData.SaveSlotExists(Constants.SaveSlotNames.Autosave);
 			FileLogger.QuietLogMessage("Title screen _Ready complete");
@@ -95,29 +90,6 @@ public partial class TitleMenu : Node
 		Directory.CreateDirectory("./custom/music/menu");
 		Directory.CreateDirectory("./custom/music/level_select");
 		Directory.CreateDirectory("./custom/music/game");
-	}
-
-
-	private void LoadMusic()
-	{
-		// Build missing directories
-		if(false == Directory.Exists("./custom")
-			|| false == Directory.Exists("./custom/music")
-			|| false == Directory.Exists("./custom/music/menu"))
-		{
-			BuildLocalDirectories();
-			return;
-		}
-
-		string audioFile = GGG.GetRandomMusicFile("./custom/music/menu");
-		if(string.IsNullOrEmpty(audioFile))
-		{
-			return;
-		}
-
-		var audioStream = GGG.BuildAudioStream(audioFile);
-		Music.Stream = audioStream;
-		Music.Play();
 	}
 
 

@@ -20,8 +20,6 @@ public partial class GameplayScreen : Node
 
 	private Label HintLabel;
 
-	private AudioStreamPlayer2D Music;
-
 	private DateTime _previousPlayerProcessTime = DateTime.Parse("01/01/2000");
 
 	private DateTime _previousPlayerSlipListProcessTime = DateTime.Parse("01/01/2000");
@@ -49,10 +47,6 @@ public partial class GameplayScreen : Node
 			HintLabel = (Label)GetNode(nameof(HintLabel));
 			HintLabel.Visible = false;
 			HintLabel.Resized += OnHintLabelResized;
-
-			Music = (AudioStreamPlayer2D)GetNode(nameof(Music));
-			LoadMusic();
-			Music.Finished += LoadMusic;
 
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.LevelHint;
@@ -106,28 +100,6 @@ public partial class GameplayScreen : Node
 	}
 
 	#endregion
-
-
-	private void LoadMusic()
-	{
-		// Build missing directories
-		if (false == Directory.Exists("./custom")
-			|| false == Directory.Exists("./custom/music")
-			|| false == Directory.Exists("./custom/music/game"))
-		{
-			return;
-		}
-
-		string audioFile = GGG.GetRandomMusicFile("./custom/music/game");
-		if (string.IsNullOrEmpty(audioFile))
-		{
-			return;
-		}
-
-		var audioStream = GGG.BuildAudioStream(audioFile);
-		Music.Stream = audioStream;
-		Music.Play();
-	}
 
 	private void UpdateLabels()
 	{

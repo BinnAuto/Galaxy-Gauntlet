@@ -2,11 +2,27 @@
 
 [ext_resource type="PackedScene" uid="uid://b3pk27uc7a2ci" path="res://prefabs/MapDisplay/MapDisplay.tscn" id="1_75xg4"]
 [ext_resource type="Script" uid="uid://c3mkr4y2306kn" path="res://screens/GameplayScreen/GameplayScreen.cs" id="1_ed854"]
+[ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_lwhh6"]
 [ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="3_bfflv"]
+[ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_cms3p"]
 [ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="4_l2pm1"]
+[ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="5_gpxbn"]
 
 [node name="GameplayScreen" type="Node2D" unique_id=43287349]
 script = ExtResource("1_ed854")
+
+[node name="Pixel" type="Sprite2D" parent="." unique_id=2008206015]
+modulate = Color(0, 0, 0, 1)
+position = Vector2(577.125, 322.375)
+scale = Vector2(1164.2499, 659.25)
+texture = ExtResource("2_lwhh6")
+
+[node name="Gradient" type="Sprite2D" parent="." unique_id=284452716]
+modulate = Color(0, 0, 0.38039216, 1)
+texture_filter = 2
+position = Vector2(579, 514)
+scale = Vector2(1168, 515.75)
+texture = ExtResource("3_cms3p")
 
 [node name="MapDisplay" parent="." unique_id=2092090514 instance=ExtResource("1_75xg4")]
 position = Vector2(192, 192)
@@ -44,5 +60,5 @@ offset_top = 329.0
 offset_right = 891.0
 offset_bottom = 352.0
 
-[node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=372237548]
-bus = &"Music"
+[node name="Music" parent="." unique_id=1124690937 instance=ExtResource("5_gpxbn")]
+SourceFolder = "./custom/music/game"

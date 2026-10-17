@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cpgjpqlraxdut"]
+
+[ext_resource type="Script" uid="uid://c76hn7rw7n3vl" path="res://prefabs/MusicPlayer/MusicPlayer.cs" id="1_gqvig"]
+
+[node name="MusicPlayer" type="Node2D" unique_id=1124690937]
+script = ExtResource("1_gqvig")
+
+[node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=1849869159]
+bus = &"Music"
