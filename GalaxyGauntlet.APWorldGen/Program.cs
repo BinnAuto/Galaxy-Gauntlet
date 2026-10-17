@@ -9,12 +9,12 @@ namespace GalaxyGauntlet.APWorldGen
     {
         private const string LevelDirectory = "./levels";
 
-        static void Main(string[] _)
+        static void Main(string[] args)
         {
             try
             {
                 FileLogger.QuietLogMessage("Program start");
-
+                ParseArguments(args);
                 CheckForLevelDirectory();
                 APWorldCodeGen.LoadLevelOverrides();
                 var files = CheckLevelList();
@@ -57,6 +57,50 @@ namespace GalaxyGauntlet.APWorldGen
         }
 
 
+        private static void ParseArguments(string[] args)
+        {
+            if(args.Length == 0)
+            {
+                return;
+            }
+
+            try
+            {
+                for(int i = 0; i < args.Length; i++)
+                {
+                    switch(args[i].ToLower())
+                    {
+                        case "-g":
+                        case "-game":
+                            i++;
+                            APWorldCodeGen.GameName = args[i];
+                            if (APWorldCodeGen.GameName == "Chip's Challenge"
+                                || APWorldCodeGen.GameName == "Chip's Challenge 2")
+                            {
+                                FileLogger.LogMessage($"WARNING: The game name \"{APWorldCodeGen.GameName}\" may cause conflicts if other players are playing the base {APWorldCodeGen.GameName} Archipelago.");
+                            }
+                            break;
+
+                        case "-a":
+                        case "-author":
+                            i++;
+                            APWorldCodeGen.AuthorName = args[i];
+                            break;
+
+                        default:
+                            throw new($"Argument {args[i]} not recognized.");
+                    }
+                }
+            }
+            catch(Exception e)
+            {
+                FileLogger.LogException("Error occurred while parsing arguments", e);
+                APWorldCodeGen.GameName = string.Empty;
+                APWorldCodeGen.AuthorName = string.Empty;
+            }
+        }
+
+
         private static void CheckForLevelDirectory()
         {
             if (false == Directory.Exists(LevelDirectory))
@@ -90,6 +134,11 @@ namespace GalaxyGauntlet.APWorldGen
         /// </summary>
         private static void PromptAPGameName()
         {
+            if(false == string.IsNullOrEmpty(APWorldCodeGen.GameName))
+            {
+                return;
+            }
+
             Console.Write("Enter a game name: ");
             APWorldCodeGen.GameName = Console.ReadLine();
             while (string.IsNullOrEmpty(APWorldCodeGen.GameName)
@@ -114,6 +163,11 @@ namespace GalaxyGauntlet.APWorldGen
         /// </summary>
         private static void PromptAPWorldAuthor()
         {
+            if(false == string.IsNullOrEmpty(APWorldCodeGen.AuthorName))
+            {
+                return;
+            }
+
             Console.Write("Enter your username, as author of this APWorld: ");
             APWorldCodeGen.AuthorName = Console.ReadLine();
             while(string.IsNullOrEmpty(APWorldCodeGen.AuthorName))
