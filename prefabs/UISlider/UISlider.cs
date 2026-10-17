@@ -86,6 +86,8 @@ public partial class UISlider : Node
 		Slider.MaxValue = Maximum;
 		Slider.Step = Step;
 		Slider.Value = Mathf.Min(Maximum, Mathf.Max(InitialValue, Minimum));
+		Slider.DragStarted += OnDragStart;
+		Slider.DragEnded += OnDragEnded;
 
 		ValueLabel = (Label)GetNode(nameof(ValueLabel));
 		ValueLabel.Text = $"{Slider.Value}";

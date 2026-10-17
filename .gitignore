@@ -374,3 +374,4 @@ FodyWeavers.xsd
 /levels/*.c2m
 /images/map_tiles/Layered
 /levels/
+*.mp3

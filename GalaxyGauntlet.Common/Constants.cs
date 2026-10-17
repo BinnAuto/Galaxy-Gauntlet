@@ -8,6 +8,13 @@ namespace GalaxyGauntlet.Common
 
         public static string GameVersion = "0.0.6";
 
+        public static class AudioBuses
+        {
+            public const string Master = nameof(Master);
+
+            public const string Music = nameof(Music);
+        }
+
         public static class ScenePaths
         {
             public const string GameplayScreen = "res://screens/GameplayScreen/GameplayScreen.tscn";

@@ -21,7 +21,10 @@ public partial class LevelSelect : Node2D
 
 	private Label LevelsCompleted;
 
-	// Called when the node enters the scene tree for the first time.
+	private AudioStreamPlayer2D Music;
+
+	#region Godot Overrides
+
 	public override void _Ready()
 	{
 		try
@@ -48,6 +51,9 @@ public partial class LevelSelect : Node2D
 
 			LevelsCompleted = (Label)ArchipelagoDisplay.GetNode(nameof(LevelsCompleted));
 
+			Music = (AudioStreamPlayer2D)GetNode(nameof(Music));
+			LoadMusic();
+
 			BuildButtonList();
 
 			ArchipelagoDisplay.Visible = false;
@@ -70,6 +76,30 @@ public partial class LevelSelect : Node2D
 		{
 			FileLogger.LogException("Error readying Level Select screen", e);
 		}
+	}
+
+	#endregion
+
+
+	private void LoadMusic()
+	{
+		// Build missing directories
+		if (false == Directory.Exists("./custom")
+			|| false == Directory.Exists("./custom/music")
+			|| false == Directory.Exists("./custom/music/menu"))
+		{
+			return;
+		}
+
+		string audioFile = GGG.GetRandomMusicFile("./custom/music/menu");
+		if (string.IsNullOrEmpty(audioFile))
+		{
+			return;
+		}
+
+		var audioStream = GGG.BuildAudioStream(audioFile);
+		Music.Stream = audioStream;
+		Music.Play();
 	}
 
 

@@ -12,6 +12,11 @@ namespace GalaxyGauntlet.scripts
             }
         }
 
+        // Audio Settings
+        public static double MasterVolume = 50;
+
+        public static double MusicVolume = 50;
+
         private const string GameConfigFilePath = "user://gamedata.config";
 
         private const string GameDataConfigSection = "GameData";
@@ -29,7 +34,8 @@ namespace GalaxyGauntlet.scripts
                 ArchipelagoPort = (int)ConfigFile.GetValue(GameDataConfigSection, nameof(ArchipelagoPort), string.Empty);
                 SlotName = (string)ConfigFile.GetValue(GameDataConfigSection, nameof(SlotName), string.Empty);
                 ArchipelagoPassword = (string)ConfigFile.GetValue(GameDataConfigSection, nameof(ArchipelagoPassword), string.Empty);
-                GD.Print(ArchipelagoPort); GD.Print(SlotName); GD.Print(ArchipelagoPassword);
+                MasterVolume = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(MasterVolume), 50);
+                MusicVolume = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(MusicVolume), 50);
             }
             SaveSettings();
         }
@@ -43,7 +49,11 @@ namespace GalaxyGauntlet.scripts
             ConfigFile.SetValue(GameDataConfigSection, nameof(ArchipelagoPort), ArchipelagoPort.ToString());
             ConfigFile.SetValue(GameDataConfigSection, nameof(SlotName), SlotName);
             ConfigFile.SetValue(GameDataConfigSection, nameof(ArchipelagoPassword), ArchipelagoPassword);
+            ConfigFile.SetValue(GameDataConfigSection, nameof(MasterVolume), MasterVolume);
+            ConfigFile.SetValue(GameDataConfigSection, nameof(MusicVolume), MusicVolume);
             ConfigFile.Save(GameConfigFilePath);
+            GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume);
+            GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume);
         }
     }
 }

@@ -101,3 +101,6 @@ offset_top = 203.0
 offset_right = 1029.0
 offset_bottom = 226.0
 horizontal_alignment = 2
+
+[node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=1881738973]
+bus = &"Music"

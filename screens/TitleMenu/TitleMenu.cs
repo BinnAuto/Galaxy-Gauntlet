@@ -27,12 +27,15 @@ public partial class TitleMenu : Node
 
 	private Label Version;
 
+	private AudioStreamPlayer2D Music;
+
 	#region Godot Overrides
 
 	public override void _Ready()
 	{
 		try
 		{
+			BuildLocalDirectories();
 			GameData.LoadSettings();
 
 			NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
@@ -65,7 +68,10 @@ public partial class TitleMenu : Node
 			Version = (Label)GetNode(nameof(Version));
 			Version.Text = $"v{Constants.GameVersion}";
 
-			Directory.CreateDirectory("./levels");
+			Music = (AudioStreamPlayer2D)GetNode(nameof(Music));
+			LoadMusic();
+			Music.Finished += LoadMusic;
+
 			SaveData.Load();
 			ContinueButton.Visible = SaveData.SaveSlotExists(Constants.SaveSlotNames.Autosave);
 			FileLogger.QuietLogMessage("Title screen _Ready complete");
@@ -79,6 +85,40 @@ public partial class TitleMenu : Node
 	}
 
 	#endregion
+
+	private static void BuildLocalDirectories()
+	{
+		Directory.CreateDirectory("./levels");
+		Directory.CreateDirectory("./logs");
+		Directory.CreateDirectory("./custom");
+		Directory.CreateDirectory("./custom/music");
+		Directory.CreateDirectory("./custom/music/menu");
+		Directory.CreateDirectory("./custom/music/level_select");
+		Directory.CreateDirectory("./custom/music/game");
+	}
+
+
+	private void LoadMusic()
+	{
+		// Build missing directories
+		if(false == Directory.Exists("./custom")
+			|| false == Directory.Exists("./custom/music")
+			|| false == Directory.Exists("./custom/music/menu"))
+		{
+			BuildLocalDirectories();
+			return;
+		}
+
+		string audioFile = GGG.GetRandomMusicFile("./custom/music/menu");
+		if(string.IsNullOrEmpty(audioFile))
+		{
+			return;
+		}
+
+		var audioStream = GGG.BuildAudioStream(audioFile);
+		Music.Stream = audioStream;
+		Music.Play();
+	}
 
 
 	#region Event Handlers
@@ -262,7 +302,7 @@ public partial class TitleMenu : Node
 	}
 
 
-	private bool ValidateLevelsForArchipelago()
+	private static bool ValidateLevelsForArchipelago()
 	{
 		string[] files = GGG.GetLevelList();
 		int levelNumber = 1;

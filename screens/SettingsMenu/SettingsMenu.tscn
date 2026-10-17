@@ -46,3 +46,16 @@ Minimum = 80.0
 Maximum = 150.0
 Step = 5.0
 ValueLabelSuffix = "%"
+
+[node name="MasterVolume" parent="." unique_id=1147235078 instance=ExtResource("5_8gnst")]
+position = Vector2(0, 140)
+LabelText = "Master Volume"
+ValueLabelSuffix = "%"
+
+[node name="MusicVolume" parent="." unique_id=905675681 instance=ExtResource("5_8gnst")]
+position = Vector2(0, 280)
+LabelText = "Music Volume"
+ValueLabelSuffix = "%"
+
+[node name="Music" type="AudioStreamPlayer2D" parent="." unique_id=625353492]
+bus = &"Music"
