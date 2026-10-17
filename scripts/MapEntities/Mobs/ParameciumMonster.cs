@@ -39,6 +39,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
         public override void ProcessTick()
         {
             var currentTile = GameData.GetMapTile(Coordinate);
+            if(CheckIfOnTrap(Forward))
+            {
+                return;
+            }
 
             #region Force Floor
 
