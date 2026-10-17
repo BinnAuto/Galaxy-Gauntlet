@@ -28,7 +28,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_N,
 						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_N,
 						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_N,
-						_ => Constants.SpriteCoordinates.Player_N
+                        Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_N,
+                        _ => Constants.SpriteCoordinates.Player_N
 					},
 					EntityOrientation.East => GameData.PlayerSpriteIndex switch
 					{
@@ -39,7 +40,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_E,
 						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_E,
 						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_E,
-						_ => Constants.SpriteCoordinates.Player_E
+                        Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_E,
+                        _ => Constants.SpriteCoordinates.Player_E
 					},
 					EntityOrientation.South => GameData.PlayerSpriteIndex switch
 					{
@@ -50,6 +52,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_S,
 						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_S,
 						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_S,
+						Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_S,
 						_ => Constants.SpriteCoordinates.Player_S
 					},
 					EntityOrientation.West => GameData.PlayerSpriteIndex switch
@@ -61,7 +64,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_W,
 						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_W,
 						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_W,
-						_ => Constants.SpriteCoordinates.Player_W
+                        Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_W,
+                        _ => Constants.SpriteCoordinates.Player_W
 					},
 					_ => throw new NotImplementedException()
 				};

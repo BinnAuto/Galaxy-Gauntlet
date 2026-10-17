@@ -283,13 +283,13 @@ public partial class GameplayScreen : Node
 				break;
 
 			case GameMode.QuickPlay:
-                GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
-                break;
+				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				break;
 
 			case GameMode.Archipelago:
-                // TODO: Score checks and goal condition
-                GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
-                break;
+				GameData.CheckArchipelagoGoal();
+				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				break;
 		}
 	}
 

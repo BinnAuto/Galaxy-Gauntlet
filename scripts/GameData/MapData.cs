@@ -132,7 +132,7 @@ namespace GalaxyGauntlet.scripts
 							MobProcessList.Add(dirtBlock);
 							MapMobs[x, y] = dirtBlock;
 						}
-						// TODO: Generalize to all monsters
+						// TODO: Generalize below to all monsters
 						if (MapData[i] == Constants.ByteCodes.Entities.Teeth)
 						{
 							// Item is hidden under a Teeth

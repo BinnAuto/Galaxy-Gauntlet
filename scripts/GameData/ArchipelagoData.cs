@@ -40,15 +40,32 @@ namespace GalaxyGauntlet.scripts
         public static List<string> ItemsReceived = [];
         public static string[] APLevelFilesToIgnore = [];
         public static List<MapItem> PendingItems = [];
-        public static string GameName;
-        private static string Server;
-        private static int? Port;
-        private static string SlotName;
-        private static string Password;
-        private static int? SlotId;
+        public static string ArchipelagoGameName;
+        public static string ArchipelagoServer { get; private set; }
+        public static int? ArchipelagoPort { get; private set; }
+        public static string SlotName { get; private set; }
+        public static string ArchipelagoPassword { get; private set; }
+        public static int? ArchipelagoSlotId { get; private set; }
         private static bool InitialProcessingComplete = false;
         private static Dictionary<string, object> SlotData = [];
         private static Dictionary<long, ScoutedItemInfo> ScoutedItems = [];
+
+        public static long APScoreGoal
+        {
+            get
+            {
+                return GetAPSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.ScoreGoal);
+            }
+        }
+
+
+        public static long APLevelCompletionGoal
+        {
+            get
+            {
+                return GetAPSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.LevelCompletionGoal);
+            }
+        }
 
         public static int TotalLevelsCompletedInAP
         {
@@ -91,7 +108,6 @@ namespace GalaxyGauntlet.scripts
             try
             {
                 ResetArchipelagoData();
-                GameName = gameName;
 
                 // Build Session
                 Session = ArchipelagoSessionFactory.CreateSession(server, port);
@@ -101,7 +117,7 @@ namespace GalaxyGauntlet.scripts
                 Session.Locations.CheckedLocationsUpdated += OnAPLocationChecked;
                 Session.Items.ItemReceived += OnAPItemReceived;
 
-                var loginResult = Session.TryConnectAndLogin(GameName, slotName, ItemsHandlingFlags.AllItems, password: password, tags: ["AP", "Deathlink"]);
+                var loginResult = Session.TryConnectAndLogin(gameName, slotName, ItemsHandlingFlags.AllItems, password: password, tags: ["AP", "Deathlink"]);
                 if(false == loginResult.Successful)
                 {
                     var loginFailure = (LoginFailure)loginResult;
@@ -111,22 +127,26 @@ namespace GalaxyGauntlet.scripts
                     }
                 }
 
-                Server = server;
-                Port = port;
+                ArchipelagoGameName = gameName;
+                ArchipelagoServer = server;
+                ArchipelagoPort = port;
                 SlotName = slotName;
-                Password = password;
-                SlotId = Session.Players.ActivePlayer.Slot;
+                ArchipelagoPassword = password;
+                ArchipelagoSlotId = Session.Players.ActivePlayer.Slot;
+                SaveSettings();
 
                 SlotData = ((LoginSuccessful)loginResult).SlotData;
 
                 // Load Archipelago save
+                SaveSlot archipelagoSaveSlot = new(Constants.SaveSlotNames.Archipelago);
                 var saveData = Session.DataStorage[Constants.Archipelago.SlotDataKeys.SaveData];
                 string saveDataJson = $"{await saveData.GetAsync()}";
                 GD.Print($"Save data: {saveDataJson}");
-                SaveSlot archipelagoSlot = JsonSerializer.Deserialize<SaveSlot>(saveDataJson);
-                SaveData.SaveData.WriteSaveSlot(archipelagoSlot);
-                archipelagoSlot = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
-                GD.Print(archipelagoSlot.SlotName);
+                if(false == string.IsNullOrEmpty(saveDataJson))
+                {
+                    archipelagoSaveSlot = JsonSerializer.Deserialize<SaveSlot>(saveDataJson);
+                }
+                SaveData.SaveData.WriteSaveSlot(archipelagoSaveSlot);
 
                 // Load list of level files to ignore
                 APLevelFilesToIgnore = [];
@@ -248,7 +268,7 @@ namespace GalaxyGauntlet.scripts
 
         public static long GetLocationId(string locationName)
         {
-            return Session.Locations.GetLocationIdFromName(GameName, locationName);
+            return Session.Locations.GetLocationIdFromName(ArchipelagoGameName, locationName);
         }
 
 
@@ -265,7 +285,6 @@ namespace GalaxyGauntlet.scripts
 
         public static void SendAPLocationCheck(string locationName)
         {
-            GD.Print($"Sending location {locationName}");
             long locationId = GetAPLocationId(locationName);
             if(locationId == -1)
             {
@@ -303,8 +322,30 @@ namespace GalaxyGauntlet.scripts
 
         public static long GetAPLocationId(string locationName)
         {
-            long id = Session.Locations.GetLocationIdFromName(GameName, locationName);
+            long id = Session.Locations.GetLocationIdFromName(ArchipelagoGameName, locationName);
             return id;
+        }
+
+
+        public static void CheckArchipelagoGoal()
+        {
+            if(APScoreGoal > 0 && TotalScoreInAP < APScoreGoal)
+            {
+                return;
+            }
+
+            if(APLevelCompletionGoal > 0 && TotalLevelsCompletedInAP < APLevelCompletionGoal)
+            {
+                return;
+            }
+
+            ReleaseGame();
+        }
+
+
+        public static void ReleaseGame()
+        {
+            Session.SetGoalAchieved();
         }
 
 
@@ -315,12 +356,12 @@ namespace GalaxyGauntlet.scripts
             LocationIDsChecked = [];
             APLevelFilesToIgnore = [];
             PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
-            GameName = string.Empty;
-            Server = string.Empty;
-            Port = null;
+            ArchipelagoGameName = string.Empty;
+            ArchipelagoServer = string.Empty;
+            ArchipelagoPort = null;
             SlotName = string.Empty;
-            SlotId = null;
-            Password = string.Empty;
+            ArchipelagoSlotId = null;
+            ArchipelagoPassword = string.Empty;
             SlotData = [];
             PendingItems = [];
             SaveData.SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Archipelago);
@@ -441,14 +482,12 @@ namespace GalaxyGauntlet.scripts
                 var itemInfo = helper.DequeueItem();
                 while(itemInfo is not null)
                 {
-                    GD.Print($"Item received: {itemInfo.ItemName}");
                     ProcessNewItem(itemInfo.ItemName);
                     itemInfo = helper.DequeueItem();
                 }
             }
             else
             {
-                GD.Print("Dumping items");
                 var itemInfo = helper.DequeueItem();
                 while(itemInfo is not null)
                 {

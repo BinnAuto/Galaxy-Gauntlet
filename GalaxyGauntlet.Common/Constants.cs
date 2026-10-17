@@ -30,7 +30,8 @@ namespace GalaxyGauntlet.Common
                 public const string PlayerSprite = "player_sprite";
                 public const string LevelHash = "level_hash";
                 public const string DeathLink = "death_link";
-                public const string MinimumScoreGoal = "minimum_score_goal";
+                public const string ScoreGoal = "score_goal";
+                public const string LevelCompletionGoal = "level_completion_goal";
                 public const string GameVersion = "game_version";
                 public const string IgnoreLevelFiles = "ignore_level_files";
                 public const string SaveData = "save_data";
@@ -71,6 +72,7 @@ namespace GalaxyGauntlet.Common
                 public const int Bug = 4;
                 public const int Paramecium = 5;
                 public const int Fireball = 6;
+                public const int Walker = 7;
             }
         }
 

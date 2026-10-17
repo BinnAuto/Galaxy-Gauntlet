@@ -1,4 +1,6 @@
 
+using System.Reflection.Metadata.Ecma335;
+
 namespace GalaxyGauntlet.scripts.MapEntities.Shared
 {
     public class MapIceTile(Vector2I coordinate, IceTileType iceType) : MapTile(coordinate)
@@ -52,6 +54,85 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
                     _ => Constants.SpriteCoordinates.IceTile
                 };
             }
+        }
+
+
+        public bool AllowEntry(Vector2I direction)
+        {
+            switch(IceTileType)
+            {
+                case IceTileType.Standard:
+                    break;
+
+                case IceTileType.Barrier_NE:
+                    if(direction.X < 0 || direction.Y > 0)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case IceTileType.Barrier_SE:
+                    if(direction.X < 0 || direction.Y < 0)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case IceTileType.Barrier_NW:
+                    if(direction.X > 0 || direction.Y > 0)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case IceTileType.Barrier_SW:
+                    if(direction.X > 0 || direction.Y < 0)
+                    {
+                        return false;
+                    }
+                    break;
+            }
+            return true;
+        }
+
+
+        public bool AllowExit(Vector2I direction)
+        {
+            switch(IceTileType)
+            {
+                case IceTileType.Standard:
+                    break;
+
+                case IceTileType.Barrier_NE:
+                    if(direction.X > 0 || direction.Y < 0)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case IceTileType.Barrier_SE:
+                    if (direction.X > 0 || direction.Y > 0)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case IceTileType.Barrier_NW:
+                    if (direction.X < 0 || direction.Y < 0)
+                    {
+                        return false;
+                    }
+                    break;
+
+                case IceTileType.Barrier_SW:
+                    if (direction.X < 0 || direction.Y > 0)
+                    {
+                        return false;
+                    }
+                    break;
+            }
+
+            return true;
         }
 
 

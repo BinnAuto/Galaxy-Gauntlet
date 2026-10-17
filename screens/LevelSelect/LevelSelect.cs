@@ -27,7 +27,7 @@ public partial class LevelSelect : Node2D
 		try
 		{
 			Node Control = GetNode(nameof(Control));
-			Node ScrollContainer = Control.GetNode(nameof(ScrollContainer));
+			ScrollContainer ScrollContainer = (ScrollContainer)Control.GetNode(nameof(ScrollContainer));
 			GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
 			GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
 				? 1 : 3;
@@ -55,7 +55,15 @@ public partial class LevelSelect : Node2D
 			{
 				ArchipelagoDisplay.Visible = true;
 				TotalScore.Text = GameData.TotalScoreInAP.ToString();
+				if(GameData.APScoreGoal != 0)
+				{
+					TotalScore.Text += $" ({GameData.APScoreGoal})";
+				}
 				LevelsCompleted.Text = GameData.TotalLevelsCompletedInAP.ToString();
+				if(GameData.APLevelCompletionGoal != 0)
+				{
+					LevelsCompleted.Text += $" ({GameData.APLevelCompletionGoal})";
+				}
 			}
 		}
 		catch(Exception e)
@@ -95,43 +103,42 @@ public partial class LevelSelect : Node2D
 				continue;
 			}
 
-			#region Archipelago logic
-
-			string mapName = $"Map {levelIndex} - {levelName}";
-			string completeLocation = $"Complete {mapName}";
-			string noResetsLocation = $"{completeLocation} (No Resets)";
-			if(false == GameData.PlayerHasAPItem(mapName))
+			if (GameData.GameMode == GameMode.Archipelago)
 			{
-				continue;
+				string mapName = $"Map {levelIndex} - {levelName}";
+				string completeLocation = $"Complete {mapName}";
+				string noResetsLocation = $"{completeLocation} (No Resets)";
+				if (false == GameData.PlayerHasAPItem(mapName))
+				{
+					continue;
+				}
+
+				button.Text = levelName;
+				button.Pressed += () => OnLevelSelect(tempLevel);
+				GridContainer.AddChild(button);
+
+				// Complete label
+				Label levelComplete = new()
+				{
+					Text = "        "
+				};
+				if (GameData.IsAPLocationChecked(completeLocation))
+				{
+					levelComplete.Text = "Complete";
+				}
+				GridContainer.AddChild(levelComplete);
+
+				// No Resets label
+				Label levelFirstTryComplete = new()
+				{
+					Text = "        "
+				};
+				if (GameData.IsAPLocationChecked(noResetsLocation))
+				{
+					levelFirstTryComplete.Text = " (No Resets)";
+				}
+				GridContainer.AddChild(levelFirstTryComplete);
 			}
-
-			button.Text = levelName;
-			button.Pressed += () => OnLevelSelect(tempLevel);
-			GridContainer.AddChild(button);
-
-			// Complete label
-			Label levelComplete = new()
-			{
-				Text = "        "
-			};
-			if (GameData.IsAPLocationChecked(completeLocation))
-			{
-				levelComplete.Text = "Complete";
-			}
-			GridContainer.AddChild(levelComplete);
-
-			// No Resets label
-			Label levelFirstTryComplete = new()
-			{
-				Text = "        "
-			};
-			if(GameData.IsAPLocationChecked(noResetsLocation))
-			{
-				levelFirstTryComplete.Text = " (No Resets)";
-			}
-			GridContainer.AddChild(levelFirstTryComplete);
-
-			#endregion
 		}
 	}
 
@@ -159,8 +166,8 @@ public partial class LevelSelect : Node2D
 		DialogWindow.YesButtonPressed += async () =>
 		{
 			await GameData.DisconnectFromArchipelago();
-            GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
-        };
+			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+		};
 		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };
 	}
 }

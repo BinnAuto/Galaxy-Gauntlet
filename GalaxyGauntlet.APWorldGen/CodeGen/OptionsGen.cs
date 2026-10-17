@@ -23,6 +23,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    option_Bug = 4",
                 "    option_Paramecium = 5",
                 "    option_Fireball = 6",
+                "    option_Walker = 7",
                 "",
                 "class ChipsAsCheckProbability(Range):",
                 "    \"\"\"",
@@ -54,10 +55,20 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    range_end = 100",
                 "    default = 0",
                 "",
+                "class LevelCompletionGoal(Range):",
+                "    \"\"\"",
+                "    Specifies the minimum amount of levels to complete to reach the goal condition.",
+                "    Set this value to 0 to disable this as a goal.",
+                "    \"\"\"",
+                "    display_name = \"Level Completion Requirement\"",
+                "    range_start = 0",
+                $"    range_end = {LevelNames.Count}",
+                "    default = 0",
+                "",
                 "class ScoreGoal(Range):",
                 "    \"\"\"",
                 "    Specifies the minimum score requirement to reach the goal condition.",
-                "    Set this value to 0 to disable the score as a goal.",
+                "    Set this value to 0 to disable this as a goal.",
                 "    \"\"\"",
                 "    display_name = \"Goal Score Requirement\"",
                 "    range_start = 0",
@@ -71,17 +82,6 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    display_name = \"Include Extended Score Checks\"",
                 ""
             ];
-            if(IncludeExtendedScoreChecks)
-            {
-                fileLines.AddRange([
-                    "class AddExtendedScoreChecks(Toggle):",
-                    "    \"\"\"",
-                    "    Add additional checks for higher score milestones.",
-                    "    \"\"\"",
-                    "    display_name = \"Include Extended Score Checks\"",
-                    ""
-                ]);
-            }
             fileLines.AddRange([
                 "@dataclass",
                 $"class {ClassPrefix}Options(PerGameCommonOptions):",
@@ -89,7 +89,8 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 $"    chip_as_check_probability: ChipsAsCheckProbability",
                 $"    proportion_of_filler_as_useful_items: ProportionOfFillerAsUsefulItems",
                 $"    proportion_of_filler_as_traps: ProportionOfFillerAsTraps",
-                $"    {Constants.Archipelago.SlotDataKeys.MinimumScoreGoal}: ScoreGoal",
+                $"    {Constants.Archipelago.SlotDataKeys.ScoreGoal}: ScoreGoal",
+                $"    {Constants.Archipelago.SlotDataKeys.LevelCompletionGoal}: LevelCompletionGoal",
                 $"    {Constants.Archipelago.SlotDataKeys.DeathLink}: DeathLink"
             ]);
             if(IncludeExtendedScoreChecks)

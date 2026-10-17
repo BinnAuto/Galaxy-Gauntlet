@@ -269,15 +269,25 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			bool isPlayer = (this is Player);
 
 			Vector2I newCoordinate = processedCoordinate.Value;
+			var currentTile = GameData.GetMapTile(Coordinate);
 			var destinationTile = GameData.GetMapTile(newCoordinate);
 			var destinationItem = GameData.GetMapItem(newCoordinate);
 			var destinationMob = GameData.GetMapMob(newCoordinate);
 
 			#region Exit from Thin Wall tile
 			
-			var currentTile = GameData.GetMapTile(Coordinate);
 			if(currentTile is ThinWallOrCanopyTile currentThinWall
 				&& false == currentThinWall.AllowExit(direction))
+			{
+				return Coordinate;
+			}
+
+			#endregion
+
+			#region Exit from Ice Tile
+
+			if(currentTile is MapIceTile currentIceTile
+				&& false == currentIceTile.AllowExit(direction))
 			{
 				return Coordinate;
 			}
@@ -326,8 +336,6 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				{
 					RemoveSelf();
 				}
-
-				return newCoordinate;
 			}
 
             #endregion
@@ -465,9 +473,20 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 			#endregion
 
-			#region Socket
+			#region Entry into Ice Tile
 			
-			if(destinationItem is SocketItem)
+			if(destinationTile is MapIceTile destinationIceTile)
+			{
+				return destinationIceTile.AllowEntry(direction)
+					? newCoordinate
+					: Coordinate;
+			}
+
+			#endregion
+
+			#region Socket
+
+			if (destinationItem is SocketItem)
 			{
 				if(isPlayer && GameData.ChipRequirementMet)
 				{

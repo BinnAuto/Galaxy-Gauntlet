@@ -105,9 +105,10 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                     case Constants.ByteCodes.Entities.ExtraChip:
                         chipCoordinates.Add($"({x}, {y})");
                         i++;
-                        if (mapData[i] == 0x17)
+                        if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock
+                            || mapData[i] == Constants.ByteCodes.Entities.Teeth)
                         {
-                            i += 2;
+                            i += 2; // Entity orientation and lower layer
                         }
                         break;
 
@@ -160,9 +161,10 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                     case Constants.ByteCodes.Entities.HikingBoots:
                         levelData.AddItem(mapByte);
                         i++;
-                        if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock)
+                        if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock
+                            || mapData[i] == Constants.ByteCodes.Entities.Teeth)
                         {
-                            i += 2; // Dirt block "orientation" and lower layer
+                            i += 2; // Entity orientation and lower layer
                         }
                         break;
 

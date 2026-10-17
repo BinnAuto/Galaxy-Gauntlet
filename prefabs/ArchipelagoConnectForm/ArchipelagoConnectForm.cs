@@ -47,6 +47,13 @@ public partial class ArchipelagoConnectForm : Node2D
 			Port = (LineEdit)GetNode(nameof(Port) + "/" + nameof(Port));
 			SlotName = (LineEdit)GetNode(nameof(SlotName) + "/" + nameof(SlotName));
 			Password = (LineEdit)GetNode(nameof(Password) + "/" + nameof(Password));
+
+			GameData.LoadSettings();
+			GameName.Text = GameData.ArchipelagoGameName;
+			Server.Text = GameData.ArchipelagoServer;
+			Port.Text = GameData.ArchipelagoPort.ToString();
+			SlotName.Text = GameData.SlotName;
+			Password.Text = GameData.ArchipelagoPassword;
 		
 			ConnectButton = (UIButton)GetNode(nameof(ConnectButton));
 			ConnectButton.Pressed += async () => { await OnConnect(); };

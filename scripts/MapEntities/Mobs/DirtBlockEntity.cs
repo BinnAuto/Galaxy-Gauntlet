@@ -10,6 +10,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 		public override bool CanMoveSelf => false;
 
+		public override bool DiesToFire => false;
+
 		public override Vector2I TextureCoordinate
 		{
 			get
