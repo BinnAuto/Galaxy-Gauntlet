@@ -445,6 +445,10 @@ namespace GalaxyGauntlet.scripts
                     AddMobAtRandom(new WalkerMonster(Vector2I.Zero));
                     break;
 
+                case Constants.Archipelago.ItemNames.BlobTrap:
+                    AddMobAtRandom(new BlobMonster(Vector2I.Zero));
+                    break;
+
                 case Constants.Archipelago.ItemNames.Helmet:
                 case Constants.Archipelago.ItemNames.SecretEye:
                     // TODO

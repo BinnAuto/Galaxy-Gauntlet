@@ -64,6 +64,7 @@ namespace GalaxyGauntlet.Common
                 public const string TimePenalty = "Time Penalty";
                 public const string TeethTrap = "Teeth";
                 public const string WalkerTrap = "Walker";
+                public const string BlobTrap = "Blob";
                 public const string ConfusionTrap = "Confusion";
 
                 public const string Filler = "Filler";
