@@ -18,8 +18,8 @@ namespace GalaxyGauntlet.Common
                 throw new($"Invalid first data block length {firstDataBlockLength}");
             }
 
-            // Skip map size
-            pointerIndex += 2;
+            byte mapWidth = compressedData[pointerIndex++];
+            byte mapHeight = compressedData[pointerIndex++];
 
             List<byte> resultList = [];
             for(int i = 0; i < firstDataBlockLength - 2; i++)
@@ -53,7 +53,29 @@ namespace GalaxyGauntlet.Common
                     int offset = compressedData[pointerIndex];
                     int copyEndIndex = resultList.Count;
                     int copyStartIndex = copyEndIndex - offset;
-                    List<byte> bytesToCopy = resultList[copyStartIndex..copyEndIndex];
+                    List<byte> bytesToCopy = [];
+
+                    #region Handle start indexes that reach into the map's metadata
+
+                    if(copyStartIndex == -3)
+                    {
+                        bytesToCopy.Add((byte)firstDataBlockLength);
+                        copyStartIndex++;
+                    }
+                    if (copyStartIndex == -2)
+                    {
+                        bytesToCopy.Add(mapWidth);
+                        copyStartIndex++;
+                    }
+                    if(copyStartIndex == -1)
+                    {
+                        bytesToCopy.Add(mapHeight);
+                        copyStartIndex++;
+                    }
+
+                    #endregion
+
+                    bytesToCopy.AddRange(resultList[copyStartIndex..copyEndIndex]);
                     for(int i = 0; i < dataLength; i++)
                     {
                         resultList.Add(bytesToCopy[i % bytesToCopy.Count]);
