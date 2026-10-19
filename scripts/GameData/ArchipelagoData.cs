@@ -329,6 +329,12 @@ namespace GalaxyGauntlet.scripts
 
         public static void CheckArchipelagoGoal()
         {
+            if(APScoreGoal == 0 && APLevelCompletionGoal == 0)
+            {
+                // No goal
+                return;
+            }
+
             if(APScoreGoal > 0 && TotalScoreInAP < APScoreGoal)
             {
                 return;
