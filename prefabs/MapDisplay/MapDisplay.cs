@@ -2,7 +2,7 @@ using GalaxyGauntlet.scripts;
 using GalaxyGauntlet.scripts.MapEntities;
 using System;
 
-public partial class MapDisplay : Node
+public partial class MapDisplay : Node2D
 {
 	private TileMapLayer FloorTiles;
 	private TileMapLayer ItemTiles;
@@ -39,6 +39,7 @@ public partial class MapDisplay : Node
 		MobTiles.Clear();
 		SceneryTiles.Clear();
 
+		SetGlobalPosition();
 		int viewportSize = GameData.MapViewportSize;
 		if(viewportSize % 2 == 0)
 		{
@@ -88,4 +89,12 @@ public partial class MapDisplay : Node
 		}
 		GameData.RerenderMap = false;
 	}
+
+
+	public void SetGlobalPosition()
+    {
+        int viewportSize = GameData.MapViewportSize;
+		int deltaFromRegular = viewportSize - GameData.StandardMapViewportSize;
+		Position = new Vector2I(144, 144) - (16 * deltaFromRegular * Vector2I.One);
+    }
 }

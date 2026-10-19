@@ -30,7 +30,8 @@ namespace GalaxyGauntlet.scripts
 	{
 		public static GameMode GameMode = GameMode.Campaign;
 		public static int MapViewportSize = 9;
-		public static int ChipsRequired = 0;
+        public static int StandardMapViewportSize = 9;
+        public static int ChipsRequired = 0;
 		public static int ChipsCollected = 0;
 		public static int CurrentLevelIndex = 1;
 		public static string LevelName = string.Empty;
@@ -94,6 +95,7 @@ namespace GalaxyGauntlet.scripts
 			TimerEnabled = false;
 			AcceptingPlayerInput = true;
 			ConfusionTimer = 0;
+			MapViewportSize = StandardMapViewportSize;
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;

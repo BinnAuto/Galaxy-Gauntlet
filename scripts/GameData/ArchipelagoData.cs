@@ -425,7 +425,7 @@ namespace GalaxyGauntlet.scripts
                     PendingItems.Add(new FlippersItem(Vector2I.Zero));
                     break;
 
-                case Constants.Archipelago.ItemNames.ConfusionTrap:
+                case Constants.Archipelago.TrapNames.ConfusionTrap:
                     RandomNumberGenerator rng = new();
                     ConfusionTimer = rng.RandiRange(20, 40);
                     break;
@@ -439,20 +439,28 @@ namespace GalaxyGauntlet.scripts
                     Timer += 10;
                     break;
 
-                case Constants.Archipelago.ItemNames.TimePenalty:
+                case Constants.Archipelago.TrapNames.TimePenalty:
                     Timer -= 10;
                     break;
 
-                case Constants.Archipelago.ItemNames.TeethTrap:
+                case Constants.Archipelago.TrapNames.TeethTrap:
                     AddMobAtRandom(new TeethMonster(Vector2I.Zero));
                     break;
 
-                case Constants.Archipelago.ItemNames.WalkerTrap:
+                case Constants.Archipelago.TrapNames.WalkerTrap:
                     AddMobAtRandom(new WalkerMonster(Vector2I.Zero));
                     break;
 
-                case Constants.Archipelago.ItemNames.BlobTrap:
+                case Constants.Archipelago.TrapNames.BlobTrap:
                     AddMobAtRandom(new BlobMonster(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.BigMap:
+                    MapViewportSize = Mathf.Min(15, MapViewportSize + 6);
+                    break;
+
+                case Constants.Archipelago.TrapNames.SmallMapTrap:
+                    MapViewportSize = Mathf.Max(5, MapViewportSize - 4);
                     break;
 
                 case Constants.Archipelago.ItemNames.Helmet:

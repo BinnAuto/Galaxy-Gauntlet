@@ -47,7 +47,6 @@ namespace GalaxyGauntlet.Common
 
             public static class ItemNames
             {
-                // Useful items
                 public const string SingleUseRedKey = "Single-Use Red Key";
                 public const string SingleUseBlueKey = "Single-Use Blue Key";
                 public const string SingleUseYellowKey = "Single-Use Yellow Key";
@@ -59,15 +58,17 @@ namespace GalaxyGauntlet.Common
                 public const string Helmet = "Helmet";
                 public const string SecretEye = "Secret Eye";
                 public const string TimeBonus = "Time Bonus";
+                public const string BigMap = "Big Map";
+                public const string Filler = "Filler";
+            }
 
-                // Traps
+            public static class TrapNames {
                 public const string TimePenalty = "Time Penalty";
                 public const string TeethTrap = "Teeth";
                 public const string WalkerTrap = "Walker";
                 public const string BlobTrap = "Blob";
                 public const string ConfusionTrap = "Confusion";
-
-                public const string Filler = "Filler";
+                public const string SmallMapTrap = "Small Map";
             }
 
 
