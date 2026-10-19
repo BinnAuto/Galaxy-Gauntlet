@@ -173,6 +173,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			GameData.RemoveFromSlipList(this);
 			newCoordinate = ProposeMove(input);
+			SetOrientation(input);
 			if(newCoordinate == Coordinate)
 			{
 				return;
