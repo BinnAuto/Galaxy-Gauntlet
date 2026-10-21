@@ -273,6 +273,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			var destinationTile = GameData.GetMapTile(newCoordinate);
 			var destinationItem = GameData.GetMapItem(newCoordinate);
 			var destinationMob = GameData.GetMapMob(newCoordinate);
+			var destinationPlayer = GameData.GetMapPlayer(newCoordinate);
 
 			#region Exit from Thin Wall tile
 			
@@ -389,12 +390,21 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				|| destinationMob is TeethMonster
 			)
 			{
-				if(isPlayer)
+				if(isPlayer && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
 				{
 					GameData.DeathMessage = Constants.DeathMessages.Monsters;
 					return newCoordinate;
 				}
 
+				return Coordinate;
+			}
+
+			#endregion
+
+			#region Player with Helmet
+
+			if(destinationPlayer is Player && GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
+			{
 				return Coordinate;
 			}
 

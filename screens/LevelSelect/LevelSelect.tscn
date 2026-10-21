@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="7_yl72h"]
 [ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="8_c3t5n"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="9_4lbje"]
+[ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="10_5ubwq"]
 
 [node name="LevelSelect" type="Node2D" unique_id=1784930774]
 script = ExtResource("1_b1i2e")
@@ -78,7 +79,6 @@ FontSize = 30
 visible = false
 
 [node name="ArchipelagoDisplay" type="Node2D" parent="." unique_id=2117108302]
-visible = false
 
 [node name="TotalScoreLabel" type="Label" parent="ArchipelagoDisplay" unique_id=1384599568]
 offset_left = 19.0
@@ -109,6 +109,34 @@ offset_top = 157.0
 offset_right = 162.0
 offset_bottom = 192.0
 theme_override_font_sizes/font_size = 25
+
+[node name="UnlockedItems" type="Node2D" parent="ArchipelagoDisplay" unique_id=1450400228]
+position = Vector2(960, 0)
+
+[node name="UnlockedItems" type="Label" parent="ArchipelagoDisplay/UnlockedItems" unique_id=487742546]
+offset_left = 9.0
+offset_top = 10.0
+offset_right = 130.0
+offset_bottom = 33.0
+text = "Unlocked Items"
+
+[node name="ItemDisplay" parent="ArchipelagoDisplay/UnlockedItems" unique_id=266836377 instance=ExtResource("10_5ubwq")]
+position = Vector2(7, 45)
+DisplayMode = 2
+
+[node name="IncomingItems" type="Node2D" parent="ArchipelagoDisplay" unique_id=1136670112]
+position = Vector2(960, 212)
+
+[node name="IncomingItems" type="Label" parent="ArchipelagoDisplay/IncomingItems" unique_id=1661710441]
+offset_left = 9.0
+offset_top = 12.0
+offset_right = 130.0
+offset_bottom = 35.0
+text = "Incoming Items"
+
+[node name="ItemDisplay" parent="ArchipelagoDisplay/IncomingItems" unique_id=234992278 instance=ExtResource("10_5ubwq")]
+position = Vector2(7, 47)
+DisplayMode = 1
 
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("9_4lbje")]
 SourceFolder = "./custom/music/level_select"

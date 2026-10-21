@@ -27,6 +27,8 @@ namespace GalaxyGauntlet.scripts
         public static bool FireBootsUnlocked = true;
         public static bool SuctionBootsUnlocked = true;
         public static bool FlippersUnlocked = true;
+        public static bool HelmetUnlocked = true;
+        public static bool SecretEyeUnlocked = true;
 
         // Archipelago connection/game data
         private static ArchipelagoSession Session = null;
@@ -385,6 +387,8 @@ namespace GalaxyGauntlet.scripts
             FireBootsUnlocked = PlayerHasAPItem("Fire Boots");
             SuctionBootsUnlocked = PlayerHasAPItem("Suction Boots");
             FlippersUnlocked = PlayerHasAPItem("Flippers");
+            HelmetUnlocked = PlayerHasAPItem("Helmet");
+            SecretEyeUnlocked = PlayerHasAPItem("Secret Eye");
             RerenderMap = true;
         }
 
@@ -425,6 +429,14 @@ namespace GalaxyGauntlet.scripts
                     PendingItems.Add(new FlippersItem(Vector2I.Zero));
                     break;
 
+                case Constants.Archipelago.ItemNames.SingleUseHelmet:
+                    PendingItems.Add(new HelmetItem(Vector2I.Zero));
+                    break;
+
+                case Constants.Archipelago.ItemNames.SingleUseSecretEye:
+                    PendingItems.Add(new SecretEyeItem(Vector2I.Zero));
+                    break;
+
                 case Constants.Archipelago.TrapNames.ConfusionTrap:
                     RandomNumberGenerator rng = new();
                     ConfusionTimer = rng.RandiRange(20, 40);
@@ -433,7 +445,7 @@ namespace GalaxyGauntlet.scripts
                 case Constants.Archipelago.ItemNames.TimeBonus:
                     if(TimeLimit == 0)
                     {
-                        // Turn untimed levels into timed levels
+                        // Turns untimed levels into timed levels
                         TimeLimit += 10;
                     }
                     Timer += 10;
@@ -461,11 +473,6 @@ namespace GalaxyGauntlet.scripts
 
                 case Constants.Archipelago.TrapNames.SmallMapTrap:
                     MapViewportSize = Mathf.Max(5, MapViewportSize - 4);
-                    break;
-
-                case Constants.Archipelago.ItemNames.Helmet:
-                case Constants.Archipelago.ItemNames.SecretEye:
-                    // TODO
                     break;
             }
         }

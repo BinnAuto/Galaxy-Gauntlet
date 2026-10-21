@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.APWorldGen
     public class APWorldLevelDataSet
     {
         [JsonPropertyName("game_items")]
-        public string[] LevelItems { get; set; } = ["Red Key", "Blue Key", "Green Key", "Yellow Key", "Suction Boots", "Fire Boots", "Ice Skates", "Flippers"];
+        public string[] LevelItems { get; set; } = ["Red Key", "Blue Key", "Green Key", "Yellow Key", "Suction Boots", "Fire Boots", "Ice Skates", "Flippers", "Secret Eye", "Helmet"];
 
         [JsonPropertyName("levels")]
         public APLevelData[] Levels { get; set; } = [];
@@ -44,6 +44,8 @@ namespace GalaxyGauntlet.APWorldGen
                 Constants.ByteCodes.Entities.FireBoots => "Fire Boots",
                 Constants.ByteCodes.Entities.Flippers => "Flippers",
                 Constants.ByteCodes.Entities.HikingBoots => "Hiking Boots",
+                Constants.ByteCodes.Entities.Helmet => "Helmet",
+                Constants.ByteCodes.Entities.SecretEye => "Secret Eye",
                 _ => throw new($"Item code {byteCode} not recognized")
             };
             if (ItemsPresent.Contains(item))

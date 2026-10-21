@@ -95,7 +95,6 @@ public partial class GameplayScreen : Node
 		{
 			GameData.PlayerItems.AddRange(GameData.PendingItems);
 			GameData.PendingItems.Clear();
-			GameData.RerenderItemList = true;
 		}
 	}
 

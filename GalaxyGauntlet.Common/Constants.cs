@@ -55,8 +55,8 @@ namespace GalaxyGauntlet.Common
                 public const string SingleUseFireBoots = "Single-Use Fire Boots";
                 public const string SingleUseSuctionBoots = "Single-Use Suction Boots";
                 public const string SingleUseFlippers = "Single-Use Flippers";
-                public const string Helmet = "Helmet";
-                public const string SecretEye = "Secret Eye";
+                public const string SingleUseHelmet = "Single-Use Helmet";
+                public const string SingleUseSecretEye = "Single-Use Secret Eye";
                 public const string TimeBonus = "Time Bonus";
                 public const string BigMap = "Big Map";
                 public const string Filler = "Filler";
@@ -364,6 +364,10 @@ namespace GalaxyGauntlet.Common
             public static Vector2I Socket_Open = new(3, 19);
             public static Vector2I DirtBlock_XRay = new(4, 19);
             public static Vector2I IceBlock_XRay = new(5, 19);
+            public static Vector2I SecretEye = new(0, 20);
+            public static Vector2I LockedSecretEye = new(1, 20);
+            public static Vector2I Helmet = new(2, 20);
+            public static Vector2I LockedHelmet = new(3, 20);
         }
 
         public static class DeathMessages

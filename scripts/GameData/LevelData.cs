@@ -42,7 +42,6 @@ namespace GalaxyGauntlet.scripts
 		public static bool AcceptingPlayerInput = true;
 		public static bool ProcessMobs = false;
 		public static bool PlayerAlive = true;
-		public static bool RerenderItemList = false;
 		public static string DeathMessage = string.Empty;
 		public static Vector2I PlayerCoordinate = Vector2I.Zero;
 		public static string[] LevelSet = [];
@@ -100,7 +99,6 @@ namespace GalaxyGauntlet.scripts
 			ChipsRequired = 0;
 			ChipsCollected = 0;
 			PlayerItems = [];
-			RerenderItemList = true;
 			PlayerCoordinate = Vector2I.Zero;
 		}
 
@@ -174,7 +172,6 @@ namespace GalaxyGauntlet.scripts
 			PlayerItems = PlayerItems.Where(e =>
 				false == bootCodes.Contains(e.DataCode)
 			).ToList();
-			RerenderItemList = true;
 		}
 
 
@@ -189,14 +186,12 @@ namespace GalaxyGauntlet.scripts
 			PlayerItems = PlayerItems.Where(e =>
 				false == keyCodes.Contains(e.DataCode)
 			).ToList();
-			RerenderItemList = true;
 		}
 
 
 		public static void AddItem(MapItem item)
 		{
 			PlayerItems.Add(item);
-			RerenderItemList = true;
 		}
 
 
@@ -206,9 +201,21 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public static bool PlayerHasPendingItem(int dataCode)
+		{
+			return PendingItems.Any(e => e.DataCode == dataCode);
+		}
+
+
 		public static int ItemCount(int dataCode)
 		{
 			return PlayerItems.Count(e => e.DataCode == dataCode);
+		}
+
+
+		public static int PendingItemCount(int dataCode)
+		{
+			return PendingItems.Count(e => e.DataCode == dataCode);
 		}
 
 
@@ -233,7 +240,6 @@ namespace GalaxyGauntlet.scripts
 				newPlayerItems.Add(playerItem);
 			}
 			PlayerItems = newPlayerItems;
-			RerenderItemList = true;
 			return result;
 		}
 	}

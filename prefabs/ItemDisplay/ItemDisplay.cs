@@ -1,7 +1,17 @@
 using GalaxyGauntlet.scripts;
 
+public enum DisplayMode
+{
+	Gameplay,
+	ArchipelagoSingleUseItems,
+	ArchipelagoTracker
+}
+
 public partial class ItemDisplay : Node
 {
+	[Export]
+	private DisplayMode DisplayMode;
+
 	private Sprite2D RedKey;
 
 	private Label RedKeyCount;
@@ -26,9 +36,17 @@ public partial class ItemDisplay : Node
 
 	private Sprite2D Flippers;
 
+	private Sprite2D SecretEye;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	private Sprite2D Helmet;
+
+	private Godot.Color UnlockedModulateColor = Godot.Color.Color8(255, 255, 255, 255);
+
+	private Godot.Color LockedModulateColor = Godot.Color.Color8(255, 255, 255, 60);
+
+
+    // Called when the node enters the scene tree for the first time.
+    public override void _Ready()
 	{
 		RedKey = (Sprite2D)GetNode(nameof(RedKey));
 		RedKeyCount = (Label)RedKey.GetNode("Count");
@@ -49,6 +67,10 @@ public partial class ItemDisplay : Node
 		FireBoots = (Sprite2D)GetNode(nameof(FireBoots));
 
 		Flippers = (Sprite2D)GetNode(nameof(Flippers));
+
+		SecretEye = (Sprite2D)GetNode(nameof(SecretEye));
+
+		Helmet = (Sprite2D)GetNode(nameof(Helmet));
 		
 		RenderItemList();
 	}
@@ -56,32 +78,77 @@ public partial class ItemDisplay : Node
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
-		if(GameData.RerenderItemList)
-		{
-			RenderItemList();
-		}
+		RenderItemList();
 	}
 
 
 	private void RenderItemList()
 	{
-		RedKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.RedKey);
-		RedKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
+		switch(DisplayMode)
+		{
+			case DisplayMode.Gameplay:
+				RedKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.RedKey);
+				BlueKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.BlueKey);
+				YellowKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.YellowKey);
+				GreenKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
+				IceSkates.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates);
+				SuctionBoots.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots);
+				FireBoots.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots);
+				Flippers.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers);
+				SecretEye.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
+				Helmet.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet);
+				
+				RedKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
+				BlueKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
+				YellowKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
+				GreenKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				break;
 
-		BlueKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.BlueKey);
-		BlueKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
+			case DisplayMode.ArchipelagoSingleUseItems:
+                RedKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.RedKey);
+                BlueKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.BlueKey);
+                YellowKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.YellowKey);
+                GreenKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.GreenKey);
+                IceSkates.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.IceSkates);
+                SuctionBoots.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.SuctionBoots);
+                FireBoots.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.FireBoots);
+                Flippers.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.Flippers);
+                SecretEye.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.SecretEye);
+                Helmet.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.Helmet);
+                
+				RedKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
+                BlueKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
+                YellowKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
+                GreenKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				break;
 
-		YellowKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.YellowKey);
-		YellowKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
+			case DisplayMode.ArchipelagoTracker:
+				RedKey.Modulate = GameData.RedKeyUnlocked
+					? UnlockedModulateColor : LockedModulateColor;
+                BlueKey.Modulate = GameData.BlueKeyUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                YellowKey.Modulate = GameData.YellowKeyUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                GreenKey.Modulate = GameData.GreenKeyUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                IceSkates.Modulate = GameData.IceSkatesUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                SuctionBoots.Modulate = GameData.SuctionBootsUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                FireBoots.Modulate = GameData.FireBootsUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                Flippers.Modulate = GameData.FlippersUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                SecretEye.Modulate = GameData.SecretEyeUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
+                Helmet.Modulate = GameData.HelmetUnlocked
+                    ? UnlockedModulateColor : LockedModulateColor;
 
-		GreenKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
-		GreenKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
-
-		IceSkates.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates);
-		SuctionBoots.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots);
-		FireBoots.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots);
-		Flippers.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers);
-
-		GameData.RerenderItemList = false;
+                RedKeyCount.Text = string.Empty;
+                BlueKeyCount.Text = string.Empty;
+                YellowKeyCount.Text = string.Empty;
+                GreenKeyCount.Text = string.Empty;
+                break;
+        }
 	}
 }

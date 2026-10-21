@@ -143,7 +143,6 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                     case Constants.ByteCodes.Entities.TimeBonus:
                     case Constants.ByteCodes.Entities.Stopwatch:
                     case Constants.ByteCodes.Entities.TimeBomb:
-                    case Constants.ByteCodes.Entities.Helmet:
                     case Constants.ByteCodes.Entities.LightningBolt:
                     case Constants.ByteCodes.Entities.BowlingBall:
                     case Constants.ByteCodes.Entities.TimePenalty:
@@ -159,6 +158,8 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                     case Constants.ByteCodes.Entities.FireBoots:
                     case Constants.ByteCodes.Entities.Flippers:
                     case Constants.ByteCodes.Entities.HikingBoots:
+                    case Constants.ByteCodes.Entities.Helmet:
+                    case Constants.ByteCodes.Entities.SecretEye:
                         levelData.AddItem(mapByte);
                         i++;
                         if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock
