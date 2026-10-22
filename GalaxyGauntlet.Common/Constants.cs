@@ -29,6 +29,29 @@ namespace GalaxyGauntlet.Common
             public const string Archipelago = "archipelago";
         }
 
+        public static class Settings
+        {
+            public const string GameConfigFilePath = "user://gamedata.config";
+
+            public const string GameDataConfigSection = "GameData";
+
+            public const string TickRate = nameof(TickRate);
+
+            public const string MasterVolume = nameof(MasterVolume);
+            
+            public const string MusicVolume = nameof(MusicVolume);
+
+            public const string ArchipelagoGameName = nameof(ArchipelagoGameName);
+
+            public const string ArchipelagoServer = nameof(ArchipelagoServer);
+
+            public const string ArchipelagoPort = nameof(ArchipelagoPort);
+
+            public const string ArchipelagoSlotName = nameof(ArchipelagoSlotName);
+
+            public const string ArchipelagoPassword = nameof(ArchipelagoPassword);
+        }
+
         public static class Archipelago
         {
 

@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return GameData.FireBootsUnlocked
+                return GameData.Archipelago.FireBootsUnlocked
                     ? Constants.SpriteCoordinates.FireBoots
                     : Constants.SpriteCoordinates.LockedFireBoots;
             }

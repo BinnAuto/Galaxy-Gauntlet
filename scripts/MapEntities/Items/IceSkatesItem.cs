@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return GameData.IceSkatesUnlocked
+                return GameData.Archipelago.IceSkatesUnlocked
                     ? Constants.SpriteCoordinates.IceSkates
                     : Constants.SpriteCoordinates.LockedIceSkates;
             }

@@ -16,13 +16,13 @@ namespace GalaxyGauntlet.scripts.MapEntities
                 if(GameData.GameMode == GameMode.Archipelago)
                 {
                     string locationName = GetArchipelagoLocationName();
-                    long locationId = GameData.GetAPLocationId(locationName);
-                    var item = GameData.GetAPItemTypeAtLocation(locationId);
+                    long locationId = GameData.Archipelago.GetLocationIdByName(locationName);
+                    var item = GameData.Archipelago.GetItemTypeAtLocation(locationId);
                     if(item is null)
                     {
                         return Constants.SpriteCoordinates.Chip;
                     }
-                    if(GameData.IsAPLocationChecked(locationId))
+                    if(GameData.Archipelago.IsLocationChecked(locationId))
                     {
                         return Constants.SpriteCoordinates.Chip;
                     }

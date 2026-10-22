@@ -16,536 +16,599 @@ using DeathLinkData = Archipelago.MultiClient.Net.BounceFeatures.DeathLink.Death
 
 namespace GalaxyGauntlet.scripts
 {
-    public static partial class GameData
-    {
-        // Item unlock flags
-        public static bool RedKeyUnlocked = true;
-        public static bool BlueKeyUnlocked = true;
-        public static bool YellowKeyUnlocked = true;
-        public static bool GreenKeyUnlocked = true;
-        public static bool IceSkatesUnlocked = true;
-        public static bool FireBootsUnlocked = true;
-        public static bool SuctionBootsUnlocked = true;
-        public static bool FlippersUnlocked = true;
-        public static bool HelmetUnlocked = true;
-        public static bool SecretEyeUnlocked = true;
-
-        // Archipelago connection/game data
-        private static ArchipelagoSession Session = null;
-        private static DeathLinkService DeathLinkService = null;
-        public static bool IsConnected { get; private set; } = false;
-        public static bool DeathLinkEnabled = false;
-        public static bool LynxBehavior = false;
-        public static bool ProcessingDeathLink = false;
-        public static long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
-        private static List<long> LocationIDsChecked = [];
-        public static List<string> ItemsReceived = [];
-        public static string[] APLevelFilesToIgnore = [];
-        public static List<MapItem> PendingItems = [];
-        public static string ArchipelagoGameName;
-        public static string ArchipelagoServer { get; private set; }
-        public static int? ArchipelagoPort { get; private set; }
-        public static string SlotName { get; private set; }
-        public static string ArchipelagoPassword { get; private set; }
-        public static int? ArchipelagoSlotId { get; private set; }
-        private static bool InitialProcessingComplete = false;
-        private static Dictionary<string, object> SlotData = [];
-        private static Dictionary<long, ScoutedItemInfo> ScoutedItems = [];
-
-        public static long APScoreGoal
-        {
-            get
-            {
-                return GetAPSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.ScoreGoal);
-            }
-        }
-
-
-        public static long APLevelCompletionGoal
-        {
-            get
-            {
-                return GetAPSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.LevelCompletionGoal);
-            }
-        }
-
-        public static int TotalLevelsCompletedInAP
-        {
-            get
-            {
-                var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
-                if(archipelagoData is null || archipelagoData.HighScores.Count == 0)
-                {
-                    return 0;
-                }
-
-                return archipelagoData.HighScores.Count;
-            }
-        }
-
-        public static long TotalScoreInAP
-        {
-            get
-            {
-                var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
-                if (archipelagoData is null || archipelagoData.HighScores.Count == 0)
-                {
-                    return 0;
-                }
-
-                return archipelagoData.HighScores.Sum(e => e.Value);
-            }
-        }
-
-        public static List<string> LocationsChecked
-        {
-            get
-            {
-                return LocationIDsChecked.Select(e => Session.Locations.GetLocationNameFromId(e)).ToList();
-            }
-        }
-
-        public static async Task ConnectToArchipelago(string gameName, string server, int port, string slotName, string password)
-        {
-            try
-            {
-                ResetArchipelagoData();
-
-                // Build Session
-                Session = ArchipelagoSessionFactory.CreateSession(server, port);
-                Session.Socket.SocketOpened += OnAPSocketOpened;
-                Session.Socket.SocketClosed += OnAPSocketClosed;
-                Session.Socket.ErrorReceived += OnAPSocketError;
-                Session.Locations.CheckedLocationsUpdated += OnAPLocationChecked;
-                Session.Items.ItemReceived += OnAPItemReceived;
-
-                var loginResult = Session.TryConnectAndLogin(gameName, slotName, ItemsHandlingFlags.AllItems, password: password, tags: ["AP", "Deathlink"]);
-                if(false == loginResult.Successful)
-                {
-                    var loginFailure = (LoginFailure)loginResult;
-                    if(loginFailure.Errors.Length > 0)
-                    {
-                        throw new(loginFailure.Errors[0]);
-                    }
-                }
-
-                ArchipelagoGameName = gameName;
-                ArchipelagoServer = server;
-                ArchipelagoPort = port;
-                SlotName = slotName;
-                ArchipelagoPassword = password;
-                ArchipelagoSlotId = Session.Players.ActivePlayer.Slot;
-                SaveSettings();
-
-                SlotData = ((LoginSuccessful)loginResult).SlotData;
-
-                // Load Archipelago save
-                SaveSlot archipelagoSaveSlot = new(Constants.SaveSlotNames.Archipelago);
-                var saveData = Session.DataStorage[Constants.Archipelago.SlotDataKeys.SaveData];
-                string saveDataJson = $"{await saveData.GetAsync()}";
-                GD.Print($"Save data: {saveDataJson}");
-                if(false == string.IsNullOrEmpty(saveDataJson))
-                {
-                    archipelagoSaveSlot = JsonSerializer.Deserialize<SaveSlot>(saveDataJson);
-                }
-                SaveData.SaveData.WriteSaveSlot(archipelagoSaveSlot);
-
-                // Load list of level files to ignore
-                APLevelFilesToIgnore = [];
-                string ignoreFiles = SlotData[Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
-                if(false == string.IsNullOrEmpty(ignoreFiles))
-                {
-                    APLevelFilesToIgnore = ignoreFiles.Split('|');
-                }
-
-                // Get Player Sprite
-                try
-                {
-                    PlayerSpriteIndex = (long)SlotData[Constants.Archipelago.SlotDataKeys.PlayerSprite];
-                }
-                catch(Exception e) {
-                    GD.Print(e.Message);
-                    PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player; 
-                }
-
-                // Configure death link
-                DeathLinkService = Session.CreateDeathLinkService();
-                DeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
-                long deathLinkSetting = GetAPSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.DeathLink);
-                DeathLinkEnabled = (deathLinkSetting == 1);
-                if(DeathLinkEnabled)
-                {
-                    DeathLinkService.EnableDeathLink();
-                }
-                else
-                {
-                    DeathLinkService.DisableDeathLink();
-                }
-
-                await ScoutAPLocations();
-                FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
-                InitialProcessingComplete = true;
-            }
-            catch (Exception e)
-            {
-                FileLogger.LogException("Error attempting to connect to Archipelago server", e);
-                Session = null;
-                throw;
-            }
-        }
-
-
-        public static async Task DisconnectFromArchipelago()
-        {
-            try
-            {
-                await Session.Socket.DisconnectAsync();
-                ResetArchipelagoData();
-            }
-            catch(Exception e)
-            {
-                FileLogger.LogException("Error disconnecting from Archipelago server", e);
-            }
-        }
-
-
-        public static void SendDeathlink()
-        {
-            try
-            {
-                if(false == DeathLinkEnabled)
-                {
-                    ProcessingDeathLink = false;
-                    return;
-                }
-
-                if(false == ProcessingDeathLink)
-                {
-                    FileLogger.QuietLogMessage("Sending deathlink message");
-                    DeathLinkData deathLinkData = new(SlotName);
-                    DeathLinkService.SendDeathLink(deathLinkData);
-                }
-            }
-            catch(Exception e)
-            {
-                FileLogger.LogException("Error sending deathlink message", e);
-            }
-        }
-
-
-        public static async Task ScoutAPLocations()
-        {
-            long[] locationIDs = [.. Session.Locations.AllLocations];
-            ScoutedItems = await Session.Locations.ScoutLocationsAsync(locationIDs);
-        }
-
-
-        public static ItemFlags? GetAPItemTypeAtLocation(long locationId)
-        {
-            if(false == ScoutedItems.ContainsKey(locationId))
-            {
-                return null;
-            }
-
-            return ScoutedItems[locationId].Flags;
-        }
-
-
-        public static void SetDataStorage(string key, string value)
-        {
-            Session.DataStorage[key] = value;
-        }
-
-
-        public static T GetAPSlotDataKey<T>(string key)
-        {
-            if(false == SlotData.ContainsKey(key))
-            {
-                return default;
-            }
-
-            return (T)SlotData[key];
-        }
-
-
-        public static long GetLocationId(string locationName)
-        {
-            return Session.Locations.GetLocationIdFromName(ArchipelagoGameName, locationName);
-        }
-
-
-        public static ScoutedItemInfo GetAPItemAtLocation(long locationId)
-        {
-            if(false == ScoutedItems.ContainsKey(locationId))
-            {
-                return null;
-            }
-
-            return ScoutedItems[locationId];
-        }
-
-
-        public static void SendAPLocationCheck(string locationName)
-        {
-            long locationId = GetAPLocationId(locationName);
-            if(locationId == -1)
-            {
-                return;
-            }
-
-            Session.Locations.CompleteLocationChecks(locationId);
-        }
-
-
-        public static bool IsAPLocationChecked(string locationName)
-        {
-            long locationId = GetAPLocationId(locationName);
-            return IsAPLocationChecked(locationId);
-        }
-
-
-        public static bool IsAPLocationChecked(long locationId)
-        {
-            return LocationIDsChecked.Contains(locationId);
-        }
-
-
-        public static bool PlayerHasAPItem(string itemName)
-        {
-            return ItemsReceived.Contains(itemName);
-        }
-
-
-        public static bool DoesAPLocationExist(string locationName)
-        {
-            return GetAPLocationId(locationName) > -1;
-        }
-
-
-        public static long GetAPLocationId(string locationName)
-        {
-            long id = Session.Locations.GetLocationIdFromName(ArchipelagoGameName, locationName);
-            return id;
-        }
-
-
-        public static void CheckArchipelagoGoal()
-        {
-            if(APScoreGoal == 0 && APLevelCompletionGoal == 0)
-            {
-                // No goal
-                return;
-            }
-
-            if(APScoreGoal > 0 && TotalScoreInAP < APScoreGoal)
-            {
-                return;
-            }
-
-            if(APLevelCompletionGoal > 0 && TotalLevelsCompletedInAP < APLevelCompletionGoal)
-            {
-                return;
-            }
-
-            ReleaseGame();
-        }
-
-
-        public static void ReleaseGame()
-        {
-            Session.SetGoalAchieved();
-        }
-
-
-        private static void ResetArchipelagoData()
-        {
-            Session = null;
-            DeathLinkService = null;
-            LocationIDsChecked = [];
-            APLevelFilesToIgnore = [];
-            PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
-            ArchipelagoGameName = string.Empty;
-            ArchipelagoServer = string.Empty;
-            ArchipelagoPort = null;
-            SlotName = string.Empty;
-            ArchipelagoSlotId = null;
-            ArchipelagoPassword = string.Empty;
-            SlotData = [];
-            PendingItems = [];
-            SaveData.SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Archipelago);
-            SaveData.SaveData.WriteSaveSlot(new SaveData.SaveSlot(Constants.SaveSlotNames.Archipelago));
-        }
-
-
-        private static void ProcessAPItemUnlocks()
-        {
-            RedKeyUnlocked = PlayerHasAPItem("Red Key");
-            BlueKeyUnlocked = PlayerHasAPItem("Blue Key");
-            YellowKeyUnlocked = PlayerHasAPItem("Yellow Key");
-            GreenKeyUnlocked = PlayerHasAPItem("Green Key");
-            IceSkatesUnlocked = PlayerHasAPItem("Ice Skates");
-            FireBootsUnlocked = PlayerHasAPItem("Fire Boots");
-            SuctionBootsUnlocked = PlayerHasAPItem("Suction Boots");
-            FlippersUnlocked = PlayerHasAPItem("Flippers");
-            HelmetUnlocked = PlayerHasAPItem("Helmet");
-            SecretEyeUnlocked = PlayerHasAPItem("Secret Eye");
-            RerenderMap = true;
-        }
-
-
-        private static void ProcessNewItem(string itemName)
-        {
-            switch(itemName)
-            {
-                case Constants.Archipelago.ItemNames.SingleUseRedKey:
-                    PendingItems.Add(new RedKeyItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseBlueKey:
-                    PendingItems.Add(new BlueKeyItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseYellowKey:
-                    PendingItems.Add(new YellowKeyItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseGreenKey:
-                    PendingItems.Add(new GreenKeyItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseIceSkates:
-                    PendingItems.Add(new IceSkatesItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseFireBoots:
-                    PendingItems.Add(new FireBootsItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseSuctionBoots:
-                    PendingItems.Add(new SuctionBootsItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseFlippers:
-                    PendingItems.Add(new FlippersItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseHelmet:
-                    PendingItems.Add(new HelmetItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.SingleUseSecretEye:
-                    PendingItems.Add(new SecretEyeItem(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.TrapNames.ConfusionTrap:
-                    RandomNumberGenerator rng = new();
-                    ConfusionTimer = rng.RandiRange(20, 40);
-                    break;
-
-                case Constants.Archipelago.ItemNames.TimeBonus:
-                    if(TimeLimit == 0)
-                    {
-                        // Turns untimed levels into timed levels
-                        TimeLimit += 10;
-                    }
-                    Timer += 10;
-                    break;
-
-                case Constants.Archipelago.TrapNames.TimePenalty:
-                    Timer -= 10;
-                    break;
-
-                case Constants.Archipelago.TrapNames.TeethTrap:
-                    AddMobAtRandom(new TeethMonster(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.TrapNames.WalkerTrap:
-                    AddMobAtRandom(new WalkerMonster(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.TrapNames.BlobTrap:
-                    AddMobAtRandom(new BlobMonster(Vector2I.Zero));
-                    break;
-
-                case Constants.Archipelago.ItemNames.BigMap:
-                    MapViewportSize = Mathf.Min(15, MapViewportSize + 6);
-                    break;
-
-                case Constants.Archipelago.TrapNames.SmallMapTrap:
-                    MapViewportSize = Mathf.Max(5, MapViewportSize - 4);
-                    break;
-            }
-        }
-
-
-        #region Event Handlers
-
-        private static void OnAPSocketError(Exception e, string message)
-        {
-            FileLogger.QuietLogMessage($"Socket error: {e.Message}");
-        }
-
-
-        private static void OnAPSocketClosed(string reason)
-        {
-            FileLogger.QuietLogMessage("Socket closed");
-            IsConnected = false;
-        }
-
-
-        private static void OnAPSocketOpened()
-        {
-            FileLogger.QuietLogMessage("Socket opened");
-            IsConnected = true;
-        }
-
-
-        private static void OnAPItemReceived(ReceivedItemsHelper helper)
-        {
-            if(InitialProcessingComplete)
-            {
-                var itemInfo = helper.DequeueItem();
-                while(itemInfo is not null)
-                {
-                    ProcessNewItem(itemInfo.ItemName);
-                    itemInfo = helper.DequeueItem();
-                }
-            }
-            else
-            {
-                var itemInfo = helper.DequeueItem();
-                while(itemInfo is not null)
-                {
-                    itemInfo = helper.DequeueItem();
-                }
-            }
-            ItemsReceived = helper.AllItemsReceived
-                .Select(e => Session.Items.GetItemName(e.ItemId))
-                .ToList();
-            ProcessAPItemUnlocks();
-        }
-
-
-        private static void OnAPLocationChecked(ReadOnlyCollection<long> newLocations)
-        {
-            LocationIDsChecked.AddRange(newLocations);
-            LocationIDsChecked = LocationIDsChecked.Distinct().ToList();
-        }
-
-
-        private static void OnDeathLinkReceived(DeathLinkData deathLink)
-        {
-            FileLogger.QuietLogMessage("Deathlinkn packet received");
-            if(false == DeathLinkEnabled)
-            {
-                FileLogger.QuietLogMessage("Deathlink is disabled");
-                return;
-            }
-
-            ProcessingDeathLink = true;
-            DeathMessage = $"Ooops! {deathLink.Source} has died!";
-        }
-
-        #endregion
-    }
+	public static partial class GameData
+	{
+		public static ArchipelagoData Archipelago = new();
+	}
+
+	public class ArchipelagoData
+	{
+		/*
+		 * Indicates if a given game item unlock has been received. For non-Archipelago 
+		 * gamemodes, these are always set to true
+		 */
+		#region Item Unlock Flags
+
+		public bool RedKeyUnlocked = true;
+		public bool BlueKeyUnlocked = true;
+		public bool YellowKeyUnlocked = true;
+		public bool GreenKeyUnlocked = true;
+		public bool IceSkatesUnlocked = true;
+		public bool FireBootsUnlocked = true;
+		public bool SuctionBootsUnlocked = true;
+		public bool FlippersUnlocked = true;
+		public bool HelmetUnlocked = true;
+		public bool SecretEyeUnlocked = true;
+
+		#endregion
+
+
+		/*
+		 * Contains information about the current connection to the Archipelago server.
+		 */
+		#region Archipelago Connection
+
+		private ArchipelagoSession Session = null;
+
+		public string GameName { get; set; } = string.Empty;
+
+		public string Server { get; set; } = string.Empty;
+
+		public int? Port { get; set; } = null;
+
+		public string SlotName { get; set; } = string.Empty;
+
+		public string Password { get; set; } = string.Empty;
+
+		public int? SlotId { get; set; } = null;
+
+		#endregion
+
+
+		/*
+		 * Contains gameplay-relevant Archipelago data such as settings, items, and 
+		 * locations.
+		 */
+		#region Archipelago Data
+
+		/// <summary>
+		/// Is deathlink enabled for the current Archipelago session
+		/// </summary>
+		public bool DeathLinkEnabled = false;
+
+		/// <summary>
+		/// Is the game currently processing an incoming deathlink command? Prevents deathlink loops.
+		/// </summary>
+		public bool IsProcessingDeathLink = false;
+
+		public long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+
+		/// <summary>
+		/// A list of level file names to ignore when displaying the level select list.
+		/// This list is defined in the APWorld file and stored in game's slot data.
+		/// </summary>
+		public string[] LevelFilesToIgnore = [];
+
+		/// <summary>
+		/// The list of single-use items the player has received. The player receives
+		/// these items when they are in a level.
+		/// </summary>
+		public List<MapItem> PendingItems = [];
+
+		private bool InitialProcessingComplete = false;
+		private DeathLinkService DeathLinkService = null;
+		private List<string> ItemsReceived = [];
+		private List<long> LocationsChecked = [];
+		private Dictionary<string, object> SlotData = [];
+		private Dictionary<long, ScoutedItemInfo> ScoutedItems = [];
+
+		/// <summary>
+		/// Returns the total score required to meet the goal condition. A goal of 0 means this
+		/// goal is disabled.
+		/// </summary>
+		public long ScoreGoal
+		{
+			get
+			{
+				return GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.ScoreGoal);
+			}
+		}
+
+
+		/// <summary>
+		/// Returns the number of completed levels required to meet the goal condition.
+		/// A goal of 0 means this goal is disabled.
+		/// </summary>
+		public long LevelCompletionGoal
+		{
+			get
+			{
+				return GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.LevelCompletionGoal);
+			}
+		}
+
+
+		/// <summary>
+		/// Returns the number of levels currently completed by the player.
+		/// </summary>
+		public int CurrentLevelCompletedCount
+		{
+			get
+			{
+				var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+				return archipelagoData?.HighScores?.Count ?? 0;
+			}
+		}
+
+
+		/// <summary>
+		/// Returns the player's current total score.
+		/// </summary>
+		public long CurrentTotalScore
+		{
+			get
+			{
+				if (CurrentLevelCompletedCount == 0)
+				{
+					return 0;
+				}
+
+
+				var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+				return archipelagoData.HighScores.Sum(e => e.Value);
+			}
+		}
+
+
+		#endregion
+
+
+		/// <summary>
+		/// Resets the object's data state.
+		/// </summary>
+		public void Reset()
+		{
+			Session = null;
+			GameName = string.Empty;
+			Server = string.Empty;
+			Port = null;
+			SlotName = string.Empty;
+			Password = string.Empty;
+
+			DeathLinkService = null;
+			LocationsChecked = [];
+			LevelFilesToIgnore = [];
+			PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+
+			SlotId = null;
+			SlotData = [];
+			PendingItems = [];
+			SaveData.SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Archipelago);
+			SaveData.SaveData.WriteSaveSlot(new(Constants.SaveSlotNames.Archipelago));
+		}
+
+
+		#region Server Connect Methods
+
+		/// <summary>
+		/// Attempts to connect to the Archipelago server using the given parameters
+		/// </summary>
+		public async Task ConnectToServer(string gameName, string server, int port, string slotName, string password)
+		{
+			try
+			{
+				Reset();
+				BuildSession(server, port);
+				ConnectToServer(gameName, slotName, password);
+
+				GameName = gameName;
+				Server = server;
+				Port = port;
+				SlotName = slotName;
+				Password = password;
+				// TODO: Save successful Archipelago connection settings to Game Settings
+
+				// Load from Slot Data
+				await LoadGameSaveFromSlotData();
+				BuildFileIgnoreList();
+				GetPlayerSprite();
+				ConfigureDeathLink();
+				await ScoutAPLocations();
+				FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
+				InitialProcessingComplete = true;
+			}
+			catch (Exception e)
+			{
+				FileLogger.LogException("Error attempting to connect to Archipelago server", e);
+				Session = null;
+				throw;
+			}
+		}
+
+
+		/// <summary>
+		/// Disconnects from the Archipelago server.
+		/// </summary>
+		public async Task DisconnectFromServer()
+		{
+			try
+			{
+				await Session.Socket.DisconnectAsync();
+				Reset();
+			}
+			catch (Exception e)
+			{
+				FileLogger.LogException("Error disconnecting from Archipelago server", e);
+			}
+		}
+
+
+		#region Socket Events
+
+		private void OnSocketOpened()
+		{
+			FileLogger.QuietLogMessage("Socket opened");
+		}
+
+
+		private void OnSocketClosed(string reason)
+		{
+			FileLogger.QuietLogMessage($"Socket closed with reason {reason}");
+		}
+
+
+		private void OnSocketError(Exception e, string message)
+		{
+			FileLogger.LogException($"Socket error occurred: {message}", e);
+		}
+
+		#endregion
+
+
+		#region Connection Helper Methods
+
+		private void BuildSession(string server, int port)
+		{
+			Session = ArchipelagoSessionFactory.CreateSession(server, port);
+			Session.Socket.SocketOpened += OnSocketOpened;
+			Session.Socket.SocketClosed += OnSocketClosed;
+			Session.Socket.ErrorReceived += OnSocketError;
+			Session.Locations.CheckedLocationsUpdated += OnLocationChecked;
+			Session.Items.ItemReceived += OnItemAddedToQueue;
+		}
+
+
+		private void ConnectToServer(string gameName, string slotName, string password)
+		{
+			var loginResult = Session.TryConnectAndLogin(gameName, slotName, ItemsHandlingFlags.AllItems, password: password, tags: ["AP"]);
+			if (false == loginResult.Successful)
+			{
+				var loginFailure = (LoginFailure)loginResult;
+				string exceptionMessage = $"The following errors occurred while attempting to connect:";
+				if (loginFailure.Errors.Length > 0)
+				{
+					exceptionMessage += $"\r\n{loginFailure.Errors.Join("\r\n")}";
+					FileLogger.LogException("Error connecting to Archipelago server", new(exceptionMessage));
+
+					throw new(loginFailure.Errors[0]);
+				}
+
+				throw new("Unexpected error occurred while connecting to Archipelago server.");
+			}
+
+			SlotData = ((LoginSuccessful)loginResult).SlotData;
+		}
+
+
+		private async Task LoadGameSaveFromSlotData()
+		{
+			SaveSlot apSaveSlot = new(Constants.SaveSlotNames.Archipelago);
+			var saveData = Session.DataStorage[Constants.Archipelago.SlotDataKeys.SaveData];
+			string saveDataJson = $"{await saveData.GetAsync()}";
+			if (false == string.IsNullOrEmpty(saveDataJson))
+			{
+				apSaveSlot = JsonSerializer.Deserialize<SaveSlot>(saveDataJson);
+			}
+			SaveData.SaveData.WriteSaveSlot(apSaveSlot);
+		}
+
+
+		private void BuildFileIgnoreList()
+		{
+			LevelFilesToIgnore = [];
+			string ignoreFiles = SlotData[Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
+			if (false == string.IsNullOrEmpty(ignoreFiles))
+			{
+				LevelFilesToIgnore = ignoreFiles.Split('|');
+			}
+		}
+
+
+		private void GetPlayerSprite()
+		{
+			try
+			{
+				PlayerSpriteIndex = (long)SlotData[Constants.Archipelago.SlotDataKeys.PlayerSprite];
+			}
+			catch (Exception e)
+			{
+				GD.Print(e.Message);
+				PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+			}
+		}
+
+
+		private void ConfigureDeathLink()
+		{
+			DeathLinkService = Session.CreateDeathLinkService();
+			DeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
+			long deathLinkSetting = GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.DeathLink);
+			DeathLinkEnabled = (deathLinkSetting == 1);
+			if (DeathLinkEnabled)
+			{
+				DeathLinkService.EnableDeathLink();
+			}
+			else
+			{
+				DeathLinkService.DisableDeathLink();
+			}
+		}
+
+
+		private async Task ScoutAPLocations()
+		{
+			long[] locationIDs = [.. Session.Locations.AllLocations];
+			ScoutedItems = await Session.Locations.ScoutLocationsAsync(locationIDs);
+		}
+
+		#endregion
+
+		#endregion
+
+
+		/// <summary>
+		/// Sets a value on the Archipelago server for a given DataStorage key.
+		/// </summary>
+		public void SetDataStorageKey(string key, string value)
+		{
+			Session.DataStorage[key] = value;
+		}
+
+
+		/// <summary>
+		/// Returns a slot data value by its corresponding key name.
+		/// </summary>
+		public T GetSlotDataKey<T>(string key)
+		{
+			return (T)SlotData.GetValueOrDefault(key);
+		}
+
+
+		/// <summary>
+		/// Checks if the player has reached their specified goal, and releases
+		/// the game if appropriate.
+		/// </summary>
+		public void CheckForGoal()
+		{
+			if(ScoreGoal == 0 && LevelCompletionGoal == 0)
+			{
+				// No automatic goal.
+				// TODO: Implement "complete all levels" fallback goal
+				return;
+			}
+
+			if(ScoreGoal > 0 && CurrentTotalScore < ScoreGoal)
+			{
+				return;
+			}
+
+			if(LevelCompletionGoal > 0 && CurrentLevelCompletedCount < LevelCompletionGoal)
+			{
+				return;
+			}
+
+			ReleaseGame();
+		}
+
+
+		/// <summary>
+		/// Marks the game as released, completing it and sending out all unchecked
+		/// locations.
+		/// </summary>
+		public void ReleaseGame()
+		{
+			Session.SetGoalAchieved();
+		}
+
+
+		#region Archipelago Location Methods
+
+		public bool HasLocationBeenChecked(string locationName)
+		{
+			long locationId = GetLocationIdByName(locationName);
+			return IsLocationChecked(locationId);
+		}
+
+
+		public bool IsLocationChecked(long locationId)
+		{
+			return LocationsChecked.Contains(locationId);
+		}
+
+
+		public bool DoesLocationExist(string locationName)
+		{
+			return GetLocationIdByName(locationName) > -1;
+		}
+
+
+		public long GetLocationIdByName(string locationName)
+		{
+			return Session.Locations.GetLocationIdFromName(GameName, locationName);
+		}
+
+
+		public void SendLocationCheck(string locationName)
+		{
+			long locationId = GetLocationIdByName(locationName);
+			if (locationId == -1)
+			{
+				FileLogger.QuietLogMessage($"Location \"{locationName}\" not recognized");
+				return;
+			}
+
+			Session.Locations.CompleteLocationChecks(locationId);
+		}
+
+		private void OnLocationChecked(ReadOnlyCollection<long> newLocations)
+		{
+			LocationsChecked.AddRange(newLocations);
+			LocationsChecked = LocationsChecked.Distinct().ToList();
+		}
+
+		#endregion
+
+
+		#region Archipelago Item Methods
+
+		public bool PlayerReceivedItem(string itemName)
+		{
+			return ItemsReceived.Contains(itemName);
+		}
+
+
+		public ScoutedItemInfo GetItemAtLocationId(long locationId)
+		{
+			return ScoutedItems.GetValueOrDefault(locationId);
+		}
+
+
+		public ItemFlags? GetItemTypeAtLocation(long locationId)
+		{
+			return ScoutedItems.GetValueOrDefault(locationId)?.Flags;
+		}
+
+
+		public void ProcessItemUnlocks()
+		{
+			RedKeyUnlocked = PlayerReceivedItem("Red Key");
+			BlueKeyUnlocked = PlayerReceivedItem("Blue Key");
+			YellowKeyUnlocked = PlayerReceivedItem("Yellow Key");
+			GreenKeyUnlocked = PlayerReceivedItem("Green Key");
+			IceSkatesUnlocked = PlayerReceivedItem("Ice Skates");
+			FireBootsUnlocked = PlayerReceivedItem("Fire Boots");
+			SuctionBootsUnlocked = PlayerReceivedItem("Suction Boots");
+			FlippersUnlocked = PlayerReceivedItem("Flippers");
+			HelmetUnlocked = PlayerReceivedItem("Helmet");
+			SecretEyeUnlocked = PlayerReceivedItem("Secret Eye");
+		}
+
+
+		private void ProcessNewItem(string itemName)
+		{
+			MapItem pendingItem = itemName switch
+			{
+				Constants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem(Vector2I.Zero),
+				Constants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem(Vector2I.Zero),
+				_ => null
+			};
+			if(pendingItem is not null)
+			{
+				PendingItems.Add(pendingItem);
+				return;
+			}
+
+			OnItemReceived.Invoke(itemName);
+		}
+
+
+		private void OnItemAddedToQueue(ReceivedItemsHelper helper)
+		{
+			var itemInfo = helper.DequeueItem();
+			while(itemInfo is not null) {
+				if(InitialProcessingComplete)
+				{
+					ProcessNewItem(itemInfo.ItemName);
+				}
+				itemInfo = helper.DequeueItem();
+			}
+			ItemsReceived = helper.AllItemsReceived
+				.Select(e => Session.Items.GetItemName(e.ItemId))
+				.ToList();
+			ProcessItemUnlocks();
+		}
+
+		#endregion
+
+
+		#region DeathLink Methods
+
+		/// <summary>
+		/// Sends a death link message to the Archipelago server.
+		/// </summary>
+		public void SendDeathLinkMessage()
+		{
+			try
+			{
+				if (false == DeathLinkEnabled)
+				{
+					IsProcessingDeathLink = false;
+					return;
+				}
+
+				// Do not send a deathlink message if player is dying from a previous deathlink.
+				if (IsProcessingDeathLink)
+				{
+					return;
+				}
+
+				FileLogger.QuietLogMessage("Sending deathlink message to server");
+				DeathLinkData deathLinkData = new(SlotName);
+				DeathLinkService.SendDeathLink(deathLinkData);
+			}
+			catch (Exception e)
+			{
+				FileLogger.LogException("Error sending deathlink message to server", e);
+			}
+		}
+
+
+		private void OnDeathLinkReceived(DeathLinkData deathLink)
+		{
+			FileLogger.QuietLogMessage("Deathlinkn packet received");
+			if (false == DeathLinkEnabled)
+			{
+				FileLogger.QuietLogMessage("Deathlink is disabled");
+				return;
+			}
+
+			IsProcessingDeathLink = true;
+			string deathMessage = $"Ooops! {deathLink.Source} has died!";
+			OnDeathMessage.Invoke(deathMessage);
+		}
+
+
+		#endregion
+
+
+		#region External Event Emitters
+
+		public delegate void OnItemReceivedHandler(string itemName);
+
+		public event OnItemReceivedHandler OnItemReceived = (itemName) => { };
+
+		public delegate void OnDeathMessageHandler(string message);
+
+		public event OnDeathMessageHandler OnDeathMessage = (message) => { };
+
+		#endregion
+	}
 }

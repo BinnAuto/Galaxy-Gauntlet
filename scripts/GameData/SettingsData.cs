@@ -28,14 +28,14 @@ namespace GalaxyGauntlet.scripts
             var loadResult = ConfigFile.Load(GameConfigFilePath);
             if(loadResult == Error.Ok)
             {
-                TickRate = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(TickRate), 1);
-                ArchipelagoGameName = (string)ConfigFile.GetValue(GameDataConfigSection, nameof(ArchipelagoGameName), "Chip's Challenge");
-                ArchipelagoServer = (string)ConfigFile.GetValue(GameDataConfigSection, nameof(ArchipelagoServer), "archipelago.gg");
-                ArchipelagoPort = (int)ConfigFile.GetValue(GameDataConfigSection, nameof(ArchipelagoPort), string.Empty);
-                SlotName = (string)ConfigFile.GetValue(GameDataConfigSection, nameof(SlotName), string.Empty);
-                ArchipelagoPassword = (string)ConfigFile.GetValue(GameDataConfigSection, nameof(ArchipelagoPassword), string.Empty);
-                MasterVolume = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(MasterVolume), 50);
-                MusicVolume = (double)ConfigFile.GetValue(GameDataConfigSection, nameof(MusicVolume), 50);
+                TickRate = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.TickRate, 1);
+                Archipelago.GameName = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoGameName, "Chip's Challenge");
+                Archipelago.Server = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoServer, "archipelago.gg");
+                Archipelago.Port = (int)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPort, string.Empty);
+                Archipelago.SlotName = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoSlotName, string.Empty);
+                Archipelago.Password = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPassword, string.Empty);
+                MasterVolume = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.MasterVolume, 50);
+                MusicVolume = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.MusicVolume, 50);
             }
             SaveSettings();
         }
@@ -43,14 +43,14 @@ namespace GalaxyGauntlet.scripts
 
         public static void SaveSettings()
         {
-            ConfigFile.SetValue(GameDataConfigSection, nameof(TickRate), TickRate);
-            ConfigFile.SetValue(GameDataConfigSection, nameof(ArchipelagoGameName), ArchipelagoGameName);
-            ConfigFile.SetValue(GameDataConfigSection, nameof(ArchipelagoServer), ArchipelagoServer);
-            ConfigFile.SetValue(GameDataConfigSection, nameof(ArchipelagoPort), ArchipelagoPort.ToString());
-            ConfigFile.SetValue(GameDataConfigSection, nameof(SlotName), SlotName);
-            ConfigFile.SetValue(GameDataConfigSection, nameof(ArchipelagoPassword), ArchipelagoPassword);
-            ConfigFile.SetValue(GameDataConfigSection, nameof(MasterVolume), MasterVolume);
-            ConfigFile.SetValue(GameDataConfigSection, nameof(MusicVolume), MusicVolume);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.TickRate, TickRate);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoGameName, Archipelago.GameName);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoServer, Archipelago.Server);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPort, Archipelago.Port.ToString());
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoSlotName, Archipelago.SlotName);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPassword, Archipelago.Password);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.MasterVolume, MasterVolume);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.MusicVolume, MusicVolume);
             ConfigFile.Save(GameConfigFilePath);
             GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume);
             GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume);

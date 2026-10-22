@@ -49,11 +49,11 @@ public partial class ArchipelagoConnectForm : Node2D
 			Password = (LineEdit)GetNode(nameof(Password) + "/" + nameof(Password));
 
 			GameData.LoadSettings();
-			GameName.Text = GameData.ArchipelagoGameName;
-			Server.Text = GameData.ArchipelagoServer;
-			Port.Text = GameData.ArchipelagoPort.ToString();
-			SlotName.Text = GameData.SlotName;
-			Password.Text = GameData.ArchipelagoPassword;
+			GameName.Text = GameData.Archipelago.GameName;
+			Server.Text = GameData.Archipelago.Server;
+			Port.Text = GameData.Archipelago.Port.ToString();
+			SlotName.Text = GameData.Archipelago.SlotName;
+			Password.Text = GameData.Archipelago.Password;
 		
 			ConnectButton = (UIButton)GetNode(nameof(ConnectButton));
 			ConnectButton.Pressed += async () => { await OnConnect(); };
@@ -83,7 +83,7 @@ public partial class ArchipelagoConnectForm : Node2D
 			int port = GetPortNumber();
 			string slotName = SlotName.Text;
 			string password = Password.Text;
-			await GameData.ConnectToArchipelago(gameName, server, port, slotName, password);
+			await GameData.Archipelago.ConnectToServer(gameName, server, port, slotName, password);
 			Connected.Invoke();
 		}
 		catch(Exception e)

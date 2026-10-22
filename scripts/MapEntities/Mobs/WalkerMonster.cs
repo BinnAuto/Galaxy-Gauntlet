@@ -118,13 +118,6 @@ namespace GalaxyGauntlet.scripts.MapEntities
                         return;
                     }
                 }
-                if(GameData.LynxBehavior)
-                {
-                    // Walkers in Lynx implementations only search
-                    // one orientation per game tick, as opposed to
-                    // MS which searches as many as necessary.
-                    return;
-                }
             }
         }
     }

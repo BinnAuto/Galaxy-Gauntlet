@@ -19,7 +19,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			{
 				return Orientation switch
 				{
-					EntityOrientation.North => GameData.PlayerSpriteIndex switch
+					EntityOrientation.North => GameData.Archipelago.PlayerSpriteIndex switch
 					{
 						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_N,
 						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_N,
@@ -31,7 +31,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
                         Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_N,
                         _ => Constants.SpriteCoordinates.Player_N
 					},
-					EntityOrientation.East => GameData.PlayerSpriteIndex switch
+					EntityOrientation.East => GameData.Archipelago.PlayerSpriteIndex switch
 					{
 						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_E,
 						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_E,
@@ -43,7 +43,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
                         Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_E,
                         _ => Constants.SpriteCoordinates.Player_E
 					},
-					EntityOrientation.South => GameData.PlayerSpriteIndex switch
+					EntityOrientation.South => GameData.Archipelago.PlayerSpriteIndex switch
 					{
 						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_S,
 						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_S,
@@ -55,7 +55,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 						Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_S,
 						_ => Constants.SpriteCoordinates.Player_S
 					},
-					EntityOrientation.West => GameData.PlayerSpriteIndex switch
+					EntityOrientation.West => GameData.Archipelago.PlayerSpriteIndex switch
 					{
 						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_W,
 						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_W,
@@ -107,14 +107,14 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			#region Process Item collection
 
 			var currentItem = GameData.GetMapItem(Coordinate);
-			if ((currentItem is RedKeyItem && GameData.RedKeyUnlocked)
-				|| (currentItem is BlueKeyItem && GameData.BlueKeyUnlocked)
-				|| (currentItem is YellowKeyItem && GameData.YellowKeyUnlocked)
-				|| (currentItem is GreenKeyItem && GameData.GreenKeyUnlocked)
-				|| (currentItem is IceSkatesItem && GameData.IceSkatesUnlocked)
-				|| (currentItem is FireBootsItem && GameData.FireBootsUnlocked)
-				|| (currentItem is FlippersItem && GameData.FlippersUnlocked)
-				|| (currentItem is SuctionBootsItem && GameData.SuctionBootsUnlocked)
+			if ((currentItem is RedKeyItem && GameData.Archipelago.RedKeyUnlocked)
+				|| (currentItem is BlueKeyItem && GameData.Archipelago.BlueKeyUnlocked)
+				|| (currentItem is YellowKeyItem && GameData.Archipelago.YellowKeyUnlocked)
+				|| (currentItem is GreenKeyItem && GameData.Archipelago.GreenKeyUnlocked)
+				|| (currentItem is IceSkatesItem && GameData.Archipelago.IceSkatesUnlocked)
+				|| (currentItem is FireBootsItem && GameData.Archipelago.FireBootsUnlocked)
+				|| (currentItem is FlippersItem && GameData.Archipelago.FlippersUnlocked)
+				|| (currentItem is SuctionBootsItem && GameData.Archipelago.SuctionBootsUnlocked)
 			)
 			{
 				GameData.RemoveMapItem(Coordinate);
@@ -182,14 +182,14 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			SetOrientationAndCoordinate(input, newCoordinate);
 
 			var item = GameData.GetMapItem(Coordinate);
-			if((item is RedKeyItem && GameData.RedKeyUnlocked)
-				|| (item is BlueKeyItem && GameData.BlueKeyUnlocked)
-				|| (item is YellowKeyItem && GameData.YellowKeyUnlocked)
-				|| (item is GreenKeyItem && GameData.GreenKeyUnlocked)
-				|| (item is IceSkatesItem && GameData.IceSkatesUnlocked)
-				|| (item is FireBootsItem && GameData.FireBootsUnlocked)
-				|| (item is FlippersItem && GameData.FlippersUnlocked)
-				|| (item is SuctionBootsItem && GameData.SuctionBootsUnlocked)
+			if((item is RedKeyItem && GameData.Archipelago.RedKeyUnlocked)
+				|| (item is BlueKeyItem && GameData.Archipelago.BlueKeyUnlocked)
+				|| (item is YellowKeyItem && GameData.Archipelago.YellowKeyUnlocked)
+				|| (item is GreenKeyItem && GameData.Archipelago.GreenKeyUnlocked)
+				|| (item is IceSkatesItem && GameData.Archipelago.IceSkatesUnlocked)
+				|| (item is FireBootsItem && GameData.Archipelago.FireBootsUnlocked)
+				|| (item is FlippersItem && GameData.Archipelago.FlippersUnlocked)
+				|| (item is SuctionBootsItem && GameData.Archipelago.SuctionBootsUnlocked)
 			)
 			{
 				GameData.RemoveMapItem(Coordinate);

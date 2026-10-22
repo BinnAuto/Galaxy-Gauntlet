@@ -91,10 +91,10 @@ public partial class GameplayScreen : Node
 			MapDisplay.RenderMapData();
 			OnPlayerDeath();
 		}
-		if(GameData.ProcessMobs && GameData.PendingItems.Count > 0)
+		if(GameData.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
 		{
-			GameData.PlayerItems.AddRange(GameData.PendingItems);
-			GameData.PendingItems.Clear();
+			GameData.PlayerItems.AddRange(GameData.Archipelago.PendingItems);
+			GameData.Archipelago.PendingItems.Clear();
 		}
 	}
 
@@ -263,7 +263,7 @@ public partial class GameplayScreen : Node
 		DialogWindow.ClearAllButtonEvents();
 		DialogWindow.ShowDialog(GameData.DeathMessage, DialogButtonType.OK);
 		DialogWindow.OKButtonPressed += RestartLevel;
-		GameData.ProcessingDeathLink = false;
+		GameData.Archipelago.IsProcessingDeathLink = false;
 	}
 
 
@@ -285,7 +285,7 @@ public partial class GameplayScreen : Node
 				break;
 
 			case GameMode.Archipelago:
-				GameData.CheckArchipelagoGoal();
+				GameData.Archipelago.CheckForGoal();
 				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
 				break;
 		}
@@ -399,7 +399,7 @@ public partial class GameplayScreen : Node
 				if(GameData.GameMode == GameMode.Archipelago)
 				{
 					string saveSlotJson = JsonSerializer.Serialize(saveSlot);
-					GameData.SetDataStorage(Constants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
+					GameData.Archipelago.SetDataStorageKey(Constants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
 				}
 				break;
 

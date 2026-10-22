@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return GameData.RedKeyUnlocked
+                return GameData.Archipelago.RedKeyUnlocked
                     ? Constants.SpriteCoordinates.RedKey
                     : Constants.SpriteCoordinates.LockedRedKey;
             }

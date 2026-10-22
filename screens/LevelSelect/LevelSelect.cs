@@ -55,15 +55,15 @@ public partial class LevelSelect : Node2D
 			if (GameData.GameMode == GameMode.Archipelago)
 			{
 				ArchipelagoDisplay.Visible = true;
-				TotalScore.Text = GameData.TotalScoreInAP.ToString();
-				if(GameData.APScoreGoal != 0)
+				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString();
+				if(GameData.Archipelago.ScoreGoal != 0)
 				{
-					TotalScore.Text += $" ({GameData.APScoreGoal})";
+					TotalScore.Text += $" ({GameData.Archipelago.ScoreGoal})";
 				}
-				LevelsCompleted.Text = GameData.TotalLevelsCompletedInAP.ToString();
-				if(GameData.APLevelCompletionGoal != 0)
+				LevelsCompleted.Text = GameData.Archipelago.CurrentLevelCompletedCount.ToString();
+				if(GameData.Archipelago.LevelCompletionGoal!= 0)
 				{
-					LevelsCompleted.Text += $" ({GameData.APLevelCompletionGoal})";
+					LevelsCompleted.Text += $" ({GameData.Archipelago.LevelCompletionGoal})";
 				}
 			}
 		}
@@ -87,7 +87,7 @@ public partial class LevelSelect : Node2D
 		GameData.LevelSet = GGG.GetLevelList();
 		if(GameData.GameMode == GameMode.Archipelago)
 		{
-			string[] levelIgnores = GameData.GetAPSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
+			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
 			GameData.LevelSet = GameData.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 		}
 		GD.Print($"{GameData.LevelSet.Length} levels found");
@@ -111,7 +111,7 @@ public partial class LevelSelect : Node2D
 				string mapName = $"Map {levelIndex} - {levelName}";
 				string completeLocation = $"Complete {mapName}";
 				string noResetsLocation = $"{completeLocation} (No Resets)";
-				if (false == GameData.PlayerHasAPItem(mapName))
+				if (false == GameData.Archipelago.PlayerReceivedItem(mapName))
 				{
 					continue;
 				}
@@ -125,7 +125,7 @@ public partial class LevelSelect : Node2D
 				{
 					Text = "        "
 				};
-				if (GameData.IsAPLocationChecked(completeLocation))
+				if (GameData.Archipelago.HasLocationBeenChecked(completeLocation))
 				{
 					levelComplete.Text = "Complete";
 				}
@@ -136,7 +136,7 @@ public partial class LevelSelect : Node2D
 				{
 					Text = "        "
 				};
-				if (GameData.IsAPLocationChecked(noResetsLocation))
+				if (GameData.Archipelago.HasLocationBeenChecked(noResetsLocation))
 				{
 					levelFirstTryComplete.Text = " (No Resets)";
 				}
@@ -168,7 +168,7 @@ public partial class LevelSelect : Node2D
 		DialogWindow.ShowDialog("Are you sure you want to disconnect from the Archipelago server?", DialogButtonType.YesNo);
 		DialogWindow.YesButtonPressed += async () =>
 		{
-			await GameData.DisconnectFromArchipelago();
+			await GameData.Archipelago.DisconnectFromServer();
 			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
 		};
 		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };

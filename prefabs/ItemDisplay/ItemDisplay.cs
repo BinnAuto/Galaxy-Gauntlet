@@ -123,25 +123,25 @@ public partial class ItemDisplay : Node
 				break;
 
 			case DisplayMode.ArchipelagoTracker:
-				RedKey.Modulate = GameData.RedKeyUnlocked
+				RedKey.Modulate = GameData.Archipelago.RedKeyUnlocked
 					? UnlockedModulateColor : LockedModulateColor;
-                BlueKey.Modulate = GameData.BlueKeyUnlocked
+                BlueKey.Modulate = GameData.Archipelago.BlueKeyUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                YellowKey.Modulate = GameData.YellowKeyUnlocked
+                YellowKey.Modulate = GameData.Archipelago.YellowKeyUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                GreenKey.Modulate = GameData.GreenKeyUnlocked
+                GreenKey.Modulate = GameData.Archipelago.GreenKeyUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                IceSkates.Modulate = GameData.IceSkatesUnlocked
+                IceSkates.Modulate = GameData.Archipelago.IceSkatesUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                SuctionBoots.Modulate = GameData.SuctionBootsUnlocked
+                SuctionBoots.Modulate = GameData.Archipelago.SuctionBootsUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                FireBoots.Modulate = GameData.FireBootsUnlocked
+                FireBoots.Modulate = GameData.Archipelago.FireBootsUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                Flippers.Modulate = GameData.FlippersUnlocked
+                Flippers.Modulate = GameData.Archipelago.FlippersUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                SecretEye.Modulate = GameData.SecretEyeUnlocked
+                SecretEye.Modulate = GameData.Archipelago.SecretEyeUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
-                Helmet.Modulate = GameData.HelmetUnlocked
+                Helmet.Modulate = GameData.Archipelago.HelmetUnlocked
                     ? UnlockedModulateColor : LockedModulateColor;
 
                 RedKeyCount.Text = string.Empty;

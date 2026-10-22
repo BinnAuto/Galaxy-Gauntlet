@@ -111,11 +111,11 @@ namespace GalaxyGauntlet.scripts
 			if (GameMode == GameMode.Archipelago)
 			{
 				string location = $"Complete Map {CurrentLevelIndex + 1} - {LevelName}";
-				SendAPLocationCheck(location);
+				Archipelago.SendLocationCheck(location);
 				if(LevelRestarts == 0)
 				{
 					location += " (No Resets)";
-					SendAPLocationCheck(location);
+                    Archipelago.SendLocationCheck(location);
 				}
 			}
 		}
@@ -145,7 +145,7 @@ namespace GalaxyGauntlet.scripts
 			if(GameMode is GameMode.Archipelago)
 			{
 				string locationName = chip.GetArchipelagoLocationName();
-				SendAPLocationCheck(locationName);
+                Archipelago.SendLocationCheck(locationName);
 			}
 			RemoveMapItem(chip.Coordinate);
 		}
@@ -157,7 +157,7 @@ namespace GalaxyGauntlet.scripts
 			AcceptingPlayerInput = false;
 			TimerEnabled = false;
 			PlayerAlive = false;
-			SendDeathlink();
+			Archipelago.SendDeathLinkMessage();
 		}
 
 
@@ -203,7 +203,7 @@ namespace GalaxyGauntlet.scripts
 
 		public static bool PlayerHasPendingItem(int dataCode)
 		{
-			return PendingItems.Any(e => e.DataCode == dataCode);
+			return Archipelago.PendingItems.Any(e => e.DataCode == dataCode);
 		}
 
 
@@ -215,7 +215,7 @@ namespace GalaxyGauntlet.scripts
 
 		public static int PendingItemCount(int dataCode)
 		{
-			return PendingItems.Count(e => e.DataCode == dataCode);
+			return Archipelago.PendingItems.Count(e => e.DataCode == dataCode);
 		}
 
 

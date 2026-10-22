@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return GameData.FlippersUnlocked
+                return GameData.Archipelago.FlippersUnlocked
                     ? Constants.SpriteCoordinates.Flippers
                     : Constants.SpriteCoordinates.LockedFlippers;
             }

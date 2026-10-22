@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return GameData.SuctionBootsUnlocked
+                return GameData.Archipelago.SuctionBootsUnlocked
                     ? Constants.SpriteCoordinates.SuctionBoots
                     : Constants.SpriteCoordinates.LockedSuctionBoots;
             }
