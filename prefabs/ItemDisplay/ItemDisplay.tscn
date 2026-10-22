@@ -11,7 +11,7 @@ texture_filter = 1
 position = Vector2(20, 20)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 62
 
 [node name="Count" type="Label" parent="RedKey" unique_id=94378567]
@@ -27,7 +27,7 @@ texture_filter = 1
 position = Vector2(62, 20)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 64
 
 [node name="Count" type="Label" parent="BlueKey" unique_id=134370951]
@@ -43,7 +43,7 @@ texture_filter = 1
 position = Vector2(104, 20)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 66
 
 [node name="Count" type="Label" parent="YellowKey" unique_id=1311901891]
@@ -59,7 +59,7 @@ texture_filter = 1
 position = Vector2(146, 20)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 68
 
 [node name="Count" type="Label" parent="GreenKey" unique_id=1093565390]
@@ -75,7 +75,7 @@ texture_filter = 1
 position = Vector2(20, 62)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 102
 
 [node name="SuctionBoots" type="Sprite2D" parent="." unique_id=2058806859]
@@ -83,7 +83,7 @@ texture_filter = 1
 position = Vector2(62, 62)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 104
 
 [node name="FireBoots" type="Sprite2D" parent="." unique_id=1627371973]
@@ -91,7 +91,7 @@ texture_filter = 1
 position = Vector2(104, 62)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 100
 
 [node name="Flippers" type="Sprite2D" parent="." unique_id=1253877429]
@@ -99,7 +99,7 @@ texture_filter = 1
 position = Vector2(146, 62)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
+vframes = 22
 frame = 106
 
 [node name="SecretEye" type="Sprite2D" parent="." unique_id=233397503]
@@ -107,13 +107,13 @@ texture_filter = 1
 position = Vector2(20, 104)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
-frame = 120
+vframes = 22
+frame = 128
 
 [node name="Helmet" type="Sprite2D" parent="." unique_id=1594558014]
 texture_filter = 1
 position = Vector2(62, 104)
 texture = ExtResource("2_0p73g")
 hframes = 6
-vframes = 21
-frame = 122
+vframes = 22
+frame = 130
