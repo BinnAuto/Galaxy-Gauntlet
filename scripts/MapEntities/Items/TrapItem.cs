@@ -38,7 +38,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             if(IsActive != active)
             {
-                GameData.RerenderMap = true;
+                GameData.Map.Rerender = true;
             }
 
             IsActive = active;

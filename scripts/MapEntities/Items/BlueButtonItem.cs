@@ -15,7 +15,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override void OnPressed()
         {
-            GameData.FlipBlueTanks();
+            GameData.Map.FlipBlueTanks();
         }
     }
 }

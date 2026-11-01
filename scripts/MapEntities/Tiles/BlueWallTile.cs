@@ -31,7 +31,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
                     return Constants.SpriteCoordinates.BlueWall;
                 }
 
-                return GameData.XRayMode
+                return GameData.Level.XRayMode
                     ? Constants.SpriteCoordinates.Floor
                     : Constants.SpriteCoordinates.BlueWall;
             }

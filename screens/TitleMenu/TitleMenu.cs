@@ -128,7 +128,7 @@ public partial class TitleMenu : Node
 				LevelHash = levelHash
 			};
 			SaveData.WriteSaveSlot(autosave);
-			GameData.CurrentLevelIndex = 0;
+			GameData.Level.CurrentLevelIndex = 0;
 			OnGoToGameplayScreen(GameMode.Campaign);
 		};
 	}
@@ -149,7 +149,7 @@ public partial class TitleMenu : Node
 
 		if (levelHash == saveSlot.LevelHash && levelCount == saveSlot.LevelCount)
 		{
-			GameData.CurrentLevelIndex = saveSlot.CurrentLevelNumber;
+			GameData.Level.CurrentLevelIndex = saveSlot.CurrentLevelNumber;
 			OnGoToGameplayScreen(GameMode.Campaign);
 			return;
 		}
@@ -162,7 +162,7 @@ public partial class TitleMenu : Node
 			saveSlot.LevelCount = levelCount;
 			saveSlot.LevelHash = levelHash;
 			SaveData.WriteSaveSlot(saveSlot);
-			GameData.CurrentLevelIndex = saveSlot.CurrentLevelNumber;
+			GameData.Level.CurrentLevelIndex = saveSlot.CurrentLevelNumber;
 			OnGoToGameplayScreen(GameMode.Campaign);
 		};
 	}
@@ -214,7 +214,7 @@ public partial class TitleMenu : Node
 
 	private void ToLevelSelect(GameMode gameMode)
 	{
-		GameData.GameMode = gameMode;
+		GameData.Level.GameMode = gameMode;
 		GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
 	}
 
@@ -227,8 +227,8 @@ public partial class TitleMenu : Node
 
 	private void OnGoToGameplayScreen(GameMode gameMode)
 	{
-		GameData.LevelSet = GGG.GetLevelList();
-		GameData.GameMode = gameMode;
+		GameData.Level.LevelSet = GGG.GetLevelList();
+		GameData.Level.GameMode = gameMode;
 		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
 	}
 

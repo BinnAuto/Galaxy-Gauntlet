@@ -14,7 +14,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return GameData.XRayMode
+                return GameData.Level.XRayMode
                     ? Constants.SpriteCoordinates.IceBlock_XRay
                     : Constants.SpriteCoordinates.IceBlock;
             }

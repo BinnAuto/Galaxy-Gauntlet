@@ -77,7 +77,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 		public override void ProcessTick()
 		{
-			if(false == GameData.AcceptingPlayerInput)
+			if(false == GameData.Level.AcceptingPlayerInput)
 			{
 				return;
 			}
@@ -99,14 +99,14 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			{
 				input = new(1, 0);
 			}
-			if (GameData.IsConfused)
+			if (GameData.Level.IsConfused)
 			{
 				input *= -1;
 			}
 
 			#region Process Item collection
 
-			var currentItem = GameData.GetMapItem(Coordinate);
+			var currentItem = GameData.Map.GetItem(Coordinate);
 			if ((currentItem is RedKeyItem && GameData.Archipelago.RedKeyUnlocked)
 				|| (currentItem is BlueKeyItem && GameData.Archipelago.BlueKeyUnlocked)
 				|| (currentItem is YellowKeyItem && GameData.Archipelago.YellowKeyUnlocked)
@@ -117,8 +117,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				|| (currentItem is SuctionBootsItem && GameData.Archipelago.SuctionBootsUnlocked)
 			)
 			{
-				GameData.RemoveMapItem(Coordinate);
-				GameData.AddItem(currentItem);
+				GameData.Map.RemoveItem(Coordinate);
+				GameData.Level.AddItem(currentItem);
 			}
 
 			if (currentItem is ChipItem chip1)
@@ -129,13 +129,13 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			#endregion
 
 			Vector2I newCoordinate = Coordinate;
-			var currentTile = GameData.GetMapTile(Coordinate);
+			var currentTile = GameData.Map.GetTile(Coordinate);
 
 			#region Force Floor 
 
-			if (currentTile is MapForceFloorTile forceFloor && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots))
+			if (currentTile is MapForceFloorTile forceFloor && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots))
 			{
-				GameData.AddToSlipList(this);
+				GameData.Map.AddToSlipList(this);
 				var forceFloorInfluence = forceFloor.GetInfluence();
 				var aggregateInput = forceFloorInfluence + input;
 				newCoordinate = ProposeMove(aggregateInput);
@@ -155,9 +155,9 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			#region Ice
 
-			if(currentTile is MapIceTile iceTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
+			if(currentTile is MapIceTile iceTile && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
 			{
-				GameData.AddToSlipList(this);
+				GameData.Map.AddToSlipList(this);
 				Orientation = iceTile.SetEntityOrientation(Orientation);
 				newCoordinate = ProposeMove(Forward);
 				if(newCoordinate == Coordinate)
@@ -171,7 +171,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			#endregion
 
-			GameData.RemoveFromSlipList(this);
+			GameData.Map.RemoveFromSlipList(this);
 			newCoordinate = ProposeMove(input);
 			SetOrientation(input);
 			if(newCoordinate == Coordinate)
@@ -181,7 +181,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			SetOrientationAndCoordinate(input, newCoordinate);
 
-			var item = GameData.GetMapItem(Coordinate);
+			var item = GameData.Map.GetItem(Coordinate);
 			if((item is RedKeyItem && GameData.Archipelago.RedKeyUnlocked)
 				|| (item is BlueKeyItem && GameData.Archipelago.BlueKeyUnlocked)
 				|| (item is YellowKeyItem && GameData.Archipelago.YellowKeyUnlocked)
@@ -192,8 +192,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				|| (item is SuctionBootsItem && GameData.Archipelago.SuctionBootsUnlocked)
 			)
 			{
-				GameData.RemoveMapItem(Coordinate);
-				GameData.AddItem(item);
+				GameData.Map.RemoveItem(Coordinate);
+				GameData.Level.AddItem(item);
 			}
 
 			if(item is ChipItem chip2)
@@ -201,11 +201,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				GameData.OnChipCollected(chip2);
 			}
 
-			currentTile = GameData.GetMapTile(Coordinate);
-			if((currentTile is MapIceTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
-				|| (currentTile is MapForceFloorTile && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
+			currentTile = GameData.Map.GetTile(Coordinate);
+			if((currentTile is MapIceTile && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
+				|| (currentTile is MapForceFloorTile && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
 			{
-				GameData.AddToSlipList(this);
+				GameData.Map.AddToSlipList(this);
 			}
 		}
 
@@ -217,11 +217,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				return;
 			}
 
-			GameData.RemoveMapPlayer(Coordinate);
+			GameData.Map.RemovePlayer(Coordinate);
 			Coordinate = newCoordinate;
-			GameData.MapPlayers[newCoordinate.X, newCoordinate.Y] = this;
-			GameData.PlayerCoordinate = newCoordinate;
-			GameData.RerenderMap = true;
+			GameData.Map.Players[newCoordinate.X, newCoordinate.Y] = this;
+			GameData.Level.PlayerCoordinate = newCoordinate;
+			GameData.Map.Rerender = true;
 		}
 	}
 }

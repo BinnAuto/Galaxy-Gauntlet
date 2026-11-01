@@ -13,7 +13,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override bool CanOpenDoor()
         {
-            return GameData.ConsumeItem(Constants.ByteCodes.Entities.RedKey);
+            return GameData.Level.ConsumeItem(Constants.ByteCodes.Entities.RedKey);
         }
     }
 }

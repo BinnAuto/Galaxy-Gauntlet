@@ -19,7 +19,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             if(CloneMachineCoordinate.HasValue)
             {
-                var cloneMachine = (CloneMachineTile)GameData.GetMapTile(CloneMachineCoordinate.Value);
+                var cloneMachine = (CloneMachineTile)GameData.Map.GetTile(CloneMachineCoordinate.Value);
                 cloneMachine.CloneEntity();
                 return;
             }
@@ -27,20 +27,20 @@ namespace GalaxyGauntlet.scripts.MapEntities
             Vector2I checkCoordinate = Coordinate.Clone();
             while(true)
             {
-                var tile = GameData.GetMapTile(checkCoordinate);
+                var tile = GameData.Map.GetTile(checkCoordinate);
                 if(tile is CloneMachineTile)
                 {
-                    var cloneMob = (CloneMachineEntity)GameData.GetMapMob(checkCoordinate);
+                    var cloneMob = (CloneMachineEntity)GameData.Map.GetMob(checkCoordinate);
                     cloneMob.CreateClone = true;
                     return;
                 }
 
                 checkCoordinate.X++;
-                if(checkCoordinate.X >= GameData.MapDimensions.X)
+                if(checkCoordinate.X >= GameData.Map.Dimensions.X)
                 {
                     checkCoordinate.X = 0;
                     checkCoordinate.Y++;
-                    if(checkCoordinate.Y >= GameData.MapDimensions.Y)
+                    if(checkCoordinate.Y >= GameData.Map.Dimensions.Y)
                     {
                         checkCoordinate.Y = 0;
                     }

@@ -4,8 +4,6 @@ public partial class SettingsMenu : Node
 {
 	#region Child Nodes
 
-	private UISlider TickRate;
-
 	private UISlider MasterVolume;
 
 	private UISlider MusicVolume;
@@ -26,8 +24,6 @@ public partial class SettingsMenu : Node
 	public override void _Ready()
 	{
 		GameData.LoadSettings();
-		TickRate = (UISlider)GetNode(nameof(TickRate));
-		TickRate.Value = GameData.TickRate;
 
 		MasterVolume = (UISlider)GetNode(nameof(MasterVolume));
 		MasterVolume.Value = GameData.MasterVolume;
@@ -75,7 +71,6 @@ public partial class SettingsMenu : Node
 
 	private void OnSavePressed()
 	{
-		GameData.TickRate = TickRate.Value;
 		GameData.MasterVolume = MasterVolume.Value;
 		GameData.MusicVolume = MusicVolume.Value;
 		GameData.SaveSettings();

@@ -25,10 +25,10 @@ namespace GalaxyGauntlet.scripts
             // Get map size
             int mapSizeX = packBytes[currentPackIndex++];
             int mapSizeY = packBytes[currentPackIndex++];
-            GameData.SetMapDimensions(mapSizeX, mapSizeY);
+            GameData.Map.SetDimensions(mapSizeX, mapSizeY);
 
             byte[] uncompressedMap = PACKDecoder.Decode(packBytes);
-            GameData.MapData = uncompressedMap;
+            GameData.Map.FileBytes = uncompressedMap;
             // DebugPrintMap(uncompressedMap);
 
             // Required chip count is derived from map data
@@ -40,7 +40,7 @@ namespace GalaxyGauntlet.scripts
                     requiredChips++;
                 }
             }
-            GameData.ChipsRequired = requiredChips;
+            GameData.Level.ChipsRequired = requiredChips;
             FileLogger.QuietLogMessage("PACK segment processed");
         }
 

@@ -89,7 +89,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Mobs
 			var entityCoordinate = Coordinate + Forward;
 			MapMob mob = (MapMob)GetMapEntity(DataCode, entityCoordinate);
 			mob.Orientation = Orientation;
-			GameData.AddMapMob(mob);
+			GameData.Map.AddMob(mob);
 			CreateClone = false;
 		}
 	}

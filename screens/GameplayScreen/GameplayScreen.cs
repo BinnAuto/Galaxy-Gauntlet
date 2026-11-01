@@ -49,8 +49,8 @@ public partial class GameplayScreen : Node
 			HintLabel.Resized += OnHintLabelResized;
 
 			GameData.LoadCurrentLevel();
-			HintLabel.Text = GameData.LevelHint;
-			GameData.Timer = GameData.TimeLimit + 0.99999;
+			HintLabel.Text = GameData.Level.Hint;
+			GameData.Level.Timer = GameData.Map.TimeLimit + 0.99999;
 		}
 		catch (Exception e)
 		{
@@ -62,7 +62,7 @@ public partial class GameplayScreen : Node
 	public override void _Process(double delta)
 	{
 		// Render map if necessary
-		if(GameData.RerenderMap)
+		if(GameData.Map.Rerender)
 		{
 			MapDisplay.RenderMapData();
 		}
@@ -74,26 +74,26 @@ public partial class GameplayScreen : Node
 		}
 		if(Input.IsActionJustPressed("player_pause"))
 		{
-			GameData.ProcessMobs = false;
-			GameData.TimerEnabled = false;
-			GameData.AcceptingPlayerInput = false;
+			GameData.Level.ProcessMobs = false;
+			GameData.Level.TimerEnabled = false;
+			GameData.Level.AcceptingPlayerInput = false;
 			// TODO: Proper pause processing
 			OnExit();
 		}
 
-		GameData.ConfusionTimer = Mathf.Max(GameData.ConfusionTimer - delta, 0);
+		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
 		ProcessGameTick();
 		CheckPlayerStatus();
 		UpdateTimer(delta);
 		UpdateLabels();
-		if(false == DialogWindow.Visible && false == string.IsNullOrEmpty(GameData.DeathMessage))
+		if(false == DialogWindow.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
 		{
 			MapDisplay.RenderMapData();
 			OnPlayerDeath();
 		}
-		if(GameData.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
+		if(GameData.Level.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
 		{
-			GameData.PlayerItems.AddRange(GameData.Archipelago.PendingItems);
+			GameData.Level.PlayerItems.AddRange(GameData.Archipelago.PendingItems);
 			GameData.Archipelago.PendingItems.Clear();
 		}
 	}
@@ -102,11 +102,11 @@ public partial class GameplayScreen : Node
 
 	private void UpdateLabels()
 	{
-		LevelName.Text = GameData.LevelName;
-		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.ChipsRequired - GameData.ChipsCollected, 0)}";
-		Timer.Text = $"Time: {(int)GameData.Timer}";
+		LevelName.Text = GameData.Level.Name;
+		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0)}";
+		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
 
-		var currentItem = GameData.GetMapItem(GameData.PlayerCoordinate);
+		var currentItem = GameData.Map.GetItem(GameData.Level.PlayerCoordinate);
 		HintLabel.Visible = (currentItem != null && currentItem is HintPanelItem);
 	}
 
@@ -115,13 +115,13 @@ public partial class GameplayScreen : Node
 	{
 		// Freeze mob lists before the process swaps mobs between lists,
 		// which can cause double processing.
-		var playerList = GameData.PlayerProcessList;
-		var playerSlipList = GameData.PlayerSliplist;
-		var slipList = GameData.MobSlipList;
-		List<MapMob> mobList = [..GameData.MobProcessList];
+		var playerList = GameData.Map.PlayerProcessList;
+		var playerSlipList = GameData.Map.PlayerSliplist;
+		var slipList = GameData.Map.MobSlipList;
+		List<MapMob> mobList = [..GameData.Map.MobProcessList];
 
 		DateTime now = DateTime.Now;
-		double regularTick = 0.2 / GameData.TickRateNumeric;
+		double regularTick = 0.2;
 		double slipListTick = regularTick / 2.0;
 
 		var timeSincePlayerProcess = (now - _previousPlayerProcessTime).TotalSeconds;
@@ -152,12 +152,12 @@ public partial class GameplayScreen : Node
 		// Process monsters that move 5 times or less per second
 		if (timeSinceMobListProcess >= regularTick)
 		{
-			if (GameData.ProcessMobs)
+			if (GameData.Level.ProcessMobs)
 			{
 				GameData.ProcessMobList(mobList);
 				_previousMobProcessTime = now;
-				GameData.PingPongStep = (GameData.PingPongStep + 1) % 2;
-				GameData.SquareStep = (GameData.SquareStep + 1) % 4;
+				GameData.Map.PingPongStep = (GameData.Map.PingPongStep + 1) % 2;
+				GameData.Map.SquareStep = (GameData.Map.SquareStep + 1) % 4;
 				ProcessButtonPresses();
 			}
 			CheckForInitializationByPlayer();
@@ -166,7 +166,7 @@ public partial class GameplayScreen : Node
 		// Process monsters that move 10 times per second (slip list)
 		if (timeSinceSlipListProcess >= slipListTick)
 		{
-			if (GameData.ProcessMobs)
+			if (GameData.Level.ProcessMobs)
 			{
 				GameData.ProcessMobList(slipList);
 			}
@@ -178,7 +178,7 @@ public partial class GameplayScreen : Node
 	private static void ProcessButtonPresses()
 	{
 		Dictionary<GalaxyGauntlet.scripts.Color, int> buttonPresses = [];
-		foreach(var button in GameData.ButtonsToProcess)
+		foreach(var button in GameData.Map.ButtonsToProcess)
 		{
 			button.ProcessTick();
 			if(button.NewlyPressed)
@@ -195,23 +195,23 @@ public partial class GameplayScreen : Node
 
 	private void UpdateTimer(double delta)
 	{
-		if(GameData.TimeLimit < 0)
+		if(GameData.Map.TimeLimit < 0)
 		{
 			return;
 		}
 
 		// TODO: Set timer display
-		if(GameData.TimerEnabled)
+		if(GameData.Level.TimerEnabled)
 		{
-			GameData.Timer -= (delta * GameData.TickRateNumeric);
+			GameData.Level.Timer -= delta;
 		}
-		if(GameData.Timer < 0)
+		if(GameData.Level.Timer < 0)
 		{
-			GameData.Timer = 0;
+			GameData.Level.Timer = 0;
 		}
-		if(GameData.TimeLimit != 0 && GameData.Timer <= 0 && false == DialogWindow.Visible)
+		if(GameData.Map.TimeLimit != 0 && GameData.Level.Timer <= 0 && false == DialogWindow.Visible)
 		{
-			GameData.DeathMessage = Constants.DeathMessages.OutOfTime;
+			GameData.Level.DeathMessage = Constants.DeathMessages.OutOfTime;
 			OnPlayerDeath();
 		}
 	}
@@ -219,7 +219,7 @@ public partial class GameplayScreen : Node
 
 	private void CheckForInitializationByPlayer()
 	{
-		if(GameData.ProcessMobs || !GameData.AcceptingPlayerInput)
+		if(GameData.Level.ProcessMobs || !GameData.Level.AcceptingPlayerInput)
 		{
 			return;
 		}
@@ -227,8 +227,8 @@ public partial class GameplayScreen : Node
 		Vector2I input = GetPlayerInput();
 		if(input != Vector2.Zero)
 		{
-			GameData.ProcessMobs = true;
-			GameData.TimerEnabled = true;
+			GameData.Level.ProcessMobs = true;
+			GameData.Level.TimerEnabled = true;
 
 			// The player gets a free starting move
 			DateTime now = DateTime.Now;
@@ -240,12 +240,12 @@ public partial class GameplayScreen : Node
 
 	private void CheckPlayerStatus()
 	{
-		if(false == GameData.ProcessMobs)
+		if(false == GameData.Level.ProcessMobs)
 		{
 			return;
 		}
 
-		var currentTile = GameData.GetMapTile(GameData.PlayerCoordinate);
+		var currentTile = GameData.Map.GetTile(GameData.Level.PlayerCoordinate);
 		if(currentTile is ExitTile)
 		{
 			GameData.OnLevelComplete();
@@ -261,7 +261,7 @@ public partial class GameplayScreen : Node
 	{
 		GameData.OnPlayerDeath();
 		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog(GameData.DeathMessage, DialogButtonType.OK);
+		DialogWindow.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);
 		DialogWindow.OKButtonPressed += RestartLevel;
 		GameData.Archipelago.IsProcessingDeathLink = false;
 	}
@@ -270,10 +270,10 @@ public partial class GameplayScreen : Node
 	private void OnLevelComplete()
 	{
 		DialogWindow.HideDialog();
-		switch(GameData.GameMode)
+		switch(GameData.Level.GameMode)
 		{
 			case GameMode.Campaign:
-				var gameComplete = GameData.OnNextLevel();
+				var gameComplete = GameData.Level.OnNextLevel();
 				if(gameComplete)
 				{
 					OnGameComplete();
@@ -303,16 +303,16 @@ public partial class GameplayScreen : Node
 
 	private void RestartLevel()
 	{
-		GameData.LevelRestarts++;
+		GameData.Level.RestartCount++;
 		GameData.LoadCurrentLevel();
-		GameData.Timer = GameData.TimeLimit + 0.999999;
+		GameData.Level.Timer = GameData.Map.TimeLimit + 0.999999;
 		DialogWindow.Visible = false;
 	}
 
 
 	private void OnExit()
 	{
-		switch(GameData.GameMode)
+		switch(GameData.Level.GameMode)
 		{
 			case GameMode.Campaign:
 				GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
@@ -360,35 +360,35 @@ public partial class GameplayScreen : Node
 
 	private static string GetLevelScoreMessage()
 	{
-		string result = GameData.LevelRestarts switch
+		string result = GameData.Level.RestartCount switch
 		{
 			0 => "Yowser! First Try!",
 			1 or 2 => "Go Bit Buster!",
 			3 or 4 => "Finished! Good Work!",
 			_ => "At last! You did it!"
 		};
-		int timeBonus = GameData.TimeLimit == 0
-			? 0 : (int)GameData.Timer * 10;
-		int levelBonus = 500 * (GameData.CurrentLevelIndex + 1);
-		levelBonus = (int)(levelBonus * Mathf.Pow(0.8f, GameData.LevelRestarts));
+		int timeBonus = GameData.Map.TimeLimit == 0
+			? 0 : (int)GameData.Level.Timer * 10;
+		int levelBonus = 500 * (GameData.Level.CurrentLevelIndex + 1);
+		levelBonus = (int)(levelBonus * Mathf.Pow(0.8f, GameData.Level.RestartCount));
 		levelBonus = Mathf.Max(levelBonus, 500);
 
-		switch(GameData.GameMode)
+		switch(GameData.Level.GameMode)
 		{
 			case GameMode.Archipelago:
 			case GameMode.Campaign:
-				string saveSlotName = (GameData.GameMode == GameMode.Archipelago)
+				string saveSlotName = (GameData.Level.GameMode == GameMode.Archipelago)
 					? Constants.SaveSlotNames.Archipelago
 					: Constants.SaveSlotNames.Autosave;
 				var saveSlot = SaveData.GetSaveSlot(saveSlotName);
-				if(false == saveSlot.HighScores.ContainsKey(GameData.CurrentLevelIndex))
+				if(false == saveSlot.HighScores.ContainsKey(GameData.Level.CurrentLevelIndex))
 				{
-					saveSlot.HighScores[GameData.CurrentLevelIndex] = 0;
+					saveSlot.HighScores[GameData.Level.CurrentLevelIndex] = 0;
 				}
-				if(timeBonus + levelBonus > saveSlot.HighScores[GameData.CurrentLevelIndex])
+				if(timeBonus + levelBonus > saveSlot.HighScores[GameData.Level.CurrentLevelIndex])
 				{
 					result += $"\nYou have a new high score!";
-					saveSlot.HighScores[GameData.CurrentLevelIndex] = timeBonus + levelBonus;
+					saveSlot.HighScores[GameData.Level.CurrentLevelIndex] = timeBonus + levelBonus;
 				}
 				SaveData.WriteSaveSlot(saveSlot);
 
@@ -396,7 +396,7 @@ public partial class GameplayScreen : Node
 				result += $"\nLevel Bonus: {levelBonus}";
 				result += $"\nLevel Score: {timeBonus + levelBonus}";
 				result += $"\nTotal Score: {saveSlot.HighScores.Sum(e => e.Value)}";
-				if(GameData.GameMode == GameMode.Archipelago)
+				if(GameData.Level.GameMode == GameMode.Archipelago)
 				{
 					string saveSlotJson = JsonSerializer.Serialize(saveSlot);
 					GameData.Archipelago.SetDataStorageKey(Constants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);

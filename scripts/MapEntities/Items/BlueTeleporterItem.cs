@@ -30,18 +30,18 @@ namespace GalaxyGauntlet.scripts.MapEntities
                     // Check has left the X bounds of the map, 
                     // wrap to row above
                     checkPosition = new(
-                        GameData.MapDimensions.X - 1
+                        GameData.Map.Dimensions.X - 1
                         , checkPosition.Y - 1
                     );
                     if(checkPosition.Y < 0)
                     {
                         // Check has left the Y bounds of the map,
                         // go to last row
-                        checkPosition = GameData.MapDimensions - Vector2I.One;
+                        checkPosition = GameData.Map.Dimensions - Vector2I.One;
                     }
                 }
 
-                var mapItem = GameData.GetMapItem(checkPosition);
+                var mapItem = GameData.Map.GetItem(checkPosition);
                 if (mapItem is BlueTeleporterItem)
                 {
                     return checkPosition;

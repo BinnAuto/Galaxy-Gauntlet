@@ -160,13 +160,30 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		#endregion
+        #endregion
 
 
-		/// <summary>
-		/// Resets the object's data state.
-		/// </summary>
-		public void Reset()
+		/*
+		 * Contains event handlers to allow Archiepago events to communicate with
+		 * other areas in GameData
+		 */
+        #region External Event Emitters
+
+        public delegate void OnItemReceivedHandler(string itemName);
+
+        public event OnItemReceivedHandler OnItemReceived = (itemName) => { };
+
+        public delegate void OnDeathMessageHandler(string message);
+
+        public event OnDeathMessageHandler OnDeathMessage = (message) => { };
+
+        #endregion
+
+
+        /// <summary>
+        /// Resets the object's data state.
+        /// </summary>
+        public void Reset()
 		{
 			Session = null;
 			GameName = string.Empty;
@@ -595,19 +612,6 @@ namespace GalaxyGauntlet.scripts
 			OnDeathMessage.Invoke(deathMessage);
 		}
 
-
-		#endregion
-
-
-		#region External Event Emitters
-
-		public delegate void OnItemReceivedHandler(string itemName);
-
-		public event OnItemReceivedHandler OnItemReceived = (itemName) => { };
-
-		public delegate void OnDeathMessageHandler(string message);
-
-		public event OnDeathMessageHandler OnDeathMessage = (message) => { };
 
 		#endregion
 	}

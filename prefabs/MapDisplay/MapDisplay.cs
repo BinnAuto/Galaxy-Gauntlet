@@ -40,16 +40,16 @@ public partial class MapDisplay : Node2D
 		SceneryTiles.Clear();
 
 		SetGlobalPosition();
-		int viewportSize = GameData.MapViewportSize;
+		int viewportSize = GameData.Level.MapViewportSize;
 		if(viewportSize % 2 == 0)
 		{
 			viewportSize = Mathf.Max(3, viewportSize - 1);
 		}
 
 		int cameraCenterOffset = (viewportSize - 1) / 2;
-		var cameraCenter = GameData.PlayerCoordinate;
-		cameraCenter.X = Mathf.Min(Mathf.Max(cameraCenterOffset, cameraCenter.X), GameData.MapDimensions.X - cameraCenterOffset - 1);
-		cameraCenter.Y = Mathf.Min(Mathf.Max(cameraCenterOffset, cameraCenter.Y), GameData.MapDimensions.Y - cameraCenterOffset - 1);
+		var cameraCenter = GameData.Level.PlayerCoordinate;
+		cameraCenter.X = Mathf.Min(Mathf.Max(cameraCenterOffset, cameraCenter.X), GameData.Map.Dimensions.X - cameraCenterOffset - 1);
+		cameraCenter.Y = Mathf.Min(Mathf.Max(cameraCenterOffset, cameraCenter.Y), GameData.Map.Dimensions.Y - cameraCenterOffset - 1);
 
 		for(int i = cameraCenter.X - cameraCenterOffset; i < cameraCenter.X + cameraCenterOffset + 1; i++)
 		{
@@ -57,44 +57,44 @@ public partial class MapDisplay : Node2D
 			{
 				Vector2I mapCoordinate = new(i - (cameraCenter.X - cameraCenterOffset), j - (cameraCenter.Y - cameraCenterOffset));
 
-				if (GameData.MapScenery[i, j] != null)
+				if (GameData.Map.Scenery[i, j] != null)
 				{
-					SceneryTiles.SetCell(mapCoordinate, 0, GameData.MapScenery[i, j].TextureCoordinate);
+					SceneryTiles.SetCell(mapCoordinate, 0, GameData.Map.Scenery[i, j].TextureCoordinate);
 				}
 
-				if (GameData.MapMobs[i, j] != null)
+				if (GameData.Map.Mobs[i, j] != null)
 				{
-					MobTiles.SetCell(mapCoordinate, 0, GameData.MapMobs[i, j].TextureCoordinate);
+					MobTiles.SetCell(mapCoordinate, 0, GameData.Map.Mobs[i, j].TextureCoordinate);
 				}
 
-				if (GameData.MapPlayers[i, j] != null)
+				if (GameData.Map.Players[i, j] != null)
 				{
-					PlayerTiles.SetCell(mapCoordinate, 0, GameData.MapPlayers[i, j].TextureCoordinate);
+					PlayerTiles.SetCell(mapCoordinate, 0, GameData.Map.Players[i, j].TextureCoordinate);
 				}
 
-				if (GameData.MapItems[i, j] != null)
+				if (GameData.Map.Items[i, j] != null)
 				{
-					ItemTiles.SetCell(mapCoordinate, 0, GameData.MapItems[i, j].TextureCoordinate);
+					ItemTiles.SetCell(mapCoordinate, 0, GameData.Map.Items[i, j].TextureCoordinate);
 				}
 
-				if (GameData.MapTiles[i, j] != null)
+				if (GameData.Map.Tiles[i, j] != null)
 				{
-					FloorTiles.SetCell(mapCoordinate, 0, GameData.MapTiles[i, j].TextureCoordinate);
-					if (GameData.MapTiles[i, j] is CloneMachineTile)
+					FloorTiles.SetCell(mapCoordinate, 0, GameData.Map.Tiles[i, j].TextureCoordinate);
+					if (GameData.Map.Tiles[i, j] is CloneMachineTile)
 					{
 						SceneryTiles.SetCell(mapCoordinate, 0, Constants.SpriteCoordinates.CloneMachineScenery);
 					}
 				}
 			}
 		}
-		GameData.RerenderMap = false;
+		GameData.Map.Rerender = false;
 	}
 
 
 	public void SetGlobalPosition()
 	{
-		int viewportSize = GameData.MapViewportSize;
-		int deltaFromRegular = viewportSize - GameData.StandardMapViewportSize;
+		int viewportSize = GameData.Level.MapViewportSize;
+		int deltaFromRegular = viewportSize - GameData.Level.StandardMapViewportSize;
 		Position = new Vector2I(144, 144) - (16 * deltaFromRegular * Vector2I.One);
 	}
 }

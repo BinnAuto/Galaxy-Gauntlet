@@ -61,8 +61,8 @@ namespace GalaxyGauntlet.scripts
                             break;
 
                         case "TITL":
-                            GameData.LevelName = GetMapTitle();
-                            FileLogger.QuietLogMessage($"Level name: {GameData.LevelName}");
+                            GameData.Level.Name = GetMapTitle();
+                            FileLogger.QuietLogMessage($"Level name: {GameData.Level.Name}");
                             break;
 
                         case "CLUE":
@@ -78,7 +78,7 @@ namespace GalaxyGauntlet.scripts
 
                         case "PACK":
                             LoadPACKStage();
-                            GameData.PopulateFromMapBytes();
+                            GameData.Map.PopulateFromFileBytes();
                             break;
 
                         case "END":
@@ -101,7 +101,7 @@ namespace GalaxyGauntlet.scripts
 
         private static void InitializeValues()
         {
-            GameData.ResetMapData();
+            GameData.Map.Reset();
             _fileBytes = [];
             _currentIndex = 0;
         }
@@ -143,7 +143,7 @@ namespace GalaxyGauntlet.scripts
             {
                 hint = hint.Replace("\r\n", " ");
             }
-            GameData.LevelHint = hint;
+            GameData.Level.Hint = hint;
         }
 
 
@@ -153,8 +153,8 @@ namespace GalaxyGauntlet.scripts
             int optionLength = GetSectionLength();
             byte[] optionBytes = GetNextBytes(optionLength);
             byte[] timeBytes = optionBytes.SkipAndTake(0, 2);
-            GameData.TimeLimit = ConvertToInt(timeBytes);
-            FileLogger.QuietLogMessage($"Level timer: {GameData.TimeLimit}");
+            GameData.Map.TimeLimit = ConvertToInt(timeBytes);
+            FileLogger.QuietLogMessage($"Level timer: {GameData.Map.TimeLimit}");
             FileLogger.QuietLogMessage("OPTN segment processed");
         }
 

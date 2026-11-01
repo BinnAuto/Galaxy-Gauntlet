@@ -13,7 +13,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public void CloneEntity()
         {
-            var entity = GameData.GetMapMob(Coordinate);
+            var entity = GameData.Map.GetMob(Coordinate);
             if(entity is null)
             {
                 return;
@@ -21,13 +21,13 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
             var newEntity = entity.CreateCopy();
             newEntity.Coordinate = entity.Coordinate + entity.Forward;
-            var existingMob = GameData.GetMapMob(newEntity.Coordinate);
+            var existingMob = GameData.Map.GetMob(newEntity.Coordinate);
             if(existingMob is not null)
             {
                 return;
             }
 
-            GameData.AddMapMob(newEntity);
+            GameData.Map.AddMob(newEntity);
         }
     }
 }

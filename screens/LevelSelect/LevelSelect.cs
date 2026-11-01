@@ -30,7 +30,7 @@ public partial class LevelSelect : Node2D
 			Node Control = GetNode(nameof(Control));
 			ScrollContainer ScrollContainer = (ScrollContainer)Control.GetNode(nameof(ScrollContainer));
 			GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
-			GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
+			GridContainer.Columns = (GameData.Level.GameMode == GameMode.QuickPlay)
 				? 1 : 3;
 			ButtonRef = (Button)GetNode(nameof(ButtonRef));
 
@@ -52,7 +52,7 @@ public partial class LevelSelect : Node2D
 			BuildButtonList();
 
 			ArchipelagoDisplay.Visible = false;
-			if (GameData.GameMode == GameMode.Archipelago)
+			if (GameData.Level.GameMode == GameMode.Archipelago)
 			{
 				ArchipelagoDisplay.Visible = true;
 				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString();
@@ -84,21 +84,21 @@ public partial class LevelSelect : Node2D
 			child.QueueFree();
 		}
 
-		GameData.LevelSet = GGG.GetLevelList();
-		if(GameData.GameMode == GameMode.Archipelago)
+		GameData.Level.LevelSet = GGG.GetLevelList();
+		if(GameData.Level.GameMode == GameMode.Archipelago)
 		{
 			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
-			GameData.LevelSet = GameData.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
+			GameData.Level.LevelSet = GameData.Level.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 		}
-		GD.Print($"{GameData.LevelSet.Length} levels found");
+		GD.Print($"{GameData.Level.LevelSet.Length} levels found");
 		int levelIndex = 0;
-		foreach(string file in GameData.LevelSet)
+		foreach(string file in GameData.Level.LevelSet)
 		{
 			int tempLevel = levelIndex;
 			levelIndex++;
 			string levelName = LevelLoader.GetLevelName(file);
 			Button button = (Button)ButtonRef.Duplicate();
-			if(GameData.GameMode == GameMode.QuickPlay)
+			if(GameData.Level.GameMode == GameMode.QuickPlay)
 			{
 				button.Text = levelName;
 				button.Pressed += () => OnLevelSelect(tempLevel);
@@ -106,7 +106,7 @@ public partial class LevelSelect : Node2D
 				continue;
 			}
 
-			if (GameData.GameMode == GameMode.Archipelago)
+			if (GameData.Level.GameMode == GameMode.Archipelago)
 			{
 				string mapName = $"Map {levelIndex} - {levelName}";
 				string completeLocation = $"Complete {mapName}";
@@ -148,16 +148,16 @@ public partial class LevelSelect : Node2D
 
 	private void OnLevelSelect(int levelIndex)
 	{
-		GameData.CurrentLevelIndex = levelIndex;
-		GameData.LevelRestarts = 0;
-		GameData.ResetLevelData();
+		GameData.Level.CurrentLevelIndex = levelIndex;
+		GameData.Level.RestartCount = 0;
+		GameData.Level.Reset();
 		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
 	}
 
 
 	private async Task ToTitleScreen()
 	{
-		if(GameData.GameMode == GameMode.QuickPlay)
+		if(GameData.Level.GameMode == GameMode.QuickPlay)
 		{
 			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
 			return;

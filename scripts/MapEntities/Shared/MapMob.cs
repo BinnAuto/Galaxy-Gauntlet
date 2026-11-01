@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 {
 	public class MapMob(Vector2I coordinate) : MapEntity(coordinate)
 	{
-		public int MobID = GameData.GetNextMobID();
+		public int MobID = GameData.Map.GetNextMobID();
 
 		public override bool NeedsOrientation => true;
 
@@ -91,11 +91,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				return;
 			}
 
-			GameData.RemoveMapMob(Coordinate);
+			GameData.Map.RemoveMob(Coordinate);
 			Coordinate = newCoordinate;
 			CheckForPlayer(Coordinate); // I don't like this here
-			GameData.MapMobs[newCoordinate.X, newCoordinate.Y] = this;
-			GameData.RerenderMap = true;
+			GameData.Map.Mobs[newCoordinate.X, newCoordinate.Y] = this;
+			GameData.Map.Rerender = true;
 		}
 
 
@@ -117,7 +117,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			{
 				Orientation = EntityOrientation.West;
 			}
-			GameData.RerenderMap = true;
+			GameData.Map.Rerender = true;
 		}
 
 
@@ -131,13 +131,13 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				EntityOrientation.West => EntityOrientation.East,
 				_ => EntityOrientation.South
 			};
-			GameData.RerenderMap = true;
+			GameData.Map.Rerender = true;
 		}
 
 		public void RemoveSelf()
 		{
 			CanProcess = false;
-			GameData.RemoveMapMob(Coordinate);
+			GameData.Map.RemoveMob(Coordinate);
 		}
 
 
@@ -157,7 +157,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					return;
 				}
 				
-				var currentTile = GameData.GetMapTile(Coordinate);
+				var currentTile = GameData.Map.GetTile(Coordinate);
 				if(currentTile is CloneMachineTile)
 				{
 					FileLogger.QuietLogMessage($"SAFETY NET: Display mob in clone machines should not move");
@@ -169,9 +169,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				#region Force Floor
 				
 				if (currentTile is MapForceFloorTile forceFloor
-					&& (false == isPlayer || false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
+					&& (false == isPlayer || false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
 				{
-					GameData.AddToSlipList(this);
+					GameData.Map.AddToSlipList(this);
 					var forceFloorInfluence = forceFloor.GetInfluence();
 					var forceCoordinate = ProposeMove(forceFloorInfluence);
 					SetOrientationAndCoordinate(forceFloorInfluence, forceCoordinate);
@@ -183,9 +183,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				#region Ice Floor
 
 				if(currentTile is MapIceTile iceTile
-					&& (false == isPlayer || false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates)))
+					&& (false == isPlayer || false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates)))
 				{
-					GameData.AddToSlipList(this);
+					GameData.Map.AddToSlipList(this);
 					Orientation = iceTile.SetEntityOrientation(Orientation);
 					var iceCoordinate = ProposeMove(Forward);
 					if(iceCoordinate == Coordinate)
@@ -200,7 +200,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 				#endregion
 
-				GameData.RemoveFromSlipList(this);
+				GameData.Map.RemoveFromSlipList(this);
 
 				if(CanMoveSelf)
 				{
@@ -209,10 +209,10 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					if(newCoordinate != Coordinate)
 					{
 						SetOrientationAndCoordinate(forward, newCoordinate);
-						currentTile = GameData.GetMapTile(Coordinate);
+						currentTile = GameData.Map.GetTile(Coordinate);
 						if(currentTile is MapIceTile || currentTile is MapForceFloorTile)
 						{
-							GameData.AddToSlipList(this);
+							GameData.Map.AddToSlipList(this);
 						}
 					}
 				}
@@ -237,8 +237,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				// Leaving minimal bounds of map
 				return null;
 			}
-			if (newCoordinate.X >= GameData.MapDimensions.X
-				|| newCoordinate.Y >= GameData.MapDimensions.Y)
+			if (newCoordinate.X >= GameData.Map.Dimensions.X
+				|| newCoordinate.Y >= GameData.Map.Dimensions.Y)
 			{
 				// Leaving maximal bounds of map
 				return null;
@@ -269,11 +269,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			bool isPlayer = (this is Player);
 
 			Vector2I newCoordinate = processedCoordinate.Value;
-			var currentTile = GameData.GetMapTile(Coordinate);
-			var destinationTile = GameData.GetMapTile(newCoordinate);
-			var destinationItem = GameData.GetMapItem(newCoordinate);
-			var destinationMob = GameData.GetMapMob(newCoordinate);
-			var destinationPlayer = GameData.GetMapPlayer(newCoordinate);
+			var currentTile = GameData.Map.GetTile(Coordinate);
+			var destinationTile = GameData.Map.GetTile(newCoordinate);
+			var destinationItem = GameData.Map.GetItem(newCoordinate);
+			var destinationMob = GameData.Map.GetMob(newCoordinate);
+			var destinationPlayer = GameData.Map.GetPlayer(newCoordinate);
 
 			#region Exit from Thin Wall tile
 			
@@ -302,13 +302,13 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				if(this is DirtBlockEntity)
 				{
 					// Dirt blocks turn water into dirt
-					GameData.SetMapTile(newCoordinate, new DirtTile(newCoordinate));
+					GameData.Map.SetTile(newCoordinate, new DirtTile(newCoordinate));
 					RemoveSelf();
 					return newCoordinate;
 				}
-				if(isPlayer && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers))
+				if(isPlayer && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers))
 				{
-					GameData.DeathMessage = Constants.DeathMessages.Water;
+					GameData.Level.DeathMessage = Constants.DeathMessages.Water;
 					return newCoordinate;
 				}
 				if(DiesToWater)
@@ -328,9 +328,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				{
 					return Coordinate;
 				}
-				if(isPlayer && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots))
+				if(isPlayer && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots))
 				{
-					GameData.DeathMessage = Constants.DeathMessages.Fire;
+					GameData.Level.DeathMessage = Constants.DeathMessages.Fire;
 					return newCoordinate;
 				}
 				if(DiesToFire)
@@ -356,8 +356,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
                 }
 
                 // Player opens door
-                GameData.RemoveMapItem(newCoordinate);
-                GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+                GameData.Map.RemoveItem(newCoordinate);
+                GameData.Map.SetTile(newCoordinate, new FloorTile(newCoordinate));
                 return newCoordinate;
             }
 
@@ -390,9 +390,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				|| destinationMob is TeethMonster
 			)
 			{
-				if(isPlayer && false == GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
+				if(isPlayer && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
 				{
-					GameData.DeathMessage = Constants.DeathMessages.Monsters;
+					GameData.Level.DeathMessage = Constants.DeathMessages.Monsters;
 					return newCoordinate;
 				}
 
@@ -403,7 +403,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 			#region Player with Helmet
 
-			if(destinationPlayer is Player && GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
+			if(destinationPlayer is Player && GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
 			{
 				return Coordinate;
 			}
@@ -421,12 +421,12 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 				if(blueWall.IsReal)
 				{
-					GameData.SetMapTile(newCoordinate, new WallTile(newCoordinate));
+					GameData.Map.SetTile(newCoordinate, new WallTile(newCoordinate));
 					return Coordinate;
 				}
 				else
 				{
-					GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+					GameData.Map.SetTile(newCoordinate, new FloorTile(newCoordinate));
 					return newCoordinate;
 				}
 			}
@@ -439,7 +439,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			{
 				if(isPlayer)
 				{
-					GameData.SetMapTile(newCoordinate, new WallTile(newCoordinate));
+					GameData.Map.SetTile(newCoordinate, new WallTile(newCoordinate));
 				}
 				return Coordinate;
 			}
@@ -452,7 +452,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			{
 				if(isPlayer)
 				{
-					GameData.SetMapTile(newCoordinate, new FloorTile(newCoordinate));
+					GameData.Map.SetTile(newCoordinate, new FloorTile(newCoordinate));
 					return newCoordinate;
 				}
 
@@ -498,9 +498,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 			if (destinationItem is SocketItem)
 			{
-				if(isPlayer && GameData.ChipRequirementMet)
+				if(isPlayer && GameData.Level.ChipRequirementMet)
 				{
-					GameData.RemoveMapItem(newCoordinate);
+					GameData.Map.RemoveItem(newCoordinate);
 					return newCoordinate;
 				}
 
@@ -528,8 +528,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					return Coordinate;
 				}
 
-				GameData.RemoveMapItem(newCoordinate);
-				GameData.SetMapTile(newCoordinate, new WallTile(newCoordinate));
+				GameData.Map.RemoveItem(newCoordinate);
+				GameData.Map.SetTile(newCoordinate, new WallTile(newCoordinate));
 				return newCoordinate;
 			}
 
@@ -559,7 +559,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 								return oldCoordinate;
 							}
 
-							GameData.RemoveMapPlayer(oldCoordinate);
+							GameData.Map.RemovePlayer(oldCoordinate);
 							return newCoordinate;
 						}
 						return oldCoordinate;
@@ -574,11 +574,11 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 						// EXIT: Step is valid, teleport complete
 						if(isPlayer)
 						{
-							GameData.RemoveMapPlayer(oldCoordinate);
+							GameData.Map.RemovePlayer(oldCoordinate);
 						}
 						else
 						{
-							GameData.RemoveMapMob(oldCoordinate);
+							GameData.Map.RemoveMob(oldCoordinate);
 						}
 						newCoordinate = teleportExitStep;
 						return newCoordinate;
@@ -617,10 +617,10 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				}
 
 				dirtBlock.SetOrientationAndCoordinate(direction, dirtBlockCoordinate);
-				var dirtBlockTile = GameData.GetMapTile(dirtBlockCoordinate);
+				var dirtBlockTile = GameData.Map.GetTile(dirtBlockCoordinate);
 				if(dirtBlockTile is MapIceTile || dirtBlockTile is MapForceFloorTile)
 				{
-					GameData.AddToSlipList(dirtBlock);
+					GameData.Map.AddToSlipList(dirtBlock);
 				}
 				return newCoordinate;
 			}
@@ -633,7 +633,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			{
 				if(isPlayer)
 				{
-					GameData.DeathMessage = Constants.DeathMessages.Bombs;
+					GameData.Level.DeathMessage = Constants.DeathMessages.Bombs;
 					return newCoordinate;
 				}
 
@@ -649,7 +649,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			{
 				if(isPlayer)
 				{
-					GameData.StealEquipment();
+					GameData.Level.StealEquipment();
 					return newCoordinate;
 				}
 
@@ -671,7 +671,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 		/// </summary>
 		public bool CheckIfOnTrap(Vector2I direction)
 		{
-			var currentItem = GameData.GetMapItem(Coordinate);
+			var currentItem = GameData.Map.GetItem(Coordinate);
 			if (currentItem is TrapItem trapItem && trapItem.IsActive)
 			{
 				SetOrientation(direction);
@@ -684,10 +684,10 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 		public static void CheckForPlayer(Vector2I coordinate)
 		{
-			var mapMob = GameData.GetMapPlayer(coordinate);
+			var mapMob = GameData.Map.GetPlayer(coordinate);
 			if (mapMob is Player)
 			{
-				GameData.DeathMessage = Constants.DeathMessages.Monsters;
+				GameData.Level.DeathMessage = Constants.DeathMessages.Monsters;
 			}
 		}
 
