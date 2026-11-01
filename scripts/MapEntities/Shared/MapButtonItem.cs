@@ -11,8 +11,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
         public void ProcessTick()
         {
             int? currentEntityId = null;
-            var mapMob = GameData.GetMapMob(Coordinate);
-            var mapPlayer = GameData.GetMapPlayer(Coordinate);
+            var mapMob = GameData.Map.GetMob(Coordinate);
+            var mapPlayer = GameData.Map.GetPlayer(Coordinate);
             currentEntityId = mapMob?.MobID ?? mapPlayer?.MobID;
             if (false == currentEntityId.HasValue)
             {

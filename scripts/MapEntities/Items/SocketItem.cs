@@ -14,7 +14,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return (GameData.ChipsCollected >= GameData.ChipsRequired)
+                return (GameData.Level.ChipsCollected >= GameData.Level.ChipsRequired)
                     ? Constants.SpriteCoordinates.Socket_Open
                     : Constants.SpriteCoordinates.Socket_Closed;
             }

@@ -13,7 +13,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                if(GameData.GameMode == GameMode.Archipelago)
+                if(GameData.Level.GameMode == GameMode.Archipelago)
                 {
                     string locationName = GetArchipelagoLocationName();
                     long locationId = GameData.Archipelago.GetLocationIdByName(locationName);
@@ -43,7 +43,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public string GetArchipelagoLocationName()
         {
-            return $"Map {GameData.CurrentLevelIndex+1} - {GameData.LevelName} Chip {Coordinate}";
+            return $"Map {GameData.Level.CurrentLevelIndex+1} - {GameData.Level.Name} Chip {Coordinate}";
         }
     }
 }

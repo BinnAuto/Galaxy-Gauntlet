@@ -87,21 +87,21 @@ public partial class ItemDisplay : Node
 		switch(DisplayMode)
 		{
 			case DisplayMode.Gameplay:
-				RedKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.RedKey);
-				BlueKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.BlueKey);
-				YellowKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.YellowKey);
-				GreenKey.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
-				IceSkates.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates);
-				SuctionBoots.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots);
-				FireBoots.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots);
-				Flippers.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers);
-				SecretEye.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
-				Helmet.Visible = GameData.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet);
+				RedKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.RedKey);
+				BlueKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.BlueKey);
+				YellowKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.YellowKey);
+				GreenKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
+				IceSkates.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates);
+				SuctionBoots.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots);
+				FireBoots.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots);
+				Flippers.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers);
+				SecretEye.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
+				Helmet.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet);
 				
-				RedKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
-				BlueKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
-				YellowKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
-				GreenKeyCount.Text = GameData.ItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				RedKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
+				BlueKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
+				YellowKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
+				GreenKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
 				break;
 
 			case DisplayMode.ArchipelagoSingleUseItems:

@@ -18,7 +18,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             if(TrapCoordinate.HasValue)
             {
-                var trapItem = (TrapItem)GameData.GetMapItem(TrapCoordinate.Value);
+                var trapItem = (TrapItem)GameData.Map.GetItem(TrapCoordinate.Value);
                 trapItem.SetState(false);
                 return;
             }
@@ -27,7 +27,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
             Vector2I checkCoordinate = Coordinate.Clone();
             while(true)
             {
-                var item = GameData.GetMapItem(checkCoordinate);
+                var item = GameData.Map.GetItem(checkCoordinate);
                 if(item is TrapItem trapItem)
                 {
                     TrapCoordinate = checkCoordinate;
@@ -36,11 +36,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
                 }
 
                 checkCoordinate.X++;
-                if (checkCoordinate.X >= GameData.MapDimensions.X)
+                if (checkCoordinate.X >= GameData.Map.Dimensions.X)
                 {
                     checkCoordinate.X = 0;
                     checkCoordinate.Y++;
-                    if (checkCoordinate.Y >= GameData.MapDimensions.Y)
+                    if (checkCoordinate.Y >= GameData.Map.Dimensions.Y)
                     {
                         checkCoordinate.Y = 0;
                     }
@@ -58,7 +58,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             if (TrapCoordinate.HasValue)
             {
-                var trapItem = (TrapItem)GameData.GetMapItem(TrapCoordinate.Value);
+                var trapItem = (TrapItem)GameData.Map.GetItem(TrapCoordinate.Value);
                 trapItem.SetState(true);
                 return;
             }
@@ -67,7 +67,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
             Vector2I checkCoordinate = Coordinate.Clone();
             while (true)
             {
-                var item = GameData.GetMapItem(checkCoordinate);
+                var item = GameData.Map.GetItem(checkCoordinate);
                 if (item is TrapItem trapItem)
                 {
                     TrapCoordinate = checkCoordinate;
@@ -76,11 +76,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
                 }
 
                 checkCoordinate.X++;
-                if (checkCoordinate.X >= GameData.MapDimensions.X)
+                if (checkCoordinate.X >= GameData.Map.Dimensions.X)
                 {
                     checkCoordinate.X = 0;
                     checkCoordinate.Y++;
-                    if (checkCoordinate.Y >= GameData.MapDimensions.Y)
+                    if (checkCoordinate.Y >= GameData.Map.Dimensions.Y)
                     {
                         checkCoordinate.Y = 0;
                     }

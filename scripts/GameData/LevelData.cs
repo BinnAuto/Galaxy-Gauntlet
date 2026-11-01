@@ -23,33 +23,38 @@ namespace GalaxyGauntlet.scripts
 		Archipelago
 	}
 
+	public static partial class GameData
+	{
+		public static LevelData Level = new();
+    }
+
 	/// <summary>
 	/// Data pertaining to the current level and gameplay
 	/// </summary>
-	public static partial class GameData
+	public class LevelData
 	{
-		public static GameMode GameMode = GameMode.Campaign;
-		public static int MapViewportSize = 9;
-        public static int StandardMapViewportSize = 9;
-        public static int ChipsRequired = 0;
-		public static int ChipsCollected = 0;
-		public static int CurrentLevelIndex = 1;
-		public static string LevelName = string.Empty;
-		public static string LevelHint = string.Empty;
-		public static int LevelRestarts = 0;
-		public static double Timer = 0;
-		public static bool TimerEnabled = false;
-		public static bool AcceptingPlayerInput = true;
-		public static bool ProcessMobs = false;
-		public static bool PlayerAlive = true;
-		public static string DeathMessage = string.Empty;
-		public static Vector2I PlayerCoordinate = Vector2I.Zero;
-		public static string[] LevelSet = [];
-		public static List<MapItem> PlayerItems = [];
+		public GameMode GameMode = GameMode.Campaign;
+		public int MapViewportSize = 9;
+        public int StandardMapViewportSize = 9;
+        public int ChipsRequired = 0;
+		public int ChipsCollected = 0;
+		public int CurrentLevelIndex = 1;
+		public string Name = string.Empty;
+		public string Hint = string.Empty;
+		public int RestartCount = 0;
+		public double Timer = 0;
+		public bool TimerEnabled = false;
+		public bool AcceptingPlayerInput = true;
+		public bool ProcessMobs = false;
+		public bool PlayerAlive = true;
+		public string DeathMessage = string.Empty;
+		public Vector2I PlayerCoordinate = Vector2I.Zero;
+		public string[] LevelSet = [];
+		public List<MapItem> PlayerItems = [];
 
 		// Controlled by Archipelago items
-		public static double ConfusionTimer = 0;
-		public static bool IsConfused
+		public double ConfusionTimer = 0;
+		public bool IsConfused
 		{
 			get
 			{
@@ -57,7 +62,7 @@ namespace GalaxyGauntlet.scripts
 			}
 		}
 
-		public static bool ChipRequirementMet
+		public bool ChipRequirementMet
 		{
 			get
 			{
@@ -66,7 +71,7 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static bool XRayMode
+		public bool XRayMode
 		{
 			get
 			{
@@ -75,21 +80,25 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static int TimerDisplay
+		public int TimerDisplay
 		{
 			get
 			{
 				return (int)Timer;
 			}
-		}
+        }
+
+        public delegate void OnLoadCurrentLevelHandler();
+
+        public event OnLoadCurrentLevelHandler OnLoadCurrentLevel = () => { };
 
 
-		public static void ResetLevelData()
+        public void Reset()
 		{
 			PlayerAlive = true;
 			DeathMessage = string.Empty;
-			LevelName = string.Empty;
-			LevelHint = string.Empty;
+			Name = string.Empty;
+			Hint = string.Empty;
 			ProcessMobs = false;
 			TimerEnabled = false;
 			AcceptingPlayerInput = true;
@@ -103,28 +112,10 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void OnLevelComplete()
-		{
-			ProcessMobs = false;
-			AcceptingPlayerInput = false;
-			TimerEnabled = false;
-			if (GameMode == GameMode.Archipelago)
-			{
-				string location = $"Complete Map {CurrentLevelIndex + 1} - {LevelName}";
-				Archipelago.SendLocationCheck(location);
-				if(LevelRestarts == 0)
-				{
-					location += " (No Resets)";
-                    Archipelago.SendLocationCheck(location);
-				}
-			}
-		}
-
-
-		public static bool OnNextLevel()
+		public bool OnNextLevel()
 		{
 			var autosave = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Autosave);
-			LevelRestarts = 0;
+			RestartCount = 0;
 			CurrentLevelIndex++;
 			autosave.CurrentLevelNumber = CurrentLevelIndex;
 			SaveData.SaveData.WriteSaveSlot(autosave);
@@ -134,34 +125,12 @@ namespace GalaxyGauntlet.scripts
 				return true;
 			}
 
-			LoadCurrentLevel();
+			OnLoadCurrentLevel.Invoke();
 			return false;
 		}
 
 
-		public static void OnChipCollected(ChipItem chip)
-		{
-			ChipsCollected++;
-			if(GameMode is GameMode.Archipelago)
-			{
-				string locationName = chip.GetArchipelagoLocationName();
-                Archipelago.SendLocationCheck(locationName);
-			}
-			RemoveMapItem(chip.Coordinate);
-		}
-
-
-		public static void OnPlayerDeath()
-		{
-			ProcessMobs = false;
-			AcceptingPlayerInput = false;
-			TimerEnabled = false;
-			PlayerAlive = false;
-			Archipelago.SendDeathLinkMessage();
-		}
-
-
-		public static void StealEquipment()
+		public void StealEquipment()
 		{
 			int[] bootCodes = [
 				Constants.ByteCodes.Entities.IceSkates
@@ -175,7 +144,7 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void StealKeys()
+		public void StealKeys()
 		{
 			int[] keyCodes = [
 				Constants.ByteCodes.Entities.RedKey
@@ -189,37 +158,25 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void AddItem(MapItem item)
+		public void AddItem(MapItem item)
 		{
 			PlayerItems.Add(item);
 		}
 
 
-		public static bool PlayerHasGameItem(int dataCode)
+		public bool PlayerHasGameItem(int dataCode)
 		{
 			return PlayerItems.Any(e => e.DataCode == dataCode);
 		}
 
 
-		public static bool PlayerHasPendingItem(int dataCode)
-		{
-			return Archipelago.PendingItems.Any(e => e.DataCode == dataCode);
-		}
-
-
-		public static int ItemCount(int dataCode)
+		public int ItemCount(int dataCode)
 		{
 			return PlayerItems.Count(e => e.DataCode == dataCode);
 		}
 
 
-		public static int PendingItemCount(int dataCode)
-		{
-			return Archipelago.PendingItems.Count(e => e.DataCode == dataCode);
-		}
-
-
-		public static bool ConsumeItem(int dataCode)
+		public bool ConsumeItem(int dataCode)
 		{
 			bool result = false;
 			List<MapItem> newPlayerItems = [];

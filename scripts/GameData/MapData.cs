@@ -7,77 +7,95 @@ using System.Linq;
 
 namespace GalaxyGauntlet.scripts
 {
-	/// <summary>
-	/// Data pertaining to the currently loaded map
-	/// </summary>
 	public static partial class GameData
 	{
-		public static int TimeLimit = -1;
-		public static Vector2I MapDimensions = -Vector2I.One;
-		public static byte[] MapData = [];
-		public static MapEntity[,] MapScenery = new MapEntity[0, 0];
-		public static MapMob[,] MapMobs = new MapMob[0, 0];
-		public static MapMob[,] MapPlayers = new MapMob[0, 0];
-		public static MapItem[,] MapItems = new MapItem[0, 0];
-		public static MapTile[,] MapTiles = new MapTile[0, 0];
-		public static List<MapMob> PlayerProcessList = [];
-		public static List<MapMob> PlayerSliplist = [];
-		public static List<MapMob> MobProcessList = [];
-		public static List<MapMob> MobSlipList = [];
-		public static List<MapButtonItem> ButtonsToProcess = [];
+		public static MapData Map = new();
+	}
+
+
+	public class MapData
+    {
+        private int NextMobID = 0;
+        public int TimeLimit = -1;
+        public Vector2I Dimensions = -Vector2I.One;
+        public byte[] FileBytes = [];
+
+
+        #region Map Layout Array
+
+        public MapEntity[,] Scenery = new MapEntity[0, 0];
+        public MapMob[,] Mobs = new MapMob[0, 0];
+        public MapMob[,] Players = new MapMob[0, 0];
+        public MapItem[,] Items = new MapItem[0, 0];
+        public MapTile[,] Tiles = new MapTile[0, 0];
+
+        #endregion
+
+
+        #region Entity Process Lists
+
+        public List<MapMob> PlayerProcessList = [];
+        public List<MapMob> PlayerSliplist = [];
+        public List<MapMob> MobProcessList = [];
+        public List<MapMob> MobSlipList = [];
+		public List<MapButtonItem> ButtonsToProcess = [];
+
+		#endregion
 
 		/// <summary>
 		/// Alternates between 0 and 1 each process tick, mimicking the odd- and even-step mechanics in Chip's Challenge.
 		/// </summary>
-		public static int PingPongStep = 0;
+		public int PingPongStep = 0;
 
-		/// <summary>
-		/// Rotates from 0 to 3, allowing entities with 1.25 moves per second to be processed accurately.
-		/// </summary>
-		public static int SquareStep = 0;
+        /// <summary>
+        /// Rotates from 0 to 3, allowing entities with 1.25 moves per second to be processed accurately.
+        /// </summary>
+        public int SquareStep = 0;
 
-		/// <summary>
-		/// Flags the level map to be rendered on the next frame.
-		/// </summary>
-		public static bool RerenderMap = false;
-		private static int NextMobID = 0;
-
-		public static void ResetMapData()
-		{
-			TimeLimit = -1;
-			RerenderMap = false;
-			MapDimensions = -Vector2I.One;
-			NextMobID = 0;
-			PlayerProcessList = [];
-			PlayerSliplist = [];
-			MobProcessList = [];
-			MobSlipList = [];
-			ButtonsToProcess = [];
-			MapData = [];
-			MapScenery = new MapEntity[0, 0];
-			MapMobs = new MapMob[0, 0];
-			MapPlayers = new MapMob[0, 0];
-			MapItems = new MapItem[0, 0];
-			MapTiles = new MapTile[0, 0];
-		}
+        /// <summary>
+        /// Flags the level map to be rendered on the next frame.
+        /// </summary>
+        public bool Rerender = false;
 
 
-		public static void LoadCurrentLevel()
-		{
-			ResetMapData();
-			ResetLevelData();
-			string mapPath = LevelSet[CurrentLevelIndex];
-			LevelLoader.LoadLevel(mapPath);
-			RerenderMap = true;
-		}
+        /*
+		 * Contains event handlers to allow Map events to communicate with
+		 * other areas in GameData
+		 */
+        #region External Event Emitters
+
+        public delegate void OnPlayerCoordinateSetHandler(Vector2I coordinate);
+
+		public event OnPlayerCoordinateSetHandler OnPlayerCoordinateSet = (coordinate) => { };
+
+		#endregion
+
+		public void Reset()
+        {
+            TimeLimit = -1;
+            Rerender = false;
+            Dimensions = -Vector2I.One;
+            NextMobID = 0;
+            PlayerProcessList = [];
+            PlayerSliplist = [];
+            MobProcessList = [];
+            MobSlipList = [];
+            ButtonsToProcess = [];
+            FileBytes = [];
+            Scenery = new MapEntity[0, 0];
+            Mobs = new MapMob[0, 0];
+            Players = new MapMob[0, 0];
+            Items = new MapItem[0, 0];
+            Tiles = new MapTile[0, 0];
+        }
 
 
 		/// <summary>
 		/// Populate entity lists based off of unpacked C2M file data
 		/// </summary>
-		public static void PopulateFromMapBytes()
+		public void PopulateFromFileBytes()
 		{
-			if (MapData.Length == 0)
+			if (FileBytes.Length == 0)
 			{
 				FileLogger.QuietLogMessage("No map data to process.");
 				return;
@@ -85,67 +103,67 @@ namespace GalaxyGauntlet.scripts
 
 			int x = 0;
 			int y = 0;
-			for (int i = 0; i < MapData.Length; i++)
+			for (int i = 0; i < FileBytes.Length; i++)
 			{
 				Vector2I mapCoordinate = new(x, y);
-				var entity = MapEntity.GetMapEntity(MapData[i], mapCoordinate);
+				var entity = MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
 				if(entity is Player)
 				{
-					PlayerCoordinate = mapCoordinate;
+					OnPlayerCoordinateSet.Invoke(mapCoordinate);
 				}
 				if (entity is MapTile tile)
 				{
-					MapTiles[x, y] = tile;
+					Tiles[x, y] = tile;
 				}
 				if(entity is ThinWallOrCanopyTile thinWall)
 				{
 					i++;
-					if (MapData[i-1] == Constants.ByteCodes.Entities.ThinWallOrCanopy)
+					if (FileBytes[i-1] == Constants.ByteCodes.Entities.ThinWallOrCanopy)
 					{
 						// Parse Thin Wall as described in CC2
-						thinWall.SetOrientation(MapData[i]);
-						if (MapData[i] == Constants.ByteCodes.ThinWallBits.Canopy)
+						thinWall.SetOrientation(FileBytes[i]);
+						if (FileBytes[i] == Constants.ByteCodes.ThinWallBits.Canopy)
 						{
 							// TODO: Set canopy scenery
 						}
 						i++;
 					}
-					MapTiles[x, y] = thinWall;
+					Tiles[x, y] = thinWall;
 				}
 				else if (entity is MapDoorItem doorItem)
 				{
-					MapItems[x, y] = doorItem;
-					MapTiles[x, y] = new WallTile(mapCoordinate);
+					Items[x, y] = doorItem;
+					Tiles[x, y] = new WallTile(mapCoordinate);
 				}
 				else if (entity is MapItem item)
 				{
 					if (entity.NeedsTileSpecification)
 					{
 						i++;
-						if (MapData[i] == Constants.ByteCodes.Entities.DirtBlock)
+						if (FileBytes[i] == Constants.ByteCodes.Entities.DirtBlock)
 						{
 							// Item is hidden under a dirt block.
 							// Chip's Challenge treats dirt blocks like tiles, but it's better to treat it like a mob.
 							DirtBlockEntity dirtBlock = new(mapCoordinate);
 							i++;
-							dirtBlock.Orientation = (EntityOrientation)MapData[i++];
+							dirtBlock.Orientation = (EntityOrientation)FileBytes[i++];
 							MobProcessList.Add(dirtBlock);
-							MapMobs[x, y] = dirtBlock;
+							Mobs[x, y] = dirtBlock;
 						}
 						// TODO: Generalize below to all monsters
-						if (MapData[i] == Constants.ByteCodes.Entities.Teeth)
+						if (FileBytes[i] == Constants.ByteCodes.Entities.Teeth)
 						{
 							// Item is hidden under a Teeth
 							TeethMonster teeth = new(mapCoordinate);
 							i++;
-							teeth.Orientation = (EntityOrientation)MapData[i++];
+							teeth.Orientation = (EntityOrientation)FileBytes[i++];
 							MobProcessList.Add(teeth);
-							MapMobs[x, y] = teeth;
+							Mobs[x, y] = teeth;
 						}
-						item.LowerLayer = (MapTile)MapEntity.GetMapEntity(MapData[i], mapCoordinate);
+						item.LowerLayer = (MapTile)MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
 					}
-					MapTiles[x, y] = item.LowerLayer;
-					MapItems[x, y] = item;
+					Tiles[x, y] = item.LowerLayer;
+					Items[x, y] = item;
 
 					if(item is MapButtonItem button)
 					{
@@ -158,21 +176,21 @@ namespace GalaxyGauntlet.scripts
 					if (mob.NeedsOrientation)
 					{
 						i++;
-						mob.Orientation = (EntityOrientation)MapData[i];
+						mob.Orientation = (EntityOrientation)FileBytes[i];
 					}
 					if (mob.NeedsTileSpecification)
 					{
 						i++;
-						var mapEntity = MapEntity.GetMapEntity(MapData[i], mapCoordinate);
+						var mapEntity = MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
 						if(mapEntity is MapButtonItem mapButton)
 						{
-							MapItems[x, y] = mapButton;
+							Items[x, y] = mapButton;
 							ButtonsToProcess.Add(mapButton);
 							mob.LowerLayer = new FloorTile(mapCoordinate);
 						}
 						else if(mapEntity is MapItem mapItem)
 						{
-							MapItems[x, y] = mapItem;
+							Items[x, y] = mapItem;
 							mob.LowerLayer = new FloorTile(mapCoordinate);
 						}
 						else
@@ -196,23 +214,23 @@ namespace GalaxyGauntlet.scripts
 					{
 						mob.Orientation = EntityOrientation.South;
 						PlayerProcessList.Add(player);
-						MapPlayers[x, y] = mob;
+						Players[x, y] = mob;
 					}
 					else
 					{
-						MapMobs[x, y] = mob;
+						Mobs[x, y] = mob;
 					}
-					MapTiles[x, y] = mob.LowerLayer;
+					Tiles[x, y] = mob.LowerLayer;
 				}
 
 				// Move to next coordinate
 				x++;
-				if (x >= MapDimensions.X)
+				if (x >= Dimensions.X)
 				{
 					x = 0;
 					y++;
 				}
-				if (y >= MapDimensions.Y)
+				if (y >= Dimensions.Y)
 				{
 					return;
 				}
@@ -220,56 +238,40 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void SetMapDimensions(int x, int y)
+		public void SetDimensions(int x, int y)
 		{
-			MapDimensions = new(x, y);
-			MapScenery = new MapEntity[x, y];
-			MapMobs = new MapMob[x, y];
-			MapPlayers = new MapMob[x, y];
-			MapItems = new MapItem[x, y];
-			MapTiles = new MapTile[x, y];
+			Dimensions = new(x, y);
+			Scenery = new MapEntity[x, y];
+			Mobs = new MapMob[x, y];
+			Players = new MapMob[x, y];
+			Items = new MapItem[x, y];
+			Tiles = new MapTile[x, y];
 
-			for (int i = 0; i < MapDimensions.X; i++)
+			for (int i = 0; i < Dimensions.X; i++)
 			{
-				for (int j = 0; j < MapDimensions.Y; j++)
+				for (int j = 0; j < Dimensions.Y; j++)
 				{
-					MapScenery[i, j] = null;
-					MapMobs[i, j] = null;
-					MapPlayers[i, j] = null;
-					MapItems[i, j] = null;
-					MapTiles[i, j] = null;
+					Scenery[i, j] = null;
+					Mobs[i, j] = null;
+					Players[i, j] = null;
+					Items[i, j] = null;
+					Tiles[i, j] = null;
 				}
 			}
 		}
 
 
-		public static int GetNextMobID()
+		public int GetNextMobID()
 		{
 			NextMobID++;
 			return NextMobID;
 		}
 
 
-		public static void ProcessMobList(List<MapMob> mobs)
-		{
-			foreach(var mob in mobs)
-			{
-				if(mob.CanProcess)
-				{
-					mob.ProcessTick();
-				}
-				if(false == PlayerAlive)
-				{
-					break;
-				}
-			}
-		}
-
-
 		/// <summary>
 		/// Moves a mob from the regular processing queue to the slip list queue
 		/// </summary>
-		public static void AddToSlipList(MapMob mob)
+		public void AddToSlipList(MapMob mob)
 		{
 			if(mob is Player)
 			{
@@ -297,7 +299,7 @@ namespace GalaxyGauntlet.scripts
 		/// <summary>
 		/// Moves a mob from the slip list processing queue to the regular queue
 		/// </summary>
-		public static void RemoveFromSlipList(MapMob mob)
+		public void RemoveFromSlipList(MapMob mob)
 		{
 			if(mob is Player)
 			{
@@ -322,22 +324,22 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void FlipGreenToggles()
+		public void FlipGreenToggles()
 		{
-			foreach(var tile in MapTiles)
+			foreach(var tile in Tiles)
 			{
 				if(tile is GreenToggleTile toggleTile)
 				{
 					toggleTile.IsWall = !toggleTile.IsWall;
 				}
 			}
-			RerenderMap = true;
+			Rerender = true;
 		}
 
 
-		public static void FlipBlueTanks()
+		public void FlipBlueTanks()
 		{
-			foreach(var mob in MapMobs)
+			foreach(var mob in Mobs)
 			{
 				if(mob is BlueTankMonster blueTank)
 				{
@@ -350,16 +352,16 @@ namespace GalaxyGauntlet.scripts
 
 		#region Scenery
 
-		public static MapEntity GetMapScenery(Vector2I coordinate)
+		public MapEntity GetSceneryAtCoordinate(Vector2I coordinate)
 		{
-			return MapScenery[coordinate.X, coordinate.Y];
+			return Scenery[coordinate.X, coordinate.Y];
 		}
 
 
-		public static void RemoveMapScenery(Vector2I coordinate)
+		public void RemoveSceneryFromCoordinate(Vector2I coordinate)
 		{
-			MapScenery[coordinate.X, coordinate.Y] = null;
-			RerenderMap = true;
+			Scenery[coordinate.X, coordinate.Y] = null;
+			Rerender = true;
 		}
 
 		#endregion
@@ -370,7 +372,7 @@ namespace GalaxyGauntlet.scripts
 		/// <summary>
 		/// Adds a mob at a random valid location in the map
 		/// </summary>
-		public static void AddMobAtRandom(MapMob mob)
+		public void AddMobAtRandom(MapMob mob)
 		{
 			int attempts = 0;
 			RandomNumberGenerator rng = new();
@@ -378,17 +380,17 @@ namespace GalaxyGauntlet.scripts
 			{
 				attempts++;
 				Vector2I mapCoordinate = new(
-					rng.RandiRange(0, MapDimensions.X - 1),
-					rng.RandiRange(0, MapDimensions.Y - 1)
+					rng.RandiRange(0, Dimensions.X - 1),
+					rng.RandiRange(0, Dimensions.Y - 1)
 				);
-				var mapTile = GetMapTile(mapCoordinate);
+				var mapTile = GetTile(mapCoordinate);
 				if(mapTile is not FloorTile
 					&& mapTile is not MapForceFloorTile)
 				{
 					continue;
 				}
 
-				var mapItem = GetMapItem(mapCoordinate);
+				var mapItem = GetItem(mapCoordinate);
 				if(mapItem is not null
 					&& mapItem is not MapButtonItem
 					&& mapItem is not TrapItem)
@@ -396,48 +398,48 @@ namespace GalaxyGauntlet.scripts
 					continue;
 				}
 
-				var mapMob = GetMapMob(mapCoordinate);
+				var mapMob = GetMob(mapCoordinate);
 				if(mapMob is not null)
 				{
 					continue;
 				}
 
-				var mapPlayer = GetMapPlayer(mapCoordinate);
+				var mapPlayer = GetPlayer(mapCoordinate);
 				if(mapPlayer is not null)
 				{
 					continue;
 				}
 
 				mob.Coordinate = mapCoordinate;
-				AddMapMob(mob);
+				AddMob(mob);
 				break;
 			}
 		}
 
 
-		public static void AddMapMob(MapMob mob)
+		public void AddMob(MapMob mob)
 		{
 			var coordinate = mob.Coordinate;
-			if (MapMobs[coordinate.X, coordinate.Y] != null)
+			if (Mobs[coordinate.X, coordinate.Y] != null)
 			{
 				return;
 			}
 
-			MapMobs[coordinate.X, coordinate.Y] = mob;
+			Mobs[coordinate.X, coordinate.Y] = mob;
 			MobProcessList.Add(mob);
-			RerenderMap = true;
+			Rerender = true;
 		}
 
-		public static MapMob GetMapMob(Vector2I coordinate)
+		public MapMob GetMob(Vector2I coordinate)
 		{
-			return MapMobs[coordinate.X, coordinate.Y];
+			return Mobs[coordinate.X, coordinate.Y];
 		}
 
 
-		public static void RemoveMapMob(Vector2I coordinate)
+		public void RemoveMob(Vector2I coordinate)
 		{
-			MapMobs[coordinate.X, coordinate.Y] = null;
-			RerenderMap = true;
+			Mobs[coordinate.X, coordinate.Y] = null;
+			Rerender = true;
 		}
 
 		#endregion
@@ -445,16 +447,16 @@ namespace GalaxyGauntlet.scripts
 
 		#region Player
 
-		public static MapMob GetMapPlayer(Vector2I coordinate)
+		public MapMob GetPlayer(Vector2I coordinate)
 		{
-			return MapPlayers[coordinate.X, coordinate.Y];
+			return Players[coordinate.X, coordinate.Y];
 		}
 
 
-		public static void RemoveMapPlayer(Vector2I coordinate)
+		public void RemovePlayer(Vector2I coordinate)
 		{
-			MapPlayers[coordinate.X, coordinate.Y] = null;
-			RerenderMap = true;
+			Players[coordinate.X, coordinate.Y] = null;
+			Rerender = true;
 		}
 
 		#endregion
@@ -462,16 +464,16 @@ namespace GalaxyGauntlet.scripts
 
 		#region Item
 
-		public static MapItem GetMapItem(Vector2I coordinate)
+		public MapItem GetItem(Vector2I coordinate)
 		{
-			return MapItems[coordinate.X, coordinate.Y];
+			return Items[coordinate.X, coordinate.Y];
 		}
 
 
-		public static void RemoveMapItem(Vector2I coordinate)
+		public void RemoveItem(Vector2I coordinate)
 		{
-			MapItems[coordinate.X, coordinate.Y] = null;
-			RerenderMap = true;
+			Items[coordinate.X, coordinate.Y] = null;
+			Rerender = true;
 		}
 
 		#endregion
@@ -479,11 +481,11 @@ namespace GalaxyGauntlet.scripts
 
 		#region Tile
 
-		public static MapTile GetMapTile(Vector2I coordinate)
+		public MapTile GetTile(Vector2I coordinate)
 		{
 			try
 			{
-				return MapTiles[coordinate.X, coordinate.Y];
+				return Tiles[coordinate.X, coordinate.Y];
 			}
 			catch(IndexOutOfRangeException)
 			{
@@ -492,17 +494,17 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void SetMapTile(Vector2I coordinate, MapTile newTile)
+		public void SetTile(Vector2I coordinate, MapTile newTile)
 		{
-			MapTiles[coordinate.X, coordinate.Y] = newTile;
-			RerenderMap = true;
+			Tiles[coordinate.X, coordinate.Y] = newTile;
+			Rerender = true;
 		}
 
 
-		public static void RemoveMapTile(Vector2I coordinate)
+		public void RemoveTile(Vector2I coordinate)
 		{
-			MapTiles[coordinate.X, coordinate.Y] = null;
-			RerenderMap = true;
+			Tiles[coordinate.X, coordinate.Y] = null;
+			Rerender = true;
 		}
 
 		#endregion
