@@ -10,9 +10,9 @@ script = ExtResource("1_i4om0")
 texture_filter = 1
 position = Vector2(20, 20)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 62
+hframes = 16
+vframes = 32
+frame = 20
 
 [node name="Count" type="Label" parent="RedKey" unique_id=94378567]
 offset_left = 3.0
@@ -26,9 +26,9 @@ text = "10"
 texture_filter = 1
 position = Vector2(62, 20)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 64
+hframes = 16
+vframes = 32
+frame = 21
 
 [node name="Count" type="Label" parent="BlueKey" unique_id=134370951]
 offset_left = 3.0
@@ -42,9 +42,9 @@ text = "10"
 texture_filter = 1
 position = Vector2(104, 20)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 66
+hframes = 16
+vframes = 32
+frame = 22
 
 [node name="Count" type="Label" parent="YellowKey" unique_id=1311901891]
 offset_left = 3.0
@@ -53,14 +53,15 @@ offset_right = 26.0
 offset_bottom = -3.0
 theme_override_font_sizes/font_size = 12
 text = "10"
+metadata/_edit_use_anchors_ = true
 
 [node name="GreenKey" type="Sprite2D" parent="." unique_id=1161818841]
 texture_filter = 1
 position = Vector2(146, 20)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 68
+hframes = 16
+vframes = 32
+frame = 23
 
 [node name="Count" type="Label" parent="GreenKey" unique_id=1093565390]
 offset_left = 3.0
@@ -74,46 +75,46 @@ text = "10"
 texture_filter = 1
 position = Vector2(20, 62)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 102
+hframes = 16
+vframes = 32
+frame = 98
 
 [node name="SuctionBoots" type="Sprite2D" parent="." unique_id=2058806859]
 texture_filter = 1
 position = Vector2(62, 62)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 104
+hframes = 16
+vframes = 32
+frame = 99
 
 [node name="FireBoots" type="Sprite2D" parent="." unique_id=1627371973]
 texture_filter = 1
 position = Vector2(104, 62)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 100
+hframes = 16
+vframes = 32
+frame = 97
 
 [node name="Flippers" type="Sprite2D" parent="." unique_id=1253877429]
 texture_filter = 1
 position = Vector2(146, 62)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 106
+hframes = 16
+vframes = 32
+frame = 96
 
 [node name="SecretEye" type="Sprite2D" parent="." unique_id=233397503]
 texture_filter = 1
 position = Vector2(20, 104)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 128
+hframes = 16
+vframes = 32
+frame = 299
 
 [node name="Helmet" type="Sprite2D" parent="." unique_id=1594558014]
 texture_filter = 1
 position = Vector2(62, 104)
 texture = ExtResource("2_0p73g")
-hframes = 6
-vframes = 22
-frame = 130
+hframes = 16
+vframes = 32
+frame = 224
