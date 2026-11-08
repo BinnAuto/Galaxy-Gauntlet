@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
 	public class BlueTankMonster(Vector2I coordinate) : MapMob(coordinate)
 	{
-		public override int DataCode => Constants.ByteCodes.Entities.BlueTank;
+		public override int DataCode => GGConstants.ByteCodes.Entities.BlueTank;
 
 		public override string Name => "Blue Tank";
 
@@ -17,10 +17,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			{
 				return Orientation switch
 				{
-					EntityOrientation.North => Constants.SpriteCoordinates.BlueTank_N,
-					EntityOrientation.East => Constants.SpriteCoordinates.BlueTank_E,
-					EntityOrientation.South => Constants.SpriteCoordinates.BlueTank_S,
-					EntityOrientation.West => Constants.SpriteCoordinates.BlueTank_W,
+					EntityOrientation.North => GGConstants.SpriteCoordinates.BlueTank_N,
+					EntityOrientation.East => GGConstants.SpriteCoordinates.BlueTank_E,
+					EntityOrientation.South => GGConstants.SpriteCoordinates.BlueTank_S,
+					EntityOrientation.West => GGConstants.SpriteCoordinates.BlueTank_W,
 					_ => throw new NotImplementedException()
 				};
 			}

@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class FireballMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Fireball;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Fireball;
 
         public override string Name => "Fireball";
 
@@ -17,10 +17,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 return Orientation switch
                 {
-                    EntityOrientation.North => Constants.SpriteCoordinates.Fireball_N,
-                    EntityOrientation.East => Constants.SpriteCoordinates.Fireball_E,
-                    EntityOrientation.South => Constants.SpriteCoordinates.Fireball_S,
-                    EntityOrientation.West => Constants.SpriteCoordinates.Fireball_W,
+                    EntityOrientation.North => GGConstants.SpriteCoordinates.Fireball_N,
+                    EntityOrientation.East => GGConstants.SpriteCoordinates.Fireball_E,
+                    EntityOrientation.South => GGConstants.SpriteCoordinates.Fireball_S,
+                    EntityOrientation.West => GGConstants.SpriteCoordinates.Fireball_W,
                     _ => throw new NotImplementedException()
                 };
             }

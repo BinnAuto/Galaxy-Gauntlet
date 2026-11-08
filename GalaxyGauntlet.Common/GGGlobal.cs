@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace GalaxyGauntlet.Common
 {
-    public static class GGG
+    public static class GGGlobal
     {
         private static readonly double VolumeMultiplier = 0.015;
 

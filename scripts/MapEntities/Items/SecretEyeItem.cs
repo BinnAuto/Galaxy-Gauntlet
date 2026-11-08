@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class SecretEyeItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.SecretEye;
+        public override int DataCode => GGConstants.ByteCodes.Entities.SecretEye;
 
         public override string Name => "Secret Eye";
 
@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return Constants.SpriteCoordinates.SecretEye;
+                return GGConstants.SpriteCoordinates.SecretEye;
             }
         }
     }

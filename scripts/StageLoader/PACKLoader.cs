@@ -35,7 +35,7 @@ namespace GalaxyGauntlet.scripts
             int requiredChips = 0;
             foreach(var data in uncompressedMap)
             {
-                if(data == Constants.ByteCodes.Entities.Chip)
+                if(data == GGConstants.ByteCodes.Entities.Chip)
                 {
                     requiredChips++;
                 }

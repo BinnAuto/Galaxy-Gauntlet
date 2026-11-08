@@ -51,7 +51,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 levelIndex++;
             }
 
-            string json = GGG.ToJson(LevelDataSet);
+            string json = GGGlobal.ToJson(LevelDataSet);
             levelData.Add(json);
 
             // Remove trailing comma off of last item in list

@@ -29,13 +29,13 @@ public partial class SettingsMenu : Node
 		MasterVolume.Value = GameData.MasterVolume;
 		MasterVolume.DragStarted += () => { _processMasterVolume = true; };
         MasterVolume.DragEnded += () => { _processMasterVolume = false; };
-		MasterVolume.ValueChanged += () => { GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume.Value); };
+		MasterVolume.ValueChanged += () => { GGGlobal.SetBusVolume(GGConstants.AudioBuses.Master, MasterVolume.Value); };
 
         MusicVolume = (UISlider)GetNode(nameof(MusicVolume));
 		MusicVolume.Value = GameData.MusicVolume;
         MusicVolume.DragStarted += () => { _processMusicVolume = true; };
         MusicVolume.DragEnded += () => { _processMusicVolume = false; };
-        MasterVolume.ValueChanged += () => { GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume.Value); };
+        MasterVolume.ValueChanged += () => { GGGlobal.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume.Value); };
 
         CancelButton = (UIButton)GetNode(nameof(CancelButton));
 		CancelButton.Pressed += OnCancelPressed;
@@ -49,11 +49,11 @@ public partial class SettingsMenu : Node
     {
         if(_processMasterVolume)
 		{
-			GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume.Value);
+			GGGlobal.SetBusVolume(GGConstants.AudioBuses.Master, MasterVolume.Value);
         }
         if (_processMusicVolume)
         {
-            GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume.Value);
+            GGGlobal.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume.Value);
         }
     }
 
@@ -63,9 +63,9 @@ public partial class SettingsMenu : Node
 
     private void OnCancelPressed()
 	{
-		GGG.SetBusVolume(Constants.AudioBuses.Master, GameData.MasterVolume);
-        GGG.SetBusVolume(Constants.AudioBuses.Music, GameData.MusicVolume);
-        GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+		GGGlobal.SetBusVolume(GGConstants.AudioBuses.Master, GameData.MasterVolume);
+        GGGlobal.SetBusVolume(GGConstants.AudioBuses.Music, GameData.MusicVolume);
+        GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
     }
 
 
@@ -74,7 +74,7 @@ public partial class SettingsMenu : Node
 		GameData.MasterVolume = MasterVolume.Value;
 		GameData.MusicVolume = MusicVolume.Value;
 		GameData.SaveSettings();
-        GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+        GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
     }
 
 	#endregion

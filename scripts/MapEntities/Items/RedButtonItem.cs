@@ -7,11 +7,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.RedButton;
+        public override int DataCode => GGConstants.ByteCodes.Entities.RedButton;
 
         public override string Name => "Red Button";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.RedButton;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.RedButton;
 
         public Vector2I? CloneMachineCoordinate = null;
 

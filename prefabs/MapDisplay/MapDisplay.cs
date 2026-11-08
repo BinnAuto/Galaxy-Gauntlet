@@ -82,7 +82,7 @@ public partial class MapDisplay : Node2D
 					FloorTiles.SetCell(mapCoordinate, 0, GameData.Map.Tiles[i, j].TextureCoordinate);
 					if (GameData.Map.Tiles[i, j] is CloneMachineTile)
 					{
-						SceneryTiles.SetCell(mapCoordinate, 0, Constants.SpriteCoordinates.CloneMachineScenery);
+						SceneryTiles.SetCell(mapCoordinate, 0, GGConstants.SpriteCoordinates.CloneMachineScenery);
 					}
 				}
 			}

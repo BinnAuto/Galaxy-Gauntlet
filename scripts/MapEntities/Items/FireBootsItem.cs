@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class FireBootsItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.FireBoots;
+        public override int DataCode => GGConstants.ByteCodes.Entities.FireBoots;
 
         public override string Name => "Fire Boots";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Archipelago.FireBootsUnlocked
-                    ? Constants.SpriteCoordinates.FireBoots
-                    : Constants.SpriteCoordinates.LockedFireBoots;
+                    ? GGConstants.SpriteCoordinates.FireBoots
+                    : GGConstants.SpriteCoordinates.LockedFireBoots;
             }
         }
     }

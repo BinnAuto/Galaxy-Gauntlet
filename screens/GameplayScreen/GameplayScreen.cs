@@ -211,7 +211,7 @@ public partial class GameplayScreen : Node
 		}
 		if(GameData.Map.TimeLimit != 0 && GameData.Level.Timer <= 0 && false == DialogWindow.Visible)
 		{
-			GameData.Level.DeathMessage = Constants.DeathMessages.OutOfTime;
+			GameData.Level.DeathMessage = GGConstants.DeathMessages.OutOfTime;
 			OnPlayerDeath();
 		}
 	}
@@ -281,12 +281,12 @@ public partial class GameplayScreen : Node
 				break;
 
 			case GameMode.QuickPlay:
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 
 			case GameMode.Archipelago:
 				GameData.Archipelago.CheckForGoal();
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 		}
 	}
@@ -296,7 +296,7 @@ public partial class GameplayScreen : Node
 	{
 		DialogWindow.ClearAllButtonEvents();
 		DialogWindow.ShowDialog("Complete!", DialogButtonType.OK);
-		SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Autosave);
+		SaveData.DeleteSaveSlot(GGConstants.SaveSlotNames.Autosave);
 		DialogWindow.OKButtonPressed += OnExit;
 	}
 
@@ -315,12 +315,12 @@ public partial class GameplayScreen : Node
 		switch(GameData.Level.GameMode)
 		{
 			case GameMode.Campaign:
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 				break;
 
 			case GameMode.QuickPlay:
 			case GameMode.Archipelago:
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 		}
 	}
@@ -378,8 +378,8 @@ public partial class GameplayScreen : Node
 			case GameMode.Archipelago:
 			case GameMode.Campaign:
 				string saveSlotName = (GameData.Level.GameMode == GameMode.Archipelago)
-					? Constants.SaveSlotNames.Archipelago
-					: Constants.SaveSlotNames.Autosave;
+					? GGConstants.SaveSlotNames.Archipelago
+					: GGConstants.SaveSlotNames.Autosave;
 				var saveSlot = SaveData.GetSaveSlot(saveSlotName);
 				if(false == saveSlot.HighScores.ContainsKey(GameData.Level.CurrentLevelIndex))
 				{
@@ -399,7 +399,7 @@ public partial class GameplayScreen : Node
 				if(GameData.Level.GameMode == GameMode.Archipelago)
 				{
 					string saveSlotJson = JsonSerializer.Serialize(saveSlot);
-					GameData.Archipelago.SetDataStorageKey(Constants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
+					GameData.Archipelago.SetDataStorageKey(GGConstants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
 				}
 				break;
 

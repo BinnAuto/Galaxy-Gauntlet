@@ -28,12 +28,12 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 if(IsReal)
                 {
-                    return Constants.SpriteCoordinates.BlueWall;
+                    return GGConstants.SpriteCoordinates.BlueWall;
                 }
 
                 return GameData.Level.XRayMode
-                    ? Constants.SpriteCoordinates.Floor
-                    : Constants.SpriteCoordinates.BlueWall;
+                    ? GGConstants.SpriteCoordinates.Floor
+                    : GGConstants.SpriteCoordinates.BlueWall;
             }
         }
     }

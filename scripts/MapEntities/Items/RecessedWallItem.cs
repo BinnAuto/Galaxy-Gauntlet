@@ -6,10 +6,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.RecessedWall;
+        public override int DataCode => GGConstants.ByteCodes.Entities.RecessedWall;
 
         public override string Name => "Recessed Wall";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.RecessedWall;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.RecessedWall;
     }
 }

@@ -73,9 +73,9 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "",
                 "    def fill_slot_data(self):",
                 "        slot_data = {option_name: getattr(self.options, option_name).value for option_name in self.options.__dict__.keys()}",
-                $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.LevelHash}\"] = \"{stageHash}\"",
-                $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.GameVersion}\"] = \"{Constants.GameVersion}\"",
-                $"        slot_data[\"{Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles}\"] = \"{string.Join("|", LevelOverrides.IgnoreFiles)}\"",
+                $"        slot_data[\"{GGConstants.Archipelago.SlotDataKeys.LevelHash}\"] = \"{stageHash}\"",
+                $"        slot_data[\"{GGConstants.Archipelago.SlotDataKeys.GameVersion}\"] = \"{GGConstants.GameVersion}\"",
+                $"        slot_data[\"{GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles}\"] = \"{string.Join("|", LevelOverrides.IgnoreFiles)}\"",
                 "        return slot_data"
             ]);
 

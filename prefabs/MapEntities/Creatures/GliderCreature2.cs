@@ -1,0 +1,15 @@
+using GalaxyGauntlet.scripts;
+
+public partial class GliderCreature2(Vector2I coordinate) : MapCreature2(coordinate)
+{
+	public override int ByteCode => GGConstants.ByteCodes.Entities.Glider;
+
+	protected override int SpriteFrameIndex => Orientation switch
+	{
+		EntityOrientation.North => GGConstants.SpriteFrameIndexes.Glider_N,
+		EntityOrientation.East => GGConstants.SpriteFrameIndexes.Glider_E,
+		EntityOrientation.South => GGConstants.SpriteFrameIndexes.Glider_S,
+		EntityOrientation.West => GGConstants.SpriteFrameIndexes.Glider_W,
+		_ => GGConstants.SpriteFrameIndexes.DebugSprite
+	};
+}

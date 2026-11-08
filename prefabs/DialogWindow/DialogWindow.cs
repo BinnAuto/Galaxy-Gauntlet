@@ -52,7 +52,7 @@ public partial class DialogWindow : Node2D
 			Content = (Label)GetNode(nameof(Content));
 
 			Title = (Label)GetNode(nameof(Title));
-			Title.Text = Constants.GameName;
+			Title.Text = GGConstants.GameName;
 
 			YesNoButtonContainer = (Node2D)GetNode(nameof(YesNoButtonContainer));
 			YesButton = (UIButton)YesNoButtonContainer.GetNode(nameof(YesButton));
@@ -86,7 +86,7 @@ public partial class DialogWindow : Node2D
 
 	public void ShowDialog(string content, DialogButtonType dialogButtonType)
 	{
-		ShowDialog(content, Constants.GameName, dialogButtonType);
+		ShowDialog(content, GGConstants.GameName, dialogButtonType);
 	}
 
 

@@ -6,10 +6,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.ToolThief;
+        public override int DataCode => GGConstants.ByteCodes.Entities.ToolThief;
 
         public override string Name => "Tool Thief";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.ToolThief;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.ToolThief;
     }
 }

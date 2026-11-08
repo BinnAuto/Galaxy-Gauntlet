@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class HelmetItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Helmet;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Helmet;
 
         public override string Name => "Helmet";
 
@@ -12,7 +12,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
         {
             get
             {
-                return Constants.SpriteCoordinates.Helmet;
+                return GGConstants.SpriteCoordinates.Helmet;
             }
         }
     }

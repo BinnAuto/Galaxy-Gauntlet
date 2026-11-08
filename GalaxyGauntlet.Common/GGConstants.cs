@@ -2,7 +2,7 @@ using Godot;
 
 namespace GalaxyGauntlet.Common
 {
-    public static class Constants
+    public static class GGConstants
     {
         public static string GameName = "Galaxy Gauntlet";
 
@@ -112,6 +112,7 @@ namespace GalaxyGauntlet.Common
         {
             public static class Entities
             {
+                public const int None = -0x01;
                 public const int Floor = 0x01;
                 public const int Wall = 0x02;
                 public const int IceTile = 0x03;
@@ -201,6 +202,7 @@ namespace GalaxyGauntlet.Common
                 public const int MaleOnlySign = 0x5A;
                 public const int FemaleOnlySign = 0x5B;
                 public const int LogicGate = 0x5C;
+                public const int UnusedMonster = 0x5D;
                 public const int PinkButton = 0x5E;
                 public const int FlameJet_Off = 0x5F;
                 public const int FlameJet_On = 0x60;
@@ -220,6 +222,7 @@ namespace GalaxyGauntlet.Common
                 public const int LetterTile = 0x71;
                 public const int PurpleToggleFloor = 0x72;
                 public const int PurpleToggleWall = 0x73;
+                public const int UnusedTile = 0x74;
                 public const int PointFlag10 = 0x7A;
                 public const int PointFlag100 = 0x7B;
                 public const int PointFlag1000 = 0x7C;
@@ -231,6 +234,7 @@ namespace GalaxyGauntlet.Common
                 public const int FloorMimic = 0x82;
                 public const int GreenBomb = 0x83;
                 public const int GreenChip = 0x84;
+                public const int UnusedItem = 0x85;
                 public const int BlackButton = 0x87;
                 public const int OnOffSwitch_Off = 0x88;
                 public const int OnOffSwitch_On = 0x89;
@@ -391,6 +395,111 @@ namespace GalaxyGauntlet.Common
             public static Vector2I LockedSecretEye = new(11, 18);
             public static Vector2I Helmet = new(0, 14);
             public static Vector2I LockedHelmet = new(0, 14);
+        }
+
+
+        public static class SpriteFrameIndexes
+        {
+            public const int RedDoor = 16;
+            public const int BlueDoor = 17;
+            public const int YellowDoor = 18;
+            public const int GreenDoor = 19;
+            public const int RedKey = 20;
+            public const int BlueKey = 21;
+            public const int YellowKey = 22;
+            public const int GreenKey = 23;
+            public const int DirtBlock = 24;
+            public const int DirtBlock_XRay = 25;
+            public const int Ice = 26;
+            public const int Ice_SE = 27;
+            public const int Ice_SW = 28;
+            public const int Ice_NE = 29;
+            public const int Ice_NW = 30;
+            public const int CloneMachine = 31;
+            public const int Floor = 32;
+            public const int Wall = 33;
+            public const int LetterPanel = 34;
+            public const int ToolThief = 35;
+            public const int Socket = 36;
+            public const int HintPanel = 37;
+            public const int Exit = 38;
+            public const int IceBlock = 42;
+            public const int IceBlock_XRay = 43;
+            public const int GreenChip = 57;
+            public const int Chip = 58;
+            public const int RedBomb = 69;
+            public const int GreenBomb = 70;
+            public const int NoSprite = 71;
+            public const int Flippers = 96;
+            public const int FireBoots = 97;
+            public const int IceSkates = 98;
+            public const int SuctionBoots = 99;
+            public const int BlueButton = 104;
+            public const int GreenButton = 105;
+            public const int RedButton = 105;
+            public const int BrownButton = 105;
+            public const int Bug_N = 112;
+            public const int Bug_E = 116;
+            public const int Bug_S = 120;
+            public const int Bug_W = 124;
+            public const int BlueTank_N = 128;
+            public const int BlueTank_E = 130;
+            public const int BlueTank_S = 132;
+            public const int BlueTank_W = 134;
+            public const int Glider_N = 136;
+            public const int Glider_E = 138;
+            public const int Glider_S = 140;
+            public const int Glider_W = 142;
+            public const int GreenToggleFloor = 144;
+            public const int ToggleWall = 152;
+            public const int TrapActive = 153;
+            public const int TrapInactive = 154;
+            public const int GrayButton = 155;
+            public const int Fireball_N = 156;
+            public const int Fireball_E = 157;
+            public const int Fireball_S = 158;
+            public const int Fireball_W = 159;
+            public const int BlueWall = 160;
+            public const int BlueTeleporter = 164;
+            public const int RecessedWall = 168;
+            public const int Gravel = 169;
+            public const int Ball = 170;
+            public const int Teeth_N = 176;
+            public const int Teeth_E = 179;
+            public const int Teeth_W = 182;
+            public const int SwivelDoor_SW = 185;
+            public const int SwivelDoor_NW = 186;
+            public const int SwivelDoor_NE = 187;
+            public const int SwivelDoor_SE = 188;
+            public const int TimePenalty = 191;
+            public const int Paramecium_N = 192;
+            public const int Paramecium_E = 195;
+            public const int Paramecium_S = 198;
+            public const int Paramecium_W = 201;
+            public const int Walker = 208;
+            public const int Helmet = 224;
+            public const int TimeToggle = 238;
+            public const int TimeBonus = 239;
+            public const int Blob = 240;
+            public const int DebugSprite = 256;
+            public const int SecretEye = 299;
+            public const int ForceFloor_N = 304;
+            public const int ForceFloor_S = 305;
+            public const int ForceFloor_E = 306;
+            public const int GreenTeleporter = 308;
+            public const int YellowTeleporter = 309;
+            public const int Transmogrifier = 316;
+            public const int ForceFloor_W = 322;
+            public const int RedTeleporter = 324;
+            public const int Slime = 328;
+            public const int ForceFloor_R = 336;
+            public const int Player_N = 392;
+            public const int Player_E = 393;
+            public const int Player_S = 394;
+            public const int Player_W = 395;
+            public const int Water = 396;
+            public const int Fire = 476;
+            public const int Dirt = 500;
         }
 
         public static class DeathMessages

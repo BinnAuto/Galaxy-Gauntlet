@@ -4,16 +4,16 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class GreenDoorItem(Vector2I coordinate) : MapDoorItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.GreenDoor;
+        public override int DataCode => GGConstants.ByteCodes.Entities.GreenDoor;
 
         public override string Name => "Green Door";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.GreenDoor;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.NoSprite;
 
 
         public override bool CanOpenDoor()
         {
-            return GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
+            return GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.GreenKey);
         }
     }
 }

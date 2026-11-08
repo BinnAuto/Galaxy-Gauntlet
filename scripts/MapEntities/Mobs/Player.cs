@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
 	public class Player(Vector2I coordinate) : MapMob(coordinate)
 	{
-		public override int DataCode => Constants.ByteCodes.Entities.Player;
+		public override int DataCode => GGConstants.ByteCodes.Entities.Player;
 
 		public override string Name => "Player";
 
@@ -21,51 +21,51 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				{
 					EntityOrientation.North => GameData.Archipelago.PlayerSpriteIndex switch
 					{
-						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_N,
-						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_N,
-						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_N,
-						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_N,
-						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_N,
-						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_N,
-						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_N,
-                        Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_N,
-                        _ => Constants.SpriteCoordinates.Player_N
+						GGConstants.Archipelago.PlayerSpriteIndexes.Player => GGConstants.SpriteCoordinates.Player_N,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Teeth => GGConstants.SpriteCoordinates.Teeth_N,
+						GGConstants.Archipelago.PlayerSpriteIndexes.BlueTank => GGConstants.SpriteCoordinates.BlueTank_N,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Glider => GGConstants.SpriteCoordinates.Glider_N,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Bug => GGConstants.SpriteCoordinates.Bug_N,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Paramecium => GGConstants.SpriteCoordinates.Paramecium_N,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Fireball => GGConstants.SpriteCoordinates.Fireball_N,
+                        GGConstants.Archipelago.PlayerSpriteIndexes.Walker => GGConstants.SpriteCoordinates.Walker_N,
+                        _ => GGConstants.SpriteCoordinates.Player_N
 					},
 					EntityOrientation.East => GameData.Archipelago.PlayerSpriteIndex switch
 					{
-						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_E,
-						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_E,
-						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_E,
-						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_E,
-						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_E,
-						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_E,
-						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_E,
-                        Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_E,
-                        _ => Constants.SpriteCoordinates.Player_E
+						GGConstants.Archipelago.PlayerSpriteIndexes.Player => GGConstants.SpriteCoordinates.Player_E,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Teeth => GGConstants.SpriteCoordinates.Teeth_E,
+						GGConstants.Archipelago.PlayerSpriteIndexes.BlueTank => GGConstants.SpriteCoordinates.BlueTank_E,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Glider => GGConstants.SpriteCoordinates.Glider_E,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Bug => GGConstants.SpriteCoordinates.Bug_E,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Paramecium => GGConstants.SpriteCoordinates.Paramecium_E,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Fireball => GGConstants.SpriteCoordinates.Fireball_E,
+                        GGConstants.Archipelago.PlayerSpriteIndexes.Walker => GGConstants.SpriteCoordinates.Walker_E,
+                        _ => GGConstants.SpriteCoordinates.Player_E
 					},
 					EntityOrientation.South => GameData.Archipelago.PlayerSpriteIndex switch
 					{
-						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_S,
-						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_S,
-						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_S,
-						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_S,
-						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_S,
-						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_S,
-						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_S,
-						Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_S,
-						_ => Constants.SpriteCoordinates.Player_S
+						GGConstants.Archipelago.PlayerSpriteIndexes.Player => GGConstants.SpriteCoordinates.Player_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Teeth => GGConstants.SpriteCoordinates.Teeth_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.BlueTank => GGConstants.SpriteCoordinates.BlueTank_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Glider => GGConstants.SpriteCoordinates.Glider_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Bug => GGConstants.SpriteCoordinates.Bug_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Paramecium => GGConstants.SpriteCoordinates.Paramecium_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Fireball => GGConstants.SpriteCoordinates.Fireball_S,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Walker => GGConstants.SpriteCoordinates.Walker_S,
+						_ => GGConstants.SpriteCoordinates.Player_S
 					},
 					EntityOrientation.West => GameData.Archipelago.PlayerSpriteIndex switch
 					{
-						Constants.Archipelago.PlayerSpriteIndexes.Player => Constants.SpriteCoordinates.Player_W,
-						Constants.Archipelago.PlayerSpriteIndexes.Teeth => Constants.SpriteCoordinates.Teeth_W,
-						Constants.Archipelago.PlayerSpriteIndexes.BlueTank => Constants.SpriteCoordinates.BlueTank_W,
-						Constants.Archipelago.PlayerSpriteIndexes.Glider => Constants.SpriteCoordinates.Glider_W,
-						Constants.Archipelago.PlayerSpriteIndexes.Bug => Constants.SpriteCoordinates.Bug_W,
-						Constants.Archipelago.PlayerSpriteIndexes.Paramecium => Constants.SpriteCoordinates.Paramecium_W,
-						Constants.Archipelago.PlayerSpriteIndexes.Fireball => Constants.SpriteCoordinates.Fireball_W,
-                        Constants.Archipelago.PlayerSpriteIndexes.Walker => Constants.SpriteCoordinates.Walker_W,
-                        _ => Constants.SpriteCoordinates.Player_W
+						GGConstants.Archipelago.PlayerSpriteIndexes.Player => GGConstants.SpriteCoordinates.Player_W,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Teeth => GGConstants.SpriteCoordinates.Teeth_W,
+						GGConstants.Archipelago.PlayerSpriteIndexes.BlueTank => GGConstants.SpriteCoordinates.BlueTank_W,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Glider => GGConstants.SpriteCoordinates.Glider_W,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Bug => GGConstants.SpriteCoordinates.Bug_W,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Paramecium => GGConstants.SpriteCoordinates.Paramecium_W,
+						GGConstants.Archipelago.PlayerSpriteIndexes.Fireball => GGConstants.SpriteCoordinates.Fireball_W,
+                        GGConstants.Archipelago.PlayerSpriteIndexes.Walker => GGConstants.SpriteCoordinates.Walker_W,
+                        _ => GGConstants.SpriteCoordinates.Player_W
 					},
 					_ => throw new NotImplementedException()
 				};
@@ -133,7 +133,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			#region Force Floor 
 
-			if (currentTile is MapForceFloorTile forceFloor && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots))
+			if (currentTile is MapForceFloorTile forceFloor && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SuctionBoots))
 			{
 				GameData.Map.AddToSlipList(this);
 				var forceFloorInfluence = forceFloor.GetInfluence();
@@ -155,7 +155,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
 			#region Ice
 
-			if(currentTile is MapIceTile iceTile && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
+			if(currentTile is MapIceTile iceTile && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.IceSkates))
 			{
 				GameData.Map.AddToSlipList(this);
 				Orientation = iceTile.SetEntityOrientation(Orientation);
@@ -202,8 +202,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			}
 
 			currentTile = GameData.Map.GetTile(Coordinate);
-			if((currentTile is MapIceTile && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates))
-				|| (currentTile is MapForceFloorTile && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
+			if((currentTile is MapIceTile && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.IceSkates))
+				|| (currentTile is MapForceFloorTile && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SuctionBoots)))
 			{
 				GameData.Map.AddToSlipList(this);
 			}

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cdpureodeuycn"]
+
+[ext_resource type="Script" uid="uid://bpdpd34n2pyol" path="res://prefabs/MapDisplay2/MapDisplay2.cs" id="1_6iif1"]
+
+[node name="MapDisplay2" type="Node2D" unique_id=1627108488]
+script = ExtResource("1_6iif1")

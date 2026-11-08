@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class SuctionBootsItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.SuctionBoots;
+        public override int DataCode => GGConstants.ByteCodes.Entities.SuctionBoots;
 
         public override string Name => "Suction Boots";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Archipelago.SuctionBootsUnlocked
-                    ? Constants.SpriteCoordinates.SuctionBoots
-                    : Constants.SpriteCoordinates.LockedSuctionBoots;
+                    ? GGConstants.SpriteCoordinates.SuctionBoots
+                    : GGConstants.SpriteCoordinates.LockedSuctionBoots;
             }
         }
     }

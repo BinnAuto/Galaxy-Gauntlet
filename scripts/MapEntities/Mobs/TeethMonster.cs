@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class TeethMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Teeth;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Teeth;
 
         public override string Name => "Teeth";
 
@@ -15,10 +15,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 return Orientation switch
                 {
-                    EntityOrientation.North => Constants.SpriteCoordinates.Teeth_N,
-                    EntityOrientation.East => Constants.SpriteCoordinates.Teeth_E,
-                    EntityOrientation.South => Constants.SpriteCoordinates.Teeth_S,
-                    EntityOrientation.West => Constants.SpriteCoordinates.Teeth_W,
+                    EntityOrientation.North => GGConstants.SpriteCoordinates.Teeth_N,
+                    EntityOrientation.East => GGConstants.SpriteCoordinates.Teeth_E,
+                    EntityOrientation.South => GGConstants.SpriteCoordinates.Teeth_S,
+                    EntityOrientation.West => GGConstants.SpriteCoordinates.Teeth_W,
                     _ => throw new NotImplementedException()
                 };
             }

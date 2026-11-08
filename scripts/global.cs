@@ -31,6 +31,28 @@ public static class Global
     }
 
 
+    public static EntityOrientation ToOrientation(this Vector2I vector)
+    {
+        if(vector == new Vector2I(0, -1))
+        {
+            return EntityOrientation.North;
+        }
+        if(vector == new Vector2I(0, 1))
+        {
+            return EntityOrientation.South;
+        }
+        if (vector == new Vector2I(1, 0))
+        {
+            return EntityOrientation.East;
+        }
+        if (vector == new Vector2I(-1, 0))
+        {
+            return EntityOrientation.West;
+        }
+        return EntityOrientation.North;
+    }
+
+
     public static Vector2 GetLabelSize(this Label label, bool includeStyleMargins)
     {
         string text = label.Text;

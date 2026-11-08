@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class FlippersItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Flippers;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Flippers;
 
         public override string Name => "Flippers";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Archipelago.FlippersUnlocked
-                    ? Constants.SpriteCoordinates.Flippers
-                    : Constants.SpriteCoordinates.LockedFlippers;
+                    ? GGConstants.SpriteCoordinates.Flippers
+                    : GGConstants.SpriteCoordinates.LockedFlippers;
             }
         }
     }

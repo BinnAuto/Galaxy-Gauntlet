@@ -4,11 +4,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class CloneMachineTile(Vector2I coordinate) : MapTile(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.CloneMachine_V1;
+        public override int DataCode => GGConstants.ByteCodes.Entities.CloneMachine_V1;
 
         public override string Name => "Clone Machine";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.CloneMachineTile;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.CloneMachineTile;
 
 
         public void CloneEntity()

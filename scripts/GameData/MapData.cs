@@ -19,7 +19,7 @@ namespace GalaxyGauntlet.scripts
         public int TimeLimit = -1;
         public Vector2I Dimensions = -Vector2I.One;
         public byte[] FileBytes = [];
-
+		private List<MapObject> NewMapObjects = [];
 
         #region Map Layout Array
 
@@ -28,6 +28,13 @@ namespace GalaxyGauntlet.scripts
         public MapMob[,] Players = new MapMob[0, 0];
         public MapItem[,] Items = new MapItem[0, 0];
         public MapTile[,] Tiles = new MapTile[0, 0];
+
+		public MapCreature2[,] Creatures2 = new MapCreature2[0, 0];
+		// public MapCreature2[,] Players2 = new MapCreature2[0, 0];
+		public MapItem2[,] Items2 = new MapItem2[0, 0];
+		public ThinWallOrCanopy2[,] ThinWalls2 = new ThinWallOrCanopy2[0, 0];
+		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
+		public List<MapCreature2> CreaturesToProcess = [];
 
         #endregion
 
@@ -70,6 +77,7 @@ namespace GalaxyGauntlet.scripts
 
 		#endregion
 
+
 		public void Reset()
         {
             TimeLimit = -1;
@@ -87,6 +95,11 @@ namespace GalaxyGauntlet.scripts
             Players = new MapMob[0, 0];
             Items = new MapItem[0, 0];
             Tiles = new MapTile[0, 0];
+            Creatures2 = new MapCreature2[0, 0];
+            Items2 = new MapItem2[0, 0];
+            Tiles2 = new MapTile2[0, 0];
+            NewMapObjects = [];
+			CreaturesToProcess = [];
         }
 
 
@@ -107,6 +120,11 @@ namespace GalaxyGauntlet.scripts
 			{
 				Vector2I mapCoordinate = new(x, y);
 				var entity = MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
+				var mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+				if(mapObject is not null)
+				{
+					AddMapObject(mapObject);
+				}
 				if(entity is Player)
 				{
 					OnPlayerCoordinateSet.Invoke(mapCoordinate);
@@ -118,11 +136,11 @@ namespace GalaxyGauntlet.scripts
 				if(entity is ThinWallOrCanopyTile thinWall)
 				{
 					i++;
-					if (FileBytes[i-1] == Constants.ByteCodes.Entities.ThinWallOrCanopy)
+					if (FileBytes[i-1] == GGConstants.ByteCodes.Entities.ThinWallOrCanopy)
 					{
 						// Parse Thin Wall as described in CC2
 						thinWall.SetOrientation(FileBytes[i]);
-						if (FileBytes[i] == Constants.ByteCodes.ThinWallBits.Canopy)
+						if (FileBytes[i] == GGConstants.ByteCodes.ThinWallBits.Canopy)
 						{
 							// TODO: Set canopy scenery
 						}
@@ -140,7 +158,7 @@ namespace GalaxyGauntlet.scripts
 					if (entity.NeedsTileSpecification)
 					{
 						i++;
-						if (FileBytes[i] == Constants.ByteCodes.Entities.DirtBlock)
+						if (FileBytes[i] == GGConstants.ByteCodes.Entities.DirtBlock)
 						{
 							// Item is hidden under a dirt block.
 							// Chip's Challenge treats dirt blocks like tiles, but it's better to treat it like a mob.
@@ -151,7 +169,7 @@ namespace GalaxyGauntlet.scripts
 							Mobs[x, y] = dirtBlock;
 						}
 						// TODO: Generalize below to all monsters
-						if (FileBytes[i] == Constants.ByteCodes.Entities.Teeth)
+						if (FileBytes[i] == GGConstants.ByteCodes.Entities.Teeth)
 						{
 							// Item is hidden under a Teeth
 							TeethMonster teeth = new(mapCoordinate);
@@ -161,6 +179,11 @@ namespace GalaxyGauntlet.scripts
 							Mobs[x, y] = teeth;
 						}
 						item.LowerLayer = (MapTile)MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
+						mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+						if(mapObject is not null)
+						{
+							AddMapObject(mapObject);
+						}
 					}
 					Tiles[x, y] = item.LowerLayer;
 					Items[x, y] = item;
@@ -196,6 +219,11 @@ namespace GalaxyGauntlet.scripts
 						else
 						{
 							mob.LowerLayer = (MapTile)mapEntity;
+							mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+							if(mapObject is not null)
+							{
+								AddMapObject(mapObject);
+							}
 						}
 						if(mob.LowerLayer is CloneMachineTile)
 						{
@@ -238,6 +266,112 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		/// <summary>
+		/// Populate object lists based off of unpacked C2M file data
+		/// </summary>
+		public void PopulateFromFileBytes2()
+		{
+			if(FileBytes.Length == 0)
+			{
+				FileLogger.QuietLogMessage("No map data to process");
+				return;
+			}
+
+			int x = 0;
+			int y = 0;
+			for(int i = 0; i < FileBytes.Length; i++)
+			{
+				Vector2I mapCoordinate = new(x, y);
+				var mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+                AddMapObject(mapObject);
+                if (mapObject is MapItem2 item2)
+				{
+					Items2[x, y] = (MapItem2)MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+
+					#region Determine the tile item is sitting on
+					
+					if(item2.RequiresLowerLayerTile)
+					{
+						i++;
+						mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+                    }
+					else
+					{
+						// Default to floor tile
+						mapObject = new FloorTile2(mapCoordinate);
+                    }
+                    AddMapObject(mapObject);
+
+					#endregion
+				}
+				if(mapObject is MapCreature2 creature2)
+				{
+					Creatures2[x, y] = (MapCreature2)MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+
+                    if (creature2.RequiresDirectionByte)
+					{
+						i++;
+						byte directionByte = FileBytes[i];
+						Creatures2[x, y].Orientation = (EntityOrientation)directionByte;
+					}
+                    if (mapObject is Player2)
+					{
+                        CreaturesToProcess = [..CreaturesToProcess.Prepend(creature2)];
+						Creatures2[x, y].Orientation = EntityOrientation.South;
+						OnPlayerCoordinateSet.Invoke(mapCoordinate);
+                    }
+					else
+					{
+                        CreaturesToProcess.Add(creature2);
+                    }
+
+					#region Determine the tile creature is standing on
+					
+					if(creature2.RequiresLowerLayerTile)
+					{
+						i++;
+                        mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+                    }
+					else
+                    {
+                        // Default to floor tile
+                        mapObject = new FloorTile2(mapCoordinate);
+                    }
+                    AddMapObject(mapObject);
+
+                    #endregion
+                }
+				if(mapObject is ThinWallOrCanopy2 thinWall)
+				{
+					i++;
+					thinWall.SetWallBitmask(FileBytes[i]);
+					ThinWalls2[x, y] = thinWall;
+					i++;
+					mapObject = MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+					AddMapObject(mapObject);
+				}
+				if(mapObject is MapTile2)
+				{
+					Tiles2[x, y] = (MapTile2)MapObject.GetMapObject(FileBytes[i], mapCoordinate);
+                }
+
+                #region Iterate map coordinate
+
+                x++;
+                if (x >= Dimensions.X)
+                {
+                    x = 0;
+                    y++;
+                }
+                if (y >= Dimensions.Y)
+                {
+                    return;
+                }
+
+				#endregion
+			}
+		}
+
 		public void SetDimensions(int x, int y)
 		{
 			Dimensions = new(x, y);
@@ -246,8 +380,12 @@ namespace GalaxyGauntlet.scripts
 			Players = new MapMob[x, y];
 			Items = new MapItem[x, y];
 			Tiles = new MapTile[x, y];
+            Creatures2 = new MapCreature2[x, y];
+            Items2 = new MapItem2[x, y];
+			ThinWalls2 = new ThinWallOrCanopy2[x, y];
+            Tiles2 = new MapTile2[x, y];
 
-			for (int i = 0; i < Dimensions.X; i++)
+            for (int i = 0; i < Dimensions.X; i++)
 			{
 				for (int j = 0; j < Dimensions.Y; j++)
 				{
@@ -256,7 +394,11 @@ namespace GalaxyGauntlet.scripts
 					Players[i, j] = null;
 					Items[i, j] = null;
 					Tiles[i, j] = null;
-				}
+                    Creatures2[i, j] = null;
+                    Items2[i, j] = null;
+					ThinWalls2[i, j] = null;
+                    Tiles2[i, j] = null;
+                }
 			}
 		}
 
@@ -324,6 +466,12 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void HandleButtons()
+		{
+			// TODO
+		}
+
+
 		public void FlipGreenToggles()
 		{
 			foreach(var tile in Tiles)
@@ -348,7 +496,8 @@ namespace GalaxyGauntlet.scripts
 			}
 		}
 
-		#region Map Tile Management
+
+		#region Map Management
 
 		#region Scenery
 
@@ -442,6 +591,39 @@ namespace GalaxyGauntlet.scripts
 			Rerender = true;
 		}
 
+
+		public MapCreature2 GetCreature2(Vector2I coordinate)
+		{
+			return Creatures2[coordinate.X, coordinate.Y];
+		}
+
+
+		public void UpdateCreature(Vector2I coordinate, Vector2I newCoordinate)
+		{
+			var creature = Creatures2[coordinate.X, coordinate.Y];
+			if (creature == null)
+			{
+				GD.Print("No creature found at source");
+				return;
+			}
+			if (Creatures2[newCoordinate.X, newCoordinate.Y] is not null)
+			{
+				var existingCreature = Creatures2[newCoordinate.X, newCoordinate.Y];
+				GD.Print($"Creature found at destination {existingCreature.GetType().Name}");
+				return;
+			}
+
+			var direction = newCoordinate - coordinate;
+			creature.Coordinate = newCoordinate;
+			creature.Orientation = direction.ToOrientation();
+			Creatures2[coordinate.X, coordinate.Y] = null;
+			Creatures2[newCoordinate.X, newCoordinate.Y] = creature;
+			AddMapObject(creature);
+			GD.Print($"Creature moved from {coordinate} to {newCoordinate}");
+			GD.Print(Creatures2[coordinate.X, coordinate.Y]);
+			GD.Print(Creatures2[newCoordinate.X, newCoordinate.Y]);
+		}
+
 		#endregion
 
 
@@ -470,18 +652,42 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public MapItem2 GetItem2(Vector2I coordinate)
+		{
+			return Items2[coordinate.X, coordinate.Y];
+		}
+
+
 		public void RemoveItem(Vector2I coordinate)
 		{
 			Items[coordinate.X, coordinate.Y] = null;
 			Rerender = true;
 		}
 
-		#endregion
+
+		public void RemoveItem2(Vector2I coordinate)
+		{
+			if (Items2[coordinate.X, coordinate.Y] is null)
+			{
+				return;
+			}
+			
+			Items2[coordinate.X, coordinate.Y].Kill();
+			Items2[coordinate.X, coordinate.Y] = null;
+		}
+
+        #endregion
+
+        
+		public ThinWallOrCanopy2 GetThinWall(Vector2I coordinate)
+		{
+			return ThinWalls2[coordinate.X, coordinate.Y];
+		}
 
 
-		#region Tile
+        #region Tile
 
-		public MapTile GetTile(Vector2I coordinate)
+        public MapTile GetTile(Vector2I coordinate)
 		{
 			try
 			{
@@ -494,6 +700,19 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public MapTile2 GetTile2(Vector2I coordinate)
+        {
+            try
+            {
+		        return Tiles2[coordinate.X, coordinate.Y];
+	        }
+            catch (IndexOutOfRangeException)
+            {
+                return new WallTile2(coordinate);
+            }
+		}
+
+
 		public void SetTile(Vector2I coordinate, MapTile newTile)
 		{
 			Tiles[coordinate.X, coordinate.Y] = newTile;
@@ -501,13 +720,46 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void SetTile2(MapTile2 newTile)
+		{
+			var coordinate = newTile.Coordinate;
+			Tiles2[coordinate.X, coordinate.Y] = newTile;
+			AddMapObject(newTile);
+		}
+
+
 		public void RemoveTile(Vector2I coordinate)
 		{
 			Tiles[coordinate.X, coordinate.Y] = null;
+			Tiles2[coordinate.X, coordinate.Y] = null;
 			Rerender = true;
 		}
 
 		#endregion
+
+		#endregion
+
+
+		#region Map Objects Management
+
+		public void AddMapObject(MapObject mapObject)
+		{
+			lock(NewMapObjects)
+			{
+				NewMapObjects.Add(mapObject);
+			}
+		}
+
+
+		public List<MapObject> GetNewMapObjects()
+		{
+			lock(NewMapObjects)
+			{
+				List<MapObject> result = [..NewMapObjects];
+				NewMapObjects.Clear();
+				return result;
+			}
+		}
 
 		#endregion
 	}

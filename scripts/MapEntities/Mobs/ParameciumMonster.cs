@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class ParameciumMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Paramecium;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Paramecium;
 
         public override string Name => "Paramecium";
 
@@ -15,10 +15,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 return Orientation switch
                 {
-                    EntityOrientation.North => Constants.SpriteCoordinates.Paramecium_N,
-                    EntityOrientation.East => Constants.SpriteCoordinates.Paramecium_E,
-                    EntityOrientation.South => Constants.SpriteCoordinates.Paramecium_S,
-                    EntityOrientation.West => Constants.SpriteCoordinates.Paramecium_W,
+                    EntityOrientation.North => GGConstants.SpriteCoordinates.Paramecium_N,
+                    EntityOrientation.East => GGConstants.SpriteCoordinates.Paramecium_E,
+                    EntityOrientation.South => GGConstants.SpriteCoordinates.Paramecium_S,
+                    EntityOrientation.West => GGConstants.SpriteCoordinates.Paramecium_W,
                     _ => throw new NotImplementedException()
                 };
             }

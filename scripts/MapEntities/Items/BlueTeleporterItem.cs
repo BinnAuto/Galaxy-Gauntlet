@@ -6,11 +6,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.BlueTeleporter;
+        public override int DataCode => GGConstants.ByteCodes.Entities.BlueTeleporter;
 
         public override string Name => "Blue Teleporter";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.BlueTeleporter;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.BlueTeleporter;
 
 
         public override Vector2I SearchForExit(Vector2I startingPoint)

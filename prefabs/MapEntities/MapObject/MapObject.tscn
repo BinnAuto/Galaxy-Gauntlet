@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://vpku0enrl0gl"]
+
+[ext_resource type="SpriteFrames" uid="uid://cbdhhw5r8t3lw" path="res://sprite_frames/tile_sprites.tres" id="1_275xi"]
+
+[node name="MapObject" type="Node2D" unique_id=2131788418]
+
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=1099796958]
+sprite_frames = ExtResource("1_275xi")
+frame = 19
+centered = false

@@ -39,13 +39,13 @@ namespace GalaxyGauntlet.scripts
             var loadResult = ConfigFile.Load(GameConfigFilePath);
             if (loadResult == Error.Ok)
             {
-                Archipelago.GameName = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoGameName, "Chip's Challenge");
-                Archipelago.Server = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoServer, "archipelago.gg");
-                Archipelago.Port = (int)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPort, string.Empty);
-                Archipelago.SlotName = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoSlotName, string.Empty);
-                Archipelago.Password = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPassword, string.Empty);
-                MasterVolume = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.MasterVolume, 50);
-                MusicVolume = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.MusicVolume, 50);
+                Archipelago.GameName = (string)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoGameName, "Chip's Challenge");
+                Archipelago.Server = (string)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoServer, "archipelago.gg");
+                Archipelago.Port = (int)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoPort, string.Empty);
+                Archipelago.SlotName = (string)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoSlotName, string.Empty);
+                Archipelago.Password = (string)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoPassword, string.Empty);
+                MasterVolume = (double)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.MasterVolume, 50);
+                MusicVolume = (double)ConfigFile.GetValue(GameDataConfigSection, GGConstants.Settings.MusicVolume, 50);
             }
             SaveSettings();
         }
@@ -53,16 +53,16 @@ namespace GalaxyGauntlet.scripts
 
         public static void SaveSettings()
         {
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoGameName, Archipelago.GameName);
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoServer, Archipelago.Server);
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPort, Archipelago.Port.ToString());
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoSlotName, Archipelago.SlotName);
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPassword, Archipelago.Password);
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.MasterVolume, MasterVolume);
-            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.MusicVolume, MusicVolume);
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoGameName, Archipelago.GameName);
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoServer, Archipelago.Server);
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoPort, Archipelago.Port.ToString());
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoSlotName, Archipelago.SlotName);
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.ArchipelagoPassword, Archipelago.Password);
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.MasterVolume, MasterVolume);
+            ConfigFile.SetValue(GameDataConfigSection, GGConstants.Settings.MusicVolume, MusicVolume);
             ConfigFile.Save(GameConfigFilePath);
-            GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume);
-            GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume);
+            GGGlobal.SetBusVolume(GGConstants.AudioBuses.Master, MasterVolume);
+            GGGlobal.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume);
         }
 
         #endregion
@@ -164,12 +164,12 @@ namespace GalaxyGauntlet.scripts
         {
             switch (itemName)
             {
-                case Constants.Archipelago.TrapNames.ConfusionTrap:
+                case GGConstants.Archipelago.TrapNames.ConfusionTrap:
                     RandomNumberGenerator rng = new();
                     Level.ConfusionTimer = rng.RandiRange(20, 40);
                     break;
 
-                case Constants.Archipelago.ItemNames.TimeBonus:
+                case GGConstants.Archipelago.ItemNames.TimeBonus:
                     if (Map.TimeLimit == 0)
                     {
                         // Turn untimed levels into timed levels (hurry up!!!)
@@ -178,34 +178,34 @@ namespace GalaxyGauntlet.scripts
                     Level.Timer += 10;
                     break;
 
-                case Constants.Archipelago.TrapNames.TimePenalty:
+                case GGConstants.Archipelago.TrapNames.TimePenalty:
                     if (Map.TimeLimit == 0)
                     {
                         // Instant death on untimed levels
-                        Level.DeathMessage = Constants.DeathMessages.OutOfTime;
+                        Level.DeathMessage = GGConstants.DeathMessages.OutOfTime;
                         return;
                     }
 
                     Level.Timer -= 10;
                     break;
 
-                case Constants.Archipelago.TrapNames.WalkerTrap:
+                case GGConstants.Archipelago.TrapNames.WalkerTrap:
                     Map.AddMobAtRandom(new WalkerMonster(Vector2I.Zero));
                     break;
 
-                case Constants.Archipelago.TrapNames.BlobTrap:
+                case GGConstants.Archipelago.TrapNames.BlobTrap:
                     Map.AddMobAtRandom(new BlobMonster(Vector2I.Zero));
                     break;
 
-                case Constants.Archipelago.TrapNames.TeethTrap:
+                case GGConstants.Archipelago.TrapNames.TeethTrap:
                     Map.AddMobAtRandom(new TeethMonster(Vector2I.Zero));
                     break;
 
-                case Constants.Archipelago.ItemNames.BigMap:
+                case GGConstants.Archipelago.ItemNames.BigMap:
                     Level.MapViewportSize = Mathf.Min(15, Level.MapViewportSize + 6);
                     break;
 
-                case Constants.Archipelago.TrapNames.SmallMapTrap:
+                case GGConstants.Archipelago.TrapNames.SmallMapTrap:
                     Level.MapViewportSize = Mathf.Max(5, Level.MapViewportSize - 4);
                     break;
 

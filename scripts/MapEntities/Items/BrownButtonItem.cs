@@ -6,11 +6,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.BrownButton;
+        public override int DataCode => GGConstants.ByteCodes.Entities.BrownButton;
 
         public override string Name => "Brown Button";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.BrownButton;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.BrownButton;
 
         public Vector2I? TrapCoordinate = null;
 

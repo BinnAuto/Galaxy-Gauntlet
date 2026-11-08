@@ -84,10 +84,10 @@ public partial class LevelSelect : Node2D
 			child.QueueFree();
 		}
 
-		GameData.Level.LevelSet = GGG.GetLevelList();
+		GameData.Level.LevelSet = GGGlobal.GetLevelList();
 		if(GameData.Level.GameMode == GameMode.Archipelago)
 		{
-			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
+			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
 			GameData.Level.LevelSet = GameData.Level.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 		}
 		GD.Print($"{GameData.Level.LevelSet.Length} levels found");
@@ -151,7 +151,7 @@ public partial class LevelSelect : Node2D
 		GameData.Level.CurrentLevelIndex = levelIndex;
 		GameData.Level.RestartCount = 0;
 		GameData.Level.Reset();
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.GameplayScreen);
 	}
 
 
@@ -159,7 +159,7 @@ public partial class LevelSelect : Node2D
 	{
 		if(GameData.Level.GameMode == GameMode.QuickPlay)
 		{
-			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 			return;
 		}
 
@@ -169,7 +169,7 @@ public partial class LevelSelect : Node2D
 		DialogWindow.YesButtonPressed += async () =>
 		{
 			await GameData.Archipelago.DisconnectFromServer();
-			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 		};
 		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };
 	}

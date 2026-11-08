@@ -5,11 +5,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class BallMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Ball;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Ball;
 
         public override string Name => "Ball";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.Ball;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.Ball;
 
 
         public override void ProcessTick()

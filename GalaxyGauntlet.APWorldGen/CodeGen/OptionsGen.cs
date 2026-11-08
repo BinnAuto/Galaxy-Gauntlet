@@ -85,13 +85,13 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             fileLines.AddRange([
                 "@dataclass",
                 $"class {ClassPrefix}Options(PerGameCommonOptions):",
-                $"    {Constants.Archipelago.SlotDataKeys.PlayerSprite}: PlayerSpriteOption",
+                $"    {GGConstants.Archipelago.SlotDataKeys.PlayerSprite}: PlayerSpriteOption",
                 $"    chip_as_check_probability: ChipsAsCheckProbability",
                 $"    proportion_of_filler_as_useful_items: ProportionOfFillerAsUsefulItems",
                 $"    proportion_of_filler_as_traps: ProportionOfFillerAsTraps",
-                $"    {Constants.Archipelago.SlotDataKeys.ScoreGoal}: ScoreGoal",
-                $"    {Constants.Archipelago.SlotDataKeys.LevelCompletionGoal}: LevelCompletionGoal",
-                $"    {Constants.Archipelago.SlotDataKeys.DeathLink}: DeathLink"
+                $"    {GGConstants.Archipelago.SlotDataKeys.ScoreGoal}: ScoreGoal",
+                $"    {GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal}: LevelCompletionGoal",
+                $"    {GGConstants.Archipelago.SlotDataKeys.DeathLink}: DeathLink"
             ]);
             if(IncludeExtendedScoreChecks)
             {

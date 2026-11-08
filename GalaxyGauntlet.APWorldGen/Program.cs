@@ -113,7 +113,7 @@ namespace GalaxyGauntlet.APWorldGen
 
         private static string[] CheckLevelList()
         {
-            var result = GGG.GetLevelList();
+            var result = GGGlobal.GetLevelList();
             if (result.Length == 0)
             {
                 throw new($"No c2m files found in levels folder");

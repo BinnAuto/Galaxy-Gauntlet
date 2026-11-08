@@ -81,7 +81,7 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public bool IsProcessingDeathLink = false;
 
-		public long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+		public long PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
 		/// <summary>
 		/// A list of level file names to ignore when displaying the level select list.
@@ -110,7 +110,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.ScoreGoal);
+				return GetSlotDataKey<long>(GGConstants.Archipelago.SlotDataKeys.ScoreGoal);
 			}
 		}
 
@@ -123,7 +123,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.LevelCompletionGoal);
+				return GetSlotDataKey<long>(GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal);
 			}
 		}
 
@@ -135,7 +135,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+				var archipelagoData = SaveData.SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Archipelago);
 				return archipelagoData?.HighScores?.Count ?? 0;
 			}
 		}
@@ -154,7 +154,7 @@ namespace GalaxyGauntlet.scripts
 				}
 
 
-				var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+				var archipelagoData = SaveData.SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Archipelago);
 				return archipelagoData.HighScores.Sum(e => e.Value);
 			}
 		}
@@ -195,13 +195,13 @@ namespace GalaxyGauntlet.scripts
 			DeathLinkService = null;
 			LocationsChecked = [];
 			LevelFilesToIgnore = [];
-			PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+			PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
 			SlotId = null;
 			SlotData = [];
 			PendingItems = [];
-			SaveData.SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Archipelago);
-			SaveData.SaveData.WriteSaveSlot(new(Constants.SaveSlotNames.Archipelago));
+			SaveData.SaveData.DeleteSaveSlot(GGConstants.SaveSlotNames.Archipelago);
+			SaveData.SaveData.WriteSaveSlot(new(GGConstants.SaveSlotNames.Archipelago));
 		}
 
 
@@ -319,8 +319,8 @@ namespace GalaxyGauntlet.scripts
 
 		private async Task LoadGameSaveFromSlotData()
 		{
-			SaveSlot apSaveSlot = new(Constants.SaveSlotNames.Archipelago);
-			var saveData = Session.DataStorage[Constants.Archipelago.SlotDataKeys.SaveData];
+			SaveSlot apSaveSlot = new(GGConstants.SaveSlotNames.Archipelago);
+			var saveData = Session.DataStorage[GGConstants.Archipelago.SlotDataKeys.SaveData];
 			string saveDataJson = $"{await saveData.GetAsync()}";
 			if (false == string.IsNullOrEmpty(saveDataJson))
 			{
@@ -333,7 +333,7 @@ namespace GalaxyGauntlet.scripts
 		private void BuildFileIgnoreList()
 		{
 			LevelFilesToIgnore = [];
-			string ignoreFiles = SlotData[Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
+			string ignoreFiles = SlotData[GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
 			if (false == string.IsNullOrEmpty(ignoreFiles))
 			{
 				LevelFilesToIgnore = ignoreFiles.Split('|');
@@ -345,12 +345,12 @@ namespace GalaxyGauntlet.scripts
 		{
 			try
 			{
-				PlayerSpriteIndex = (long)SlotData[Constants.Archipelago.SlotDataKeys.PlayerSprite];
+				PlayerSpriteIndex = (long)SlotData[GGConstants.Archipelago.SlotDataKeys.PlayerSprite];
 			}
 			catch (Exception e)
 			{
 				GD.Print(e.Message);
-				PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+				PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 			}
 		}
 
@@ -359,7 +359,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			DeathLinkService = Session.CreateDeathLinkService();
 			DeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
-			long deathLinkSetting = GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.DeathLink);
+			long deathLinkSetting = GetSlotDataKey<long>(GGConstants.Archipelago.SlotDataKeys.DeathLink);
 			DeathLinkEnabled = (deathLinkSetting == 1);
 			if (DeathLinkEnabled)
 			{
@@ -525,16 +525,16 @@ namespace GalaxyGauntlet.scripts
 		{
 			MapItem pendingItem = itemName switch
 			{
-				Constants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem(Vector2I.Zero),
 				_ => null
 			};
 			if(pendingItem is not null)

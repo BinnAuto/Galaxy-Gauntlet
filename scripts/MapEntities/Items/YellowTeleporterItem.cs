@@ -4,10 +4,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class YellowTeleporterItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.YellowTeleporter;
+        public override int DataCode => GGConstants.ByteCodes.Entities.YellowTeleporter;
 
         public override string Name => "Yellow Teleporter";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.YellowTeleporter;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.YellowTeleporter;
     }
 }

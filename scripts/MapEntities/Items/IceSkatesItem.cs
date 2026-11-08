@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class IceSkatesItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.IceSkates;
+        public override int DataCode => GGConstants.ByteCodes.Entities.IceSkates;
 
         public override string Name => "Ice Skates";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Archipelago.IceSkatesUnlocked
-                    ? Constants.SpriteCoordinates.IceSkates
-                    : Constants.SpriteCoordinates.LockedIceSkates;
+                    ? GGConstants.SpriteCoordinates.IceSkates
+                    : GGConstants.SpriteCoordinates.LockedIceSkates;
             }
         }
     }

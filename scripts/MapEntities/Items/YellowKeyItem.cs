@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class YellowKeyItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.YellowKey;
+        public override int DataCode => GGConstants.ByteCodes.Entities.YellowKey;
 
         public override string Name => "Yellow Key";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Archipelago.YellowKeyUnlocked
-                    ? Constants.SpriteCoordinates.YellowKey
-                    : Constants.SpriteCoordinates.LockedYellowKey;
+                    ? GGConstants.SpriteCoordinates.YellowKey
+                    : GGConstants.SpriteCoordinates.LockedYellowKey;
             }
         }
     }

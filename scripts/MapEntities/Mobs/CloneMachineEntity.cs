@@ -16,66 +16,66 @@ namespace GalaxyGauntlet.scripts.MapEntities.Mobs
 
 		public override Vector2I TextureCoordinate => DataCode switch
 		{
-			Constants.ByteCodes.Entities.Ball => Constants.SpriteCoordinates.Ball,
-			Constants.ByteCodes.Entities.Blob => Constants.SpriteCoordinates.Blob,
-			Constants.ByteCodes.Entities.BlueTank => Orientation switch
+			GGConstants.ByteCodes.Entities.Ball => GGConstants.SpriteCoordinates.Ball,
+			GGConstants.ByteCodes.Entities.Blob => GGConstants.SpriteCoordinates.Blob,
+			GGConstants.ByteCodes.Entities.BlueTank => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.BlueTank_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.BlueTank_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.BlueTank_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.BlueTank_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.BlueTank_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.BlueTank_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.BlueTank_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.BlueTank_W,
 				_ => throw new NotImplementedException()
 			},
-			Constants.ByteCodes.Entities.Bug => Orientation switch
+			GGConstants.ByteCodes.Entities.Bug => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.Bug_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.Bug_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.Bug_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.Bug_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.Bug_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.Bug_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.Bug_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.Bug_W,
 				_ => throw new NotImplementedException()
 			},
-			Constants.ByteCodes.Entities.DirtBlock => Constants.SpriteCoordinates.DirtBlock,
-			Constants.ByteCodes.Entities.Fireball => Orientation switch
+			GGConstants.ByteCodes.Entities.DirtBlock => GGConstants.SpriteCoordinates.DirtBlock,
+			GGConstants.ByteCodes.Entities.Fireball => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.Fireball_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.Fireball_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.Fireball_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.Fireball_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.Fireball_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.Fireball_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.Fireball_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.Fireball_W,
 				_ => throw new NotImplementedException()
 			},
-			Constants.ByteCodes.Entities.Glider => Orientation switch
+			GGConstants.ByteCodes.Entities.Glider => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.Glider_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.Glider_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.Glider_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.Glider_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.Glider_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.Glider_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.Glider_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.Glider_W,
 				_ => throw new NotImplementedException()
 			},
-			Constants.ByteCodes.Entities.Paramecium => Orientation switch
+			GGConstants.ByteCodes.Entities.Paramecium => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.Paramecium_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.Paramecium_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.Paramecium_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.Paramecium_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.Paramecium_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.Paramecium_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.Paramecium_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.Paramecium_W,
 				_ => throw new NotImplementedException()
 			},
-			Constants.ByteCodes.Entities.Teeth => Orientation switch
+			GGConstants.ByteCodes.Entities.Teeth => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.Teeth_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.Teeth_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.Teeth_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.Teeth_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.Teeth_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.Teeth_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.Teeth_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.Teeth_W,
 				_ => throw new NotImplementedException()
 			},
-			Constants.ByteCodes.Entities.Walker => Orientation switch
+			GGConstants.ByteCodes.Entities.Walker => Orientation switch
 			{
-				EntityOrientation.North => Constants.SpriteCoordinates.Walker_N,
-				EntityOrientation.East => Constants.SpriteCoordinates.Walker_E,
-				EntityOrientation.South => Constants.SpriteCoordinates.Walker_S,
-				EntityOrientation.West => Constants.SpriteCoordinates.Walker_W,
+				EntityOrientation.North => GGConstants.SpriteCoordinates.Walker_N,
+				EntityOrientation.East => GGConstants.SpriteCoordinates.Walker_E,
+				EntityOrientation.South => GGConstants.SpriteCoordinates.Walker_S,
+				EntityOrientation.West => GGConstants.SpriteCoordinates.Walker_W,
 				_ => throw new NotImplementedException()
 			},
-			_ => Constants.SpriteCoordinates.NoSprite
+			_ => GGConstants.SpriteCoordinates.NoSprite
 		};
 
 
