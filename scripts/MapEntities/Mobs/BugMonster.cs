@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class BugMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Bug;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Bug;
 
         public override string Name => "Bug";
 
@@ -17,10 +17,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 return Orientation switch
                 {
-                    EntityOrientation.North => Constants.SpriteCoordinates.Bug_N,
-                    EntityOrientation.East => Constants.SpriteCoordinates.Bug_E,
-                    EntityOrientation.South => Constants.SpriteCoordinates.Bug_S,
-                    EntityOrientation.West => Constants.SpriteCoordinates.Bug_W,
+                    EntityOrientation.North => GGConstants.SpriteCoordinates.Bug_N,
+                    EntityOrientation.East => GGConstants.SpriteCoordinates.Bug_E,
+                    EntityOrientation.South => GGConstants.SpriteCoordinates.Bug_S,
+                    EntityOrientation.West => GGConstants.SpriteCoordinates.Bug_W,
                     _ => throw new NotImplementedException()
                 };
             }

@@ -2,10 +2,10 @@ namespace GalaxyGauntlet.scripts
 {
 	public enum EntityOrientation
 	{
-		North = Constants.ByteCodes.OrientationBytes.North,
-		East = Constants.ByteCodes.OrientationBytes.East,
-		South = Constants.ByteCodes.OrientationBytes.South,
-		West = Constants.ByteCodes.OrientationBytes.West
+		North = GGConstants.ByteCodes.OrientationBytes.North,
+		East = GGConstants.ByteCodes.OrientationBytes.East,
+		South = GGConstants.ByteCodes.OrientationBytes.South,
+		West = GGConstants.ByteCodes.OrientationBytes.West
 	}
 
 

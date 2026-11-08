@@ -11,8 +11,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return IsWall
-                    ? Constants.ByteCodes.Entities.GreenToggleWall 
-                    : Constants.ByteCodes.Entities.GreenToggleFloor;
+                    ? GGConstants.ByteCodes.Entities.GreenToggleWall 
+                    : GGConstants.ByteCodes.Entities.GreenToggleFloor;
             }
         }
 
@@ -29,8 +29,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return IsWall
-                    ? Constants.SpriteCoordinates.GreenToggleWall
-                    : Constants.SpriteCoordinates.GreenToggleFloor;
+                    ? GGConstants.SpriteCoordinates.GreenToggleWall
+                    : GGConstants.SpriteCoordinates.GreenToggleFloor;
             }
         }
     }

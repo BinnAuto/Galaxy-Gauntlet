@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class IceBlockEntity(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.IceBlock;
+        public override int DataCode => GGConstants.ByteCodes.Entities.IceBlock;
 
         public override string Name => "Ice Block";
 
@@ -15,8 +15,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Level.XRayMode
-                    ? Constants.SpriteCoordinates.IceBlock_XRay
-                    : Constants.SpriteCoordinates.IceBlock;
+                    ? GGConstants.SpriteCoordinates.IceBlock_XRay
+                    : GGConstants.SpriteCoordinates.IceBlock;
             }
         }
 

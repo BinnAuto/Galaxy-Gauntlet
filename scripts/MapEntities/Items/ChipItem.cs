@@ -20,23 +20,23 @@ namespace GalaxyGauntlet.scripts.MapEntities
                     var item = GameData.Archipelago.GetItemTypeAtLocation(locationId);
                     if(item is null)
                     {
-                        return Constants.SpriteCoordinates.Chip;
+                        return GGConstants.SpriteCoordinates.Chip;
                     }
                     if(GameData.Archipelago.IsLocationChecked(locationId))
                     {
-                        return Constants.SpriteCoordinates.Chip;
+                        return GGConstants.SpriteCoordinates.Chip;
                     }
                     return item switch
                     {
-                        ItemFlags.Advancement => Constants.SpriteCoordinates.ProgressiveArchipelagoItem,
-                        ItemFlags.Trap => Constants.SpriteCoordinates.ArchipelagoTrap,
-                        ItemFlags.None => Constants.SpriteCoordinates.ArchipelagoFiller,
-                        ItemFlags.NeverExclude => Constants.SpriteCoordinates.ArchipelagoItem,
-                        _ => Constants.SpriteCoordinates.ArchipelagoFiller
+                        ItemFlags.Advancement => GGConstants.SpriteCoordinates.ProgressiveArchipelagoItem,
+                        ItemFlags.Trap => GGConstants.SpriteCoordinates.ArchipelagoTrap,
+                        ItemFlags.None => GGConstants.SpriteCoordinates.ArchipelagoFiller,
+                        ItemFlags.NeverExclude => GGConstants.SpriteCoordinates.ArchipelagoItem,
+                        _ => GGConstants.SpriteCoordinates.ArchipelagoFiller
                     };
                 }
 
-                return Constants.SpriteCoordinates.Chip;
+                return GGConstants.SpriteCoordinates.Chip;
             }
         }
 

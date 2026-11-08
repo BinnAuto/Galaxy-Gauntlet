@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class RedKeyItem(Vector2I coordinate) : MapItem(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.RedKey;
+        public override int DataCode => GGConstants.ByteCodes.Entities.RedKey;
 
         public override string Name => "Red Key";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Archipelago.RedKeyUnlocked
-                    ? Constants.SpriteCoordinates.RedKey
-                    : Constants.SpriteCoordinates.LockedRedKey;
+                    ? GGConstants.SpriteCoordinates.RedKey
+                    : GGConstants.SpriteCoordinates.LockedRedKey;
             }
         }
     }

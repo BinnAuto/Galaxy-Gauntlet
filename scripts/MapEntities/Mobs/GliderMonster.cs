@@ -5,7 +5,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class GliderMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Glider;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Glider;
 
         public override string Name => "Glider";
 
@@ -17,10 +17,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 return Orientation switch
                 {
-                    EntityOrientation.North => Constants.SpriteCoordinates.Glider_N,
-                    EntityOrientation.East => Constants.SpriteCoordinates.Glider_E,
-                    EntityOrientation.South => Constants.SpriteCoordinates.Glider_S,
-                    EntityOrientation.West => Constants.SpriteCoordinates.Glider_W,
+                    EntityOrientation.North => GGConstants.SpriteCoordinates.Glider_N,
+                    EntityOrientation.East => GGConstants.SpriteCoordinates.Glider_E,
+                    EntityOrientation.South => GGConstants.SpriteCoordinates.Glider_S,
+                    EntityOrientation.West => GGConstants.SpriteCoordinates.Glider_W,
                     _ => throw new NotImplementedException()
                 };
             }

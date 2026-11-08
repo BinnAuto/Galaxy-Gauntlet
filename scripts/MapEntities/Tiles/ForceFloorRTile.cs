@@ -4,11 +4,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class ForceFloorRTile(Vector2I coordinate) : MapForceFloorTile(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.ForceFloor_R;
+        public override int DataCode => GGConstants.ByteCodes.Entities.ForceFloor_R;
 
         public override string Name => "Force Floor (Random)";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.ForceFloor_R;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.ForceFloor_R;
 
         public override Vector2I GetInfluence()
         {

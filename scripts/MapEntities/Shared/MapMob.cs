@@ -169,7 +169,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				#region Force Floor
 				
 				if (currentTile is MapForceFloorTile forceFloor
-					&& (false == isPlayer || false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots)))
+					&& (false == isPlayer || false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SuctionBoots)))
 				{
 					GameData.Map.AddToSlipList(this);
 					var forceFloorInfluence = forceFloor.GetInfluence();
@@ -183,7 +183,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				#region Ice Floor
 
 				if(currentTile is MapIceTile iceTile
-					&& (false == isPlayer || false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates)))
+					&& (false == isPlayer || false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.IceSkates)))
 				{
 					GameData.Map.AddToSlipList(this);
 					Orientation = iceTile.SetEntityOrientation(Orientation);
@@ -306,9 +306,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 					RemoveSelf();
 					return newCoordinate;
 				}
-				if(isPlayer && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers))
+				if(isPlayer && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Flippers))
 				{
-					GameData.Level.DeathMessage = Constants.DeathMessages.Water;
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.Water;
 					return newCoordinate;
 				}
 				if(DiesToWater)
@@ -328,9 +328,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				{
 					return Coordinate;
 				}
-				if(isPlayer && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots))
+				if(isPlayer && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.FireBoots))
 				{
-					GameData.Level.DeathMessage = Constants.DeathMessages.Fire;
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.Fire;
 					return newCoordinate;
 				}
 				if(DiesToFire)
@@ -390,9 +390,9 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				|| destinationMob is TeethMonster
 			)
 			{
-				if(isPlayer && false == GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
+				if(isPlayer && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Helmet))
 				{
-					GameData.Level.DeathMessage = Constants.DeathMessages.Monsters;
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
 					return newCoordinate;
 				}
 
@@ -403,7 +403,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 
 			#region Player with Helmet
 
-			if(destinationPlayer is Player && GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet))
+			if(destinationPlayer is Player && GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Helmet))
 			{
 				return Coordinate;
 			}
@@ -633,7 +633,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			{
 				if(isPlayer)
 				{
-					GameData.Level.DeathMessage = Constants.DeathMessages.Bombs;
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
 					return newCoordinate;
 				}
 
@@ -687,7 +687,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			var mapMob = GameData.Map.GetPlayer(coordinate);
 			if (mapMob is Player)
 			{
-				GameData.Level.DeathMessage = Constants.DeathMessages.Monsters;
+				GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
 			}
 		}
 

@@ -35,17 +35,17 @@ namespace GalaxyGauntlet.APWorldGen
         {
             string item = byteCode switch
             {
-                Constants.ByteCodes.Entities.RedKey => "Red Key",
-                Constants.ByteCodes.Entities.BlueKey => "Blue Key",
-                Constants.ByteCodes.Entities.YellowKey => "Yellow Key",
-                Constants.ByteCodes.Entities.GreenKey => "Green Key",
-                Constants.ByteCodes.Entities.IceSkates => "Ice Skates",
-                Constants.ByteCodes.Entities.SuctionBoots => "Suction Boots",
-                Constants.ByteCodes.Entities.FireBoots => "Fire Boots",
-                Constants.ByteCodes.Entities.Flippers => "Flippers",
-                Constants.ByteCodes.Entities.HikingBoots => "Hiking Boots",
-                Constants.ByteCodes.Entities.Helmet => "Helmet",
-                Constants.ByteCodes.Entities.SecretEye => "Secret Eye",
+                GGConstants.ByteCodes.Entities.RedKey => "Red Key",
+                GGConstants.ByteCodes.Entities.BlueKey => "Blue Key",
+                GGConstants.ByteCodes.Entities.YellowKey => "Yellow Key",
+                GGConstants.ByteCodes.Entities.GreenKey => "Green Key",
+                GGConstants.ByteCodes.Entities.IceSkates => "Ice Skates",
+                GGConstants.ByteCodes.Entities.SuctionBoots => "Suction Boots",
+                GGConstants.ByteCodes.Entities.FireBoots => "Fire Boots",
+                GGConstants.ByteCodes.Entities.Flippers => "Flippers",
+                GGConstants.ByteCodes.Entities.HikingBoots => "Hiking Boots",
+                GGConstants.ByteCodes.Entities.Helmet => "Helmet",
+                GGConstants.ByteCodes.Entities.SecretEye => "Secret Eye",
                 _ => throw new($"Item code {byteCode} not recognized")
             };
             if (ItemsPresent.Contains(item))

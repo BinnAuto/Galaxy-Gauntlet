@@ -97,73 +97,73 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 byte mapByte = mapData[i];
                 switch(mapByte)
                 {
-                    case Constants.ByteCodes.Entities.Floor:
-                    case Constants.ByteCodes.Entities.Wall:
+                    case GGConstants.ByteCodes.Entities.Floor:
+                    case GGConstants.ByteCodes.Entities.Wall:
                         break;
 
-                    case Constants.ByteCodes.Entities.Chip:
-                    case Constants.ByteCodes.Entities.ExtraChip:
+                    case GGConstants.ByteCodes.Entities.Chip:
+                    case GGConstants.ByteCodes.Entities.ExtraChip:
                         chipCoordinates.Add($"({x}, {y})");
                         i++;
-                        if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock
-                            || mapData[i] == Constants.ByteCodes.Entities.Teeth)
+                        if (mapData[i] == GGConstants.ByteCodes.Entities.DirtBlock
+                            || mapData[i] == GGConstants.ByteCodes.Entities.Teeth)
                         {
                             i += 2; // Entity orientation and lower layer
                         }
                         break;
 
                     // Direction and Tile specification
-                    case Constants.ByteCodes.Entities.Player:
-                    case Constants.ByteCodes.Entities.DirtBlock:
-                    case Constants.ByteCodes.Entities.Walker:
-                    case Constants.ByteCodes.Entities.Glider:
-                    case Constants.ByteCodes.Entities.IceBlock:
-                    case Constants.ByteCodes.Entities.BlueTank:
-                    case Constants.ByteCodes.Entities.Bug:
-                    case Constants.ByteCodes.Entities.Paramecium:
-                    case Constants.ByteCodes.Entities.Ball:
-                    case Constants.ByteCodes.Entities.Blob:
-                    case Constants.ByteCodes.Entities.Teeth:
-                    case Constants.ByteCodes.Entities.Fireball:
-                    case Constants.ByteCodes.Entities.Melinda:
-                    case Constants.ByteCodes.Entities.TimidTeeth:
-                    case Constants.ByteCodes.Entities.Explosion:
-                    case Constants.ByteCodes.Entities.YellowTank:
-                    case Constants.ByteCodes.Entities.MirrorPlayer:
-                    case Constants.ByteCodes.Entities.MirrorMelinda:
-                    case Constants.ByteCodes.Entities.Rover:
-                    case Constants.ByteCodes.Entities.ThinWallOrCanopy:
+                    case GGConstants.ByteCodes.Entities.Player:
+                    case GGConstants.ByteCodes.Entities.DirtBlock:
+                    case GGConstants.ByteCodes.Entities.Walker:
+                    case GGConstants.ByteCodes.Entities.Glider:
+                    case GGConstants.ByteCodes.Entities.IceBlock:
+                    case GGConstants.ByteCodes.Entities.BlueTank:
+                    case GGConstants.ByteCodes.Entities.Bug:
+                    case GGConstants.ByteCodes.Entities.Paramecium:
+                    case GGConstants.ByteCodes.Entities.Ball:
+                    case GGConstants.ByteCodes.Entities.Blob:
+                    case GGConstants.ByteCodes.Entities.Teeth:
+                    case GGConstants.ByteCodes.Entities.Fireball:
+                    case GGConstants.ByteCodes.Entities.Melinda:
+                    case GGConstants.ByteCodes.Entities.TimidTeeth:
+                    case GGConstants.ByteCodes.Entities.Explosion:
+                    case GGConstants.ByteCodes.Entities.YellowTank:
+                    case GGConstants.ByteCodes.Entities.MirrorPlayer:
+                    case GGConstants.ByteCodes.Entities.MirrorMelinda:
+                    case GGConstants.ByteCodes.Entities.Rover:
+                    case GGConstants.ByteCodes.Entities.ThinWallOrCanopy:
                         i += 2;
                         break;
 
-                    case Constants.ByteCodes.Entities.ThinWall_E:
-                    case Constants.ByteCodes.Entities.ThinWall_S:
-                    case Constants.ByteCodes.Entities.ThinWall_SE:
-                    case Constants.ByteCodes.Entities.RedBomb:
-                    case Constants.ByteCodes.Entities.TimeBonus:
-                    case Constants.ByteCodes.Entities.Stopwatch:
-                    case Constants.ByteCodes.Entities.TimeBomb:
-                    case Constants.ByteCodes.Entities.LightningBolt:
-                    case Constants.ByteCodes.Entities.BowlingBall:
-                    case Constants.ByteCodes.Entities.TimePenalty:
+                    case GGConstants.ByteCodes.Entities.ThinWall_E:
+                    case GGConstants.ByteCodes.Entities.ThinWall_S:
+                    case GGConstants.ByteCodes.Entities.ThinWall_SE:
+                    case GGConstants.ByteCodes.Entities.RedBomb:
+                    case GGConstants.ByteCodes.Entities.TimeBonus:
+                    case GGConstants.ByteCodes.Entities.Stopwatch:
+                    case GGConstants.ByteCodes.Entities.TimeBomb:
+                    case GGConstants.ByteCodes.Entities.LightningBolt:
+                    case GGConstants.ByteCodes.Entities.BowlingBall:
+                    case GGConstants.ByteCodes.Entities.TimePenalty:
                         i++;
                         break;
 
-                    case Constants.ByteCodes.Entities.RedKey:
-                    case Constants.ByteCodes.Entities.BlueKey:
-                    case Constants.ByteCodes.Entities.YellowKey:
-                    case Constants.ByteCodes.Entities.GreenKey:
-                    case Constants.ByteCodes.Entities.IceSkates:
-                    case Constants.ByteCodes.Entities.SuctionBoots:
-                    case Constants.ByteCodes.Entities.FireBoots:
-                    case Constants.ByteCodes.Entities.Flippers:
-                    case Constants.ByteCodes.Entities.HikingBoots:
-                    case Constants.ByteCodes.Entities.Helmet:
-                    case Constants.ByteCodes.Entities.SecretEye:
+                    case GGConstants.ByteCodes.Entities.RedKey:
+                    case GGConstants.ByteCodes.Entities.BlueKey:
+                    case GGConstants.ByteCodes.Entities.YellowKey:
+                    case GGConstants.ByteCodes.Entities.GreenKey:
+                    case GGConstants.ByteCodes.Entities.IceSkates:
+                    case GGConstants.ByteCodes.Entities.SuctionBoots:
+                    case GGConstants.ByteCodes.Entities.FireBoots:
+                    case GGConstants.ByteCodes.Entities.Flippers:
+                    case GGConstants.ByteCodes.Entities.HikingBoots:
+                    case GGConstants.ByteCodes.Entities.Helmet:
+                    case GGConstants.ByteCodes.Entities.SecretEye:
                         levelData.AddItem(mapByte);
                         i++;
-                        if (mapData[i] == Constants.ByteCodes.Entities.DirtBlock
-                            || mapData[i] == Constants.ByteCodes.Entities.Teeth)
+                        if (mapData[i] == GGConstants.ByteCodes.Entities.DirtBlock
+                            || mapData[i] == GGConstants.ByteCodes.Entities.Teeth)
                         {
                             i += 2; // Entity orientation and lower layer
                         }

@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class WalkerMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Walker;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Walker;
 
         public override string Name => "Walker";
 
@@ -16,10 +16,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
             {
                 return Orientation switch
                 {
-                    EntityOrientation.North => Constants.SpriteCoordinates.Walker_N,
-                    EntityOrientation.East => Constants.SpriteCoordinates.Walker_E,
-                    EntityOrientation.South => Constants.SpriteCoordinates.Walker_S,
-                    EntityOrientation.West => Constants.SpriteCoordinates.Walker_W,
+                    EntityOrientation.North => GGConstants.SpriteCoordinates.Walker_N,
+                    EntityOrientation.East => GGConstants.SpriteCoordinates.Walker_E,
+                    EntityOrientation.South => GGConstants.SpriteCoordinates.Walker_S,
+                    EntityOrientation.West => GGConstants.SpriteCoordinates.Walker_W,
                     _ => throw new NotImplementedException()
                 };
             }

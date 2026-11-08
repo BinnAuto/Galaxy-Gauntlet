@@ -29,12 +29,12 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
             {
                 return IceTileType switch
                 {
-                    IceTileType.Standard => Constants.ByteCodes.Entities.IceTile,
-                    IceTileType.Barrier_NE => Constants.ByteCodes.Entities.Ice_NE,
-                    IceTileType.Barrier_NW => Constants.ByteCodes.Entities.Ice_NW,
-                    IceTileType.Barrier_SE => Constants.ByteCodes.Entities.Ice_SE,
-                    IceTileType.Barrier_SW => Constants.ByteCodes.Entities.Ice_SW,
-                    _ => Constants.ByteCodes.Entities.IceTile
+                    IceTileType.Standard => GGConstants.ByteCodes.Entities.IceTile,
+                    IceTileType.Barrier_NE => GGConstants.ByteCodes.Entities.Ice_NE,
+                    IceTileType.Barrier_NW => GGConstants.ByteCodes.Entities.Ice_NW,
+                    IceTileType.Barrier_SE => GGConstants.ByteCodes.Entities.Ice_SE,
+                    IceTileType.Barrier_SW => GGConstants.ByteCodes.Entities.Ice_SW,
+                    _ => GGConstants.ByteCodes.Entities.IceTile
                 };
             }
         }
@@ -46,12 +46,12 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
             {
                 return IceTileType switch
                 {
-                    IceTileType.Standard => Constants.SpriteCoordinates.IceTile,
-                    IceTileType.Barrier_NE => Constants.SpriteCoordinates.Ice_NE,
-                    IceTileType.Barrier_NW => Constants.SpriteCoordinates.Ice_NW,
-                    IceTileType.Barrier_SE => Constants.SpriteCoordinates.Ice_SE,
-                    IceTileType.Barrier_SW => Constants.SpriteCoordinates.Ice_SW,
-                    _ => Constants.SpriteCoordinates.IceTile
+                    IceTileType.Standard => GGConstants.SpriteCoordinates.IceTile,
+                    IceTileType.Barrier_NE => GGConstants.SpriteCoordinates.Ice_NE,
+                    IceTileType.Barrier_NW => GGConstants.SpriteCoordinates.Ice_NW,
+                    IceTileType.Barrier_SE => GGConstants.SpriteCoordinates.Ice_SE,
+                    IceTileType.Barrier_SW => GGConstants.SpriteCoordinates.Ice_SW,
+                    _ => GGConstants.SpriteCoordinates.IceTile
                 };
             }
         }

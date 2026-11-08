@@ -87,39 +87,39 @@ public partial class ItemDisplay : Node
 		switch(DisplayMode)
 		{
 			case DisplayMode.Gameplay:
-				RedKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.RedKey);
-				BlueKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.BlueKey);
-				YellowKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.YellowKey);
-				GreenKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
-				IceSkates.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates);
-				SuctionBoots.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots);
-				FireBoots.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots);
-				Flippers.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers);
-				SecretEye.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
-				Helmet.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet);
+				RedKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.RedKey);
+				BlueKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.BlueKey);
+				YellowKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.YellowKey);
+				GreenKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.GreenKey);
+				IceSkates.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.IceSkates);
+				SuctionBoots.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SuctionBoots);
+				FireBoots.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.FireBoots);
+				Flippers.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Flippers);
+				SecretEye.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SecretEye);
+				Helmet.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Helmet);
 				
-				RedKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
-				BlueKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
-				YellowKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
-				GreenKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				RedKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.RedKey).ToString();
+				BlueKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.BlueKey).ToString();
+				YellowKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.YellowKey).ToString();
+				GreenKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.GreenKey).ToString();
 				break;
 
 			case DisplayMode.ArchipelagoSingleUseItems:
-                RedKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.RedKey);
-                BlueKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.BlueKey);
-                YellowKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.YellowKey);
-                GreenKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.GreenKey);
-                IceSkates.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.IceSkates);
-                SuctionBoots.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.SuctionBoots);
-                FireBoots.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.FireBoots);
-                Flippers.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.Flippers);
-                SecretEye.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.SecretEye);
-                Helmet.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.Helmet);
+                RedKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.RedKey);
+                BlueKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.BlueKey);
+                YellowKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.YellowKey);
+                GreenKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.GreenKey);
+                IceSkates.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.IceSkates);
+                SuctionBoots.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.SuctionBoots);
+                FireBoots.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.FireBoots);
+                Flippers.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.Flippers);
+                SecretEye.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.SecretEye);
+                Helmet.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.Helmet);
                 
-				RedKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
-                BlueKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
-                YellowKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
-                GreenKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				RedKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.RedKey).ToString();
+                BlueKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.BlueKey).ToString();
+                YellowKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.YellowKey).ToString();
+                GreenKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.GreenKey).ToString();
 				break;
 
 			case DisplayMode.ArchipelagoTracker:

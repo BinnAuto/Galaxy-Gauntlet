@@ -16,8 +16,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return IsActive
-                    ? Constants.ByteCodes.Entities.Trap
-                    : Constants.ByteCodes.Entities.OpenTrap;
+                    ? GGConstants.ByteCodes.Entities.Trap
+                    : GGConstants.ByteCodes.Entities.OpenTrap;
             }
         }
 
@@ -28,8 +28,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return IsActive
-                    ? Constants.SpriteCoordinates.ActiveTrap
-                    : Constants.SpriteCoordinates.InactiveTrap;
+                    ? GGConstants.SpriteCoordinates.ActiveTrap
+                    : GGConstants.SpriteCoordinates.InactiveTrap;
             }
         }
 

@@ -5,11 +5,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class BlobMonster(Vector2I coordinate) : MapMob(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.Blob;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Blob;
 
         public override string Name => "Blob";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.Blob;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.Blob;
 
         public override MapMob CreateCopy()
         {

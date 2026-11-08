@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
 	public class DirtBlockEntity(Vector2I coordinate) : MapMob(coordinate)
 	{
-		public override int DataCode => Constants.ByteCodes.Entities.DirtBlock;
+		public override int DataCode => GGConstants.ByteCodes.Entities.DirtBlock;
 
 		public override string Name => "Dirt Block";
 
@@ -17,8 +17,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			get
 			{
 				return GameData.Level.XRayMode
-					? Constants.SpriteCoordinates.DirtBlock_XRay
-					: Constants.SpriteCoordinates.DirtBlock;
+					? GGConstants.SpriteCoordinates.DirtBlock_XRay
+					: GGConstants.SpriteCoordinates.DirtBlock;
 			}
 		}
 

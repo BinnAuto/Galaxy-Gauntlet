@@ -65,10 +65,10 @@ public partial class TitleMenu : Node
 			ArchipelagoConnectForm.Cancelled += () => { Archipelago.Visible = false; };
 
 			Version = (Label)GetNode(nameof(Version));
-			Version.Text = $"v{Constants.GameVersion}";
+			Version.Text = $"v{GGConstants.GameVersion}";
 
 			SaveData.Load();
-			ContinueButton.Visible = SaveData.SaveSlotExists(Constants.SaveSlotNames.Autosave);
+			ContinueButton.Visible = SaveData.SaveSlotExists(GGConstants.SaveSlotNames.Autosave);
 			FileLogger.QuietLogMessage("Title screen _Ready complete");
 		}
 		catch (Exception e)
@@ -97,9 +97,9 @@ public partial class TitleMenu : Node
 
 	private void OnNewGame()
 	{
-		if(false == SaveData.SaveSlotExists(Constants.SaveSlotNames.Autosave))
+		if(false == SaveData.SaveSlotExists(GGConstants.SaveSlotNames.Autosave))
 		{
-			SaveSlot autosave = new(Constants.SaveSlotNames.Autosave);
+			SaveSlot autosave = new(GGConstants.SaveSlotNames.Autosave);
 			string levelHash = GetLevelSetHash();
 			autosave.LevelHash = levelHash;
 			SaveData.WriteSaveSlot(autosave);
@@ -112,7 +112,7 @@ public partial class TitleMenu : Node
 		DialogWindow.NoButtonPressed += DialogWindow.HideDialog;
 		DialogWindow.YesButtonPressed += () =>
 		{
-			int levelCount = GGG.GetLevelList().Length;
+			int levelCount = GalaxyGauntlet.Common.Global.GetLevelList().Length;
 			string levelHash = GetLevelSetHash();
 			if(levelCount == 0 || string.IsNullOrEmpty(levelHash))
 			{
@@ -122,7 +122,7 @@ public partial class TitleMenu : Node
 				return;
 			}
 
-			SaveSlot autosave = new(Constants.SaveSlotNames.Autosave)
+			SaveSlot autosave = new(GGConstants.SaveSlotNames.Autosave)
 			{
 				LevelCount = levelCount,
 				LevelHash = levelHash
@@ -136,9 +136,9 @@ public partial class TitleMenu : Node
 
 	private void OnContinue()
 	{
-		var saveSlot = SaveData.GetSaveSlot(Constants.SaveSlotNames.Autosave);
+		var saveSlot = SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Autosave);
 		string levelHash = GetLevelSetHash();
-		int levelCount = GGG.GetLevelList().Length;
+		int levelCount = GalaxyGauntlet.Common.Global.GetLevelList().Length;
 		if (levelCount == 0 || string.IsNullOrEmpty(levelHash))
 		{
 			DialogWindow.ClearAllButtonEvents();
@@ -171,7 +171,7 @@ public partial class TitleMenu : Node
 	private void OnArchipelagoConnected()
 	{
 		Archipelago.Visible = false;
-		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.LevelHash);
+		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.LevelHash);
 		FileLogger.QuietLogMessage($"APWorld level hash: {apLevelHash}");
 		if(string.IsNullOrEmpty(apLevelHash))
 		{
@@ -215,7 +215,7 @@ public partial class TitleMenu : Node
 	private void ToLevelSelect(GameMode gameMode)
 	{
 		GameData.Level.GameMode = gameMode;
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 	}
 
 
@@ -227,15 +227,15 @@ public partial class TitleMenu : Node
 
 	private void OnGoToGameplayScreen(GameMode gameMode)
 	{
-		GameData.Level.LevelSet = GGG.GetLevelList();
+        GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList();
 		GameData.Level.GameMode = gameMode;
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.GameplayScreen);
 	}
 
 
 	private void OnSettingsButtonPressed()
 	{
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.SettingsMenu);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.SettingsMenu);
 	}
 
 	#endregion
@@ -246,7 +246,7 @@ public partial class TitleMenu : Node
 		string levelPath = "./levels";
 		Directory.CreateDirectory(levelPath);
 		levelPath = Path.GetFullPath(levelPath);
-		string[] files = GGG.GetLevelList();
+		string[] files = GalaxyGauntlet.Common.Global.GetLevelList();
 		if(files.Length == 0)
 		{
 			DialogWindow.ClearAllButtonEvents();
@@ -276,7 +276,7 @@ public partial class TitleMenu : Node
 
 	private static bool ValidateLevelsForArchipelago()
 	{
-		string[] files = GGG.GetLevelList();
+		string[] files = GalaxyGauntlet.Common.Global.GetLevelList();
 		int levelNumber = 1;
 		bool isValid = true;
 		List<byte> combinedFileData = [];
@@ -299,7 +299,7 @@ public partial class TitleMenu : Node
 		SHA256 sha256 = SHA256.Create();
 		var hash = SHA256.HashData([.. combinedFileData]);
 		string localLevelHash =  hash.Select(e => $"{e:x2}").ToArray().Join("");
-		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.LevelHash);
+		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.LevelHash);
 		return isValid && (apLevelHash == localLevelHash);
 	}
 }

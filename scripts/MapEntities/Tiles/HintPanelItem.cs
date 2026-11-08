@@ -6,10 +6,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.HintPanel;
+        public override int DataCode => GGConstants.ByteCodes.Entities.HintPanel;
 
         public override string Name => "Hint Panel";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.HintPanel;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.HintPanel;
     }
 }

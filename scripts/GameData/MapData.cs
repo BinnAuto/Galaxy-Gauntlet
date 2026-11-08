@@ -118,11 +118,11 @@ namespace GalaxyGauntlet.scripts
 				if(entity is ThinWallOrCanopyTile thinWall)
 				{
 					i++;
-					if (FileBytes[i-1] == Constants.ByteCodes.Entities.ThinWallOrCanopy)
+					if (FileBytes[i-1] == GGConstants.ByteCodes.Entities.ThinWallOrCanopy)
 					{
 						// Parse Thin Wall as described in CC2
 						thinWall.SetOrientation(FileBytes[i]);
-						if (FileBytes[i] == Constants.ByteCodes.ThinWallBits.Canopy)
+						if (FileBytes[i] == GGConstants.ByteCodes.ThinWallBits.Canopy)
 						{
 							// TODO: Set canopy scenery
 						}
@@ -140,7 +140,7 @@ namespace GalaxyGauntlet.scripts
 					if (entity.NeedsTileSpecification)
 					{
 						i++;
-						if (FileBytes[i] == Constants.ByteCodes.Entities.DirtBlock)
+						if (FileBytes[i] == GGConstants.ByteCodes.Entities.DirtBlock)
 						{
 							// Item is hidden under a dirt block.
 							// Chip's Challenge treats dirt blocks like tiles, but it's better to treat it like a mob.
@@ -151,7 +151,7 @@ namespace GalaxyGauntlet.scripts
 							Mobs[x, y] = dirtBlock;
 						}
 						// TODO: Generalize below to all monsters
-						if (FileBytes[i] == Constants.ByteCodes.Entities.Teeth)
+						if (FileBytes[i] == GGConstants.ByteCodes.Entities.Teeth)
 						{
 							// Item is hidden under a Teeth
 							TeethMonster teeth = new(mapCoordinate);

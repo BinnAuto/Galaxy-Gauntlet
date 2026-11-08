@@ -2,7 +2,7 @@ using Godot;
 
 namespace GalaxyGauntlet.Common
 {
-    public static class Constants
+    public static class GGConstants
     {
         public static string GameName = "Galaxy Gauntlet";
 

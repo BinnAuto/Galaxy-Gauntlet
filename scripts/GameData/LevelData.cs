@@ -75,7 +75,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
+				return PlayerHasGameItem(GGConstants.ByteCodes.Entities.SecretEye);
 			}
 		}
 
@@ -114,7 +114,7 @@ namespace GalaxyGauntlet.scripts
 
 		public bool OnNextLevel()
 		{
-			var autosave = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Autosave);
+			var autosave = SaveData.SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Autosave);
 			RestartCount = 0;
 			CurrentLevelIndex++;
 			autosave.CurrentLevelNumber = CurrentLevelIndex;
@@ -133,10 +133,10 @@ namespace GalaxyGauntlet.scripts
 		public void StealEquipment()
 		{
 			int[] bootCodes = [
-				Constants.ByteCodes.Entities.IceSkates
-				, Constants.ByteCodes.Entities.Flippers
-				, Constants.ByteCodes.Entities.FireBoots
-				, Constants.ByteCodes.Entities.SuctionBoots
+				GGConstants.ByteCodes.Entities.IceSkates
+				, GGConstants.ByteCodes.Entities.Flippers
+				, GGConstants.ByteCodes.Entities.FireBoots
+				, GGConstants.ByteCodes.Entities.SuctionBoots
 			];
 			PlayerItems = PlayerItems.Where(e =>
 				false == bootCodes.Contains(e.DataCode)
@@ -147,10 +147,10 @@ namespace GalaxyGauntlet.scripts
 		public void StealKeys()
 		{
 			int[] keyCodes = [
-				Constants.ByteCodes.Entities.RedKey
-				, Constants.ByteCodes.Entities.BlueKey
-				, Constants.ByteCodes.Entities.YellowKey
-				, Constants.ByteCodes.Entities.GreenKey
+				GGConstants.ByteCodes.Entities.RedKey
+				, GGConstants.ByteCodes.Entities.BlueKey
+				, GGConstants.ByteCodes.Entities.YellowKey
+				, GGConstants.ByteCodes.Entities.GreenKey
 			];
 			PlayerItems = PlayerItems.Where(e =>
 				false == keyCodes.Contains(e.DataCode)

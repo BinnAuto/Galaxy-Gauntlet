@@ -8,11 +8,11 @@ namespace GalaxyGauntlet.scripts.MapEntities
 
         public override bool NeedsTileSpecification => true;
 
-        public override int DataCode => Constants.ByteCodes.Entities.RedBomb;
+        public override int DataCode => GGConstants.ByteCodes.Entities.RedBomb;
 
         public override string Name => "Red Bomb";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.RedBomb;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.RedBomb;
 
         public override void ProcessTick()
         {

@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 {
     public class HiddenWallTile(Vector2I coordinate) : MapTile(coordinate)
     {
-        public override int DataCode => Constants.ByteCodes.Entities.HiddenWall;
+        public override int DataCode => GGConstants.ByteCodes.Entities.HiddenWall;
 
         public override string Name => "Hidden Wall";
 
@@ -13,8 +13,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return GameData.Level.XRayMode
-                    ? Constants.SpriteCoordinates.Wall
-                    : Constants.SpriteCoordinates.Floor;
+                    ? GGConstants.SpriteCoordinates.Wall
+                    : GGConstants.SpriteCoordinates.Floor;
             }
         }
     }

@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => false;
 
-        public override int DataCode => Constants.ByteCodes.Entities.Socket;
+        public override int DataCode => GGConstants.ByteCodes.Entities.Socket;
 
         public override string Name => "Socket";
 
@@ -15,8 +15,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return (GameData.Level.ChipsCollected >= GameData.Level.ChipsRequired)
-                    ? Constants.SpriteCoordinates.Socket_Open
-                    : Constants.SpriteCoordinates.Socket_Closed;
+                    ? GGConstants.SpriteCoordinates.Socket_Open
+                    : GGConstants.SpriteCoordinates.Socket_Closed;
             }
         }
     }

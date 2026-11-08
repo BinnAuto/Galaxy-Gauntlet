@@ -6,10 +6,10 @@ namespace GalaxyGauntlet.scripts.MapEntities
     {
         public override bool NeedsTileSpecification => true;
 
-        public override int DataCode => Constants.ByteCodes.Entities.ThinWall_S;
+        public override int DataCode => GGConstants.ByteCodes.Entities.ThinWall_S;
 
         public override string Name => "Thin Wall (S)";
 
-        public override Vector2I TextureCoordinate => Constants.SpriteCoordinates.ThinWall_S;
+        public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.ThinWall_S;
     }
 }
