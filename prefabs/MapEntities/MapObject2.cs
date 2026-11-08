@@ -4,17 +4,17 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 {
 	public bool IsDead = false;
 
-	public virtual string MapObjectName { get; protected set; } = "mapobj";
+	public virtual string MapObjectName => "mapobj";
 
-	public Vector2I Coordinate { get; set; } = coordinate;
+	public Vector2I Coordinate = coordinate;
 
 	public virtual bool RequiresDirectionByte => false;
 
 	public virtual bool RequiresLowerLayerTile => false;
 
-	public virtual int SpriteFrameIndex { get; protected set; } = GGConstants.SpriteFrameIndexes.DebugSprite;
+	public virtual int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.DebugSprite;
 
-	public virtual int ByteCode { get; protected set; } = GGConstants.ByteCodes.Entities.None;
+	public virtual int ByteCode => GGConstants.ByteCodes.Entities.None;
 
 	private AnimatedSprite2D Sprite;
 

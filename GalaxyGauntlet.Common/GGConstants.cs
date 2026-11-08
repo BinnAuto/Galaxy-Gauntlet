@@ -501,6 +501,7 @@ namespace GalaxyGauntlet.Common
             public const int Dirt = 500;
         }
 
+
         public static class DeathMessages
         {
             public static string MovingBlocks = "Ooops! Watch out for moving blocks!";
