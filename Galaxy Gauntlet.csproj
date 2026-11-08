@@ -17,4 +17,8 @@
   <ItemGroup>
     <ProjectReference Include="GalaxyGauntlet.Common\GalaxyGauntlet.Common.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="prefabs\MapEntities\" />
+    <Folder Include="prefabs\UISlider\" />
+  </ItemGroup>
 </Project>

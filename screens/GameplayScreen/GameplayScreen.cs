@@ -125,7 +125,7 @@ public partial class GameplayScreen : Node
 		double slipListTick = regularTick / 2.0;
 
 		var timeSincePlayerProcess = (now - _previousPlayerProcessTime).TotalSeconds;
-		var playerInput = GetPlayerInput();
+		var playerInput = GameData.GetPlayerInput();
 		if(playerInput != Vector2I.Zero && timeSincePlayerProcess >= regularTick)
 		{
 			if(playerList.Count != 0)
@@ -224,7 +224,7 @@ public partial class GameplayScreen : Node
 			return;
 		}
 
-		Vector2I input = GetPlayerInput();
+		Vector2I input = GameData.GetPlayerInput();
 		if(input != Vector2.Zero)
 		{
 			GameData.Level.ProcessMobs = true;
@@ -323,29 +323,6 @@ public partial class GameplayScreen : Node
 				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 		}
-	}
-
-
-	private static Vector2I GetPlayerInput()
-	{
-		Vector2I input = Vector2I.Zero;
-		if (Input.IsActionPressed("player_up"))
-		{
-			input = new(0, -1);
-		}
-		if (Input.IsActionPressed("player_down"))
-		{
-			input = new(0, 1);
-		}
-		if (Input.IsActionPressed("player_left"))
-		{
-			input = new(-1, 0);
-		}
-		if (Input.IsActionPressed("player_right"))
-		{
-			input = new(1, 0);
-		}
-		return input;
 	}
 
 

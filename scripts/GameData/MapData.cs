@@ -19,15 +19,22 @@ namespace GalaxyGauntlet.scripts
         public int TimeLimit = -1;
         public Vector2I Dimensions = -Vector2I.One;
         public byte[] FileBytes = [];
-
+		private List<MapObject2> NewMapObjects = [];
+		public List<MapCreature2> CreaturesToProcess { get; private set; } = [];
 
         #region Map Layout Array
 
+		// Legacy
         public MapEntity[,] Scenery = new MapEntity[0, 0];
         public MapMob[,] Mobs = new MapMob[0, 0];
         public MapMob[,] Players = new MapMob[0, 0];
         public MapItem[,] Items = new MapItem[0, 0];
         public MapTile[,] Tiles = new MapTile[0, 0];
+
+		// 2
+		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
+		public MapItem2[,] Items2 = new MapItem2[0, 0];
+		public MapCreature2[,] Creatures2 = new MapCreature2[0, 0];
 
         #endregion
 
@@ -87,6 +94,8 @@ namespace GalaxyGauntlet.scripts
             Players = new MapMob[0, 0];
             Items = new MapItem[0, 0];
             Tiles = new MapTile[0, 0];
+			Tiles2 = new MapTile2[0, 0];
+			Creatures2 = new MapCreature2[0, 0];
         }
 
 
@@ -238,6 +247,66 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void PopulateFromFileBytes2()
+		{
+			if(FileBytes.Length == 0)
+			{
+				FileLogger.QuietLogMessage("No map data to process");
+				return;
+			}
+
+			int x = 0;
+			int y = 0;
+			for(int i = 0; i < FileBytes.Length; i++)
+			{
+				Vector2I mapCoordinate = new(x, y);
+				var mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+				AddMapObject(mapObject);
+				if(mapObject is MapItem2 mapItem)
+				{
+					// TODO
+				}
+				if(mapObject is MapCreature2 creature)
+                {
+                    Creatures2[x, y] = (MapCreature2)MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+                    if (creature.RequiresDirectionByte)
+					{
+						i++;
+						byte directionByte = FileBytes[i];
+						Creatures2[x, y].Orientation = (EntityOrientation)directionByte;
+					}
+					if(creature is Player2)
+					{
+						GameData.Level.PlayerCoordinate = mapCoordinate;
+						creature.Orientation = EntityOrientation.South;
+						CreaturesToProcess = CreaturesToProcess.Prepend(creature).ToList();
+					}
+					else
+					{
+						CreaturesToProcess.Add(creature);
+					}
+
+
+					if(creature.RequiresLowerLayerTile)
+					{
+						i++;
+						mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+					}
+					else
+					{
+						// Shouldn't be reached, but assume creature stands on floor tile.
+						mapObject = new FloorTile2(mapCoordinate);
+					}
+					AddMapObject(mapObject);
+				}
+				if(mapObject is MapTile2)
+				{
+					Tiles2[x, y] = (MapTile2)MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+				}
+			}
+		}
+
+
 		public void SetDimensions(int x, int y)
 		{
 			Dimensions = new(x, y);
@@ -246,6 +315,8 @@ namespace GalaxyGauntlet.scripts
 			Players = new MapMob[x, y];
 			Items = new MapItem[x, y];
 			Tiles = new MapTile[x, y];
+			Tiles2 = new MapTile2[x, y];
+			Creatures2 = new MapCreature2[x, y];
 
 			for (int i = 0; i < Dimensions.X; i++)
 			{
@@ -256,7 +327,9 @@ namespace GalaxyGauntlet.scripts
 					Players[i, j] = null;
 					Items[i, j] = null;
 					Tiles[i, j] = null;
-				}
+					Tiles2[i, j] = null;
+                    Creatures2[i, j] = null;
+                }
 			}
 		}
 
@@ -265,6 +338,26 @@ namespace GalaxyGauntlet.scripts
 		{
 			NextMobID++;
 			return NextMobID;
+		}
+
+
+		public void AddMapObject(MapObject2 mapObject)
+		{
+			lock(NewMapObjects)
+			{
+				NewMapObjects.Add(mapObject);
+			}
+		}
+
+
+		public List<MapObject2> GetNewMapObjects()
+		{
+			lock(NewMapObjects)
+			{
+				List<MapObject2> result = [.. NewMapObjects];
+				NewMapObjects.Clear();
+				return result;
+			}
 		}
 
 
@@ -347,6 +440,7 @@ namespace GalaxyGauntlet.scripts
 				}
 			}
 		}
+
 
 		#region Map Tile Management
 

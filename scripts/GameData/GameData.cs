@@ -222,6 +222,28 @@ namespace GalaxyGauntlet.scripts
             Level.PlayerCoordinate = coordinate;
         }
 
+        public static Vector2I GetPlayerInput()
+        {
+            Vector2I input = Vector2I.Zero;
+            if (Input.IsActionPressed("player_up"))
+            {
+                input = new(0, -1);
+            }
+            if (Input.IsActionPressed("player_down"))
+            {
+                input = new(0, 1);
+            }
+            if (Input.IsActionPressed("player_left"))
+            {
+                input = new(-1, 0);
+            }
+            if (Input.IsActionPressed("player_right"))
+            {
+                input = new(1, 0);
+            }
+            return input;
+        }
+
         #endregion
     }
 }

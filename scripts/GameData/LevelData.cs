@@ -39,6 +39,8 @@ namespace GalaxyGauntlet.scripts
         public int ChipsRequired = 0;
 		public int ChipsCollected = 0;
 		public int CurrentLevelIndex = 1;
+		public int CurrentTick = 0;
+		public int ChipTick = 0;
 		public string Name = string.Empty;
 		public string Hint = string.Empty;
 		public int RestartCount = 0;
@@ -104,6 +106,8 @@ namespace GalaxyGauntlet.scripts
 			AcceptingPlayerInput = true;
 			ConfusionTimer = 0;
 			MapViewportSize = StandardMapViewportSize;
+			CurrentTick = 0;
+			ChipTick = 0;
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;

@@ -79,6 +79,7 @@ namespace GalaxyGauntlet.scripts
                         case "PACK":
                             LoadPACKStage();
                             GameData.Map.PopulateFromFileBytes();
+                            GameData.Map.PopulateFromFileBytes2();
                             break;
 
                         case "END":
