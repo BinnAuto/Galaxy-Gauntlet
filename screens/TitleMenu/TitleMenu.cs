@@ -35,7 +35,8 @@ public partial class TitleMenu : Node
 		try
 		{
 			BuildLocalDirectories();
-			GameData.Initialize();
+			GameData.Initialize(new(1152, 648));
+			SetWindowSize();
 
 			NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
 			NewGameButton.Pressed += OnNewGame;
@@ -90,6 +91,14 @@ public partial class TitleMenu : Node
 		Directory.CreateDirectory("./custom/music/menu");
 		Directory.CreateDirectory("./custom/music/level_select");
 		Directory.CreateDirectory("./custom/music/game");
+	}
+
+
+	private static void SetWindowSize()
+	{
+		var initialWindowResolution = GameData.InitialWindowResolution;
+		var newWindowResolution = (int)GameData.WindowMagnifier * initialWindowResolution.Value;
+		DisplayServer.WindowSetSize(newWindowResolution);
 	}
 
 

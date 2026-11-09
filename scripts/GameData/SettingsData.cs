@@ -1,3 +1,5 @@
+using Godot;
+
 namespace GalaxyGauntlet.scripts
 {
     public static partial class GameData
@@ -17,11 +19,15 @@ namespace GalaxyGauntlet.scripts
 
         public static double MusicVolume = 50;
 
+        public static double WindowMagnifier = 1;
+
         private const string GameConfigFilePath = "user://gamedata.config";
 
         private const string GameDataConfigSection = "GameData";
 
         private static ConfigFile ConfigFile = new();
+
+        public static Vector2I? InitialWindowResolution;
 
         public static void LoadSettings()
         {
@@ -36,6 +42,7 @@ namespace GalaxyGauntlet.scripts
                 Archipelago.Password = (string)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPassword, string.Empty);
                 MasterVolume = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.MasterVolume, 50);
                 MusicVolume = (double)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.MusicVolume, 50);
+                WindowMagnifier = (int)ConfigFile.GetValue(GameDataConfigSection, Constants.Settings.WindowMagnifier, 1);
             }
             SaveSettings();
         }
@@ -51,7 +58,10 @@ namespace GalaxyGauntlet.scripts
             ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.ArchipelagoPassword, Archipelago.Password);
             ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.MasterVolume, MasterVolume);
             ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.MusicVolume, MusicVolume);
+            ConfigFile.SetValue(GameDataConfigSection, Constants.Settings.WindowMagnifier, WindowMagnifier);
             ConfigFile.Save(GameConfigFilePath);
+
+            // Apply settings
             GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume);
             GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume);
         }

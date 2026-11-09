@@ -92,9 +92,9 @@ public partial class MapDisplay : Node2D
 
 
 	public void SetGlobalPosition()
-    {
-        int viewportSize = GameData.MapViewportSize;
+	{
+		int viewportSize = GameData.MapViewportSize;
 		int deltaFromRegular = viewportSize - GameData.StandardMapViewportSize;
 		Position = new Vector2I(144, 144) - (16 * deltaFromRegular * Vector2I.One);
-    }
+	}
 }

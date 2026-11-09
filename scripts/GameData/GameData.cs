@@ -8,8 +8,9 @@ namespace GalaxyGauntlet.scripts
     public static partial class GameData
     {
 
-        public static void Initialize()
+        public static void Initialize(Vector2I windowSize)
         {
+            InitialWindowResolution = windowSize; 
             Archipelago = new();
             Archipelago.OnDeathMessage += OnSetDeathMessage;
             Archipelago.OnItemReceived += OnArchipelagoItemReceived;
