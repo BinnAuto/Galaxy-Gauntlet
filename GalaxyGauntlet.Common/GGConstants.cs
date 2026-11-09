@@ -41,6 +41,8 @@ namespace GalaxyGauntlet.Common
             
             public const string MusicVolume = nameof(MusicVolume);
 
+            public const string WindowMagnifier = nameof(WindowMagnifier);
+
             public const string ArchipelagoGameName = nameof(ArchipelagoGameName);
 
             public const string ArchipelagoServer = nameof(ArchipelagoServer);

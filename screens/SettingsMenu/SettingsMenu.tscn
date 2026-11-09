@@ -58,7 +58,14 @@ position = Vector2(0, 280)
 LabelText = "Music Volume"
 ValueLabelSuffix = "%"
 
+[node name="WindowSize" parent="." unique_id=357809550 instance=ExtResource("5_8gnst")]
+position = Vector2(400, 0)
+LabelText = "Window Size"
+InitialValue = 1.0
+Minimum = 1.0
+Maximum = 3.0
+ValueLabelSuffix = "x"
+
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("6_v1qaq")]
 SourceFolder = "./custom/music/menu"
 IncludeSharedFiles = false
-CooldownMS = 15

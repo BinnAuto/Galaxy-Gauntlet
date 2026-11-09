@@ -8,6 +8,8 @@ public partial class SettingsMenu : Node
 
 	private UISlider MusicVolume;
 
+	private UISlider WindowSize;
+
 	private UIButton CancelButton;
 
 	private UIButton SaveButton;
@@ -37,6 +39,9 @@ public partial class SettingsMenu : Node
         MusicVolume.DragEnded += () => { _processMusicVolume = false; };
         MasterVolume.ValueChanged += () => { GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume.Value); };
 
+		WindowSize = (UISlider)GetNode(nameof(WindowSize));
+		WindowSize.Value = GameData.WindowMagnifier;
+
         CancelButton = (UIButton)GetNode(nameof(CancelButton));
 		CancelButton.Pressed += OnCancelPressed;
 
@@ -59,6 +64,7 @@ public partial class SettingsMenu : Node
 
     #endregion
 
+
     #region Event Handlers
 
     private void OnCancelPressed()
@@ -73,7 +79,8 @@ public partial class SettingsMenu : Node
 	{
 		GameData.MasterVolume = MasterVolume.Value;
 		GameData.MusicVolume = MusicVolume.Value;
-		GameData.SaveSettings();
+		GameData.WindowMagnifier = WindowSize.Value;
+        GameData.SaveSettings();
         GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
     }
 
