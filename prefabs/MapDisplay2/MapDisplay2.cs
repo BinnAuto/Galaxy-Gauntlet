@@ -23,12 +23,13 @@ public partial class MapDisplay2 : Node
 		int gameTick = GameData.Level.CurrentTick;
 		InitialHousekeeping();
 		GameData.Level.CurrentTick++;
+        var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
 
-		#region Advance Creatures
+        #region Advance Creatures
 
-		if (gameTick != 0 && (gameTick & 1) == 0)
-		{
-			foreach(var creature in GameData.Map.CreaturesToProcess)
+        if (gameTick != 0 && (gameTick & 1) == 0)
+        {
+            foreach (var creature in creaturesToProcess)
 			{
 				if(creature is Player2)
 				{
@@ -74,11 +75,11 @@ public partial class MapDisplay2 : Node
 			}
 		}
 
-		#endregion
+        #endregion
 
-		#region Advance Player
+        #region Advance Player
 
-		foreach(var creature in GameData.Map.CreaturesToProcess)
+        foreach (var creature in creaturesToProcess)
 		{
 			if(creature is not Player2)
 			{
@@ -110,9 +111,10 @@ public partial class MapDisplay2 : Node
 	private void InitialHousekeeping()
 	{
 		int gameTick = GameData.Level.CurrentTick;
+		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
 		if(gameTick % 3 == 0)
 		{
-			foreach(var creature in GameData.Map.CreaturesToProcess)
+			foreach(var creature in creaturesToProcess)
 			{
 				if(creature is Player2)
 				{
@@ -127,11 +129,10 @@ public partial class MapDisplay2 : Node
 			}
 
 			GameData.Level.ChipTick++;
-			GD.Print(GameData.Level.ChipTick);
 			if(GameData.Level.ChipTick > 3)
 			{
 				GameData.Level.ChipTick = 3;
-				foreach(var creature in GameData.Map.CreaturesToProcess)
+                foreach (var creature in creaturesToProcess)
 				{
 					if(creature is not Player2)
 					{

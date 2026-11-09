@@ -1,5 +1,6 @@
 using GalaxyGauntlet.prefabs.MapEntities;
 using GalaxyGauntlet.scripts;
+using System;
 using System.Collections.Generic;
 
 public class CreatureStateFlags
@@ -67,8 +68,30 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				, Vector2I.Zero
 			];
 			TDir = Vector2I.Zero;
+
+            #region Entity and Tick Checks
+
+            if (EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
+			{
+				return;
+			}
+			if((GameData.Level.CurrentTick & 2) != 0)
+			{
+				return;
+			}
+			if(EntityID == GGConstants.ByteCodes.Entities.Teeth
+				|| EntityID == GGConstants.ByteCodes.Entities.Blob)
+			{
+				if((GameData.Level.CurrentTick & 4) != 0)
+				{
+					return;
+				}
+			}
+
+			#endregion
+
 			var currentTile = GameData.Map.GetTile2(Coordinate);
-						
+
 			if(HasState(CreatureStateFlags.Turning)) {
 				State &= ~(CreatureStateFlags.Turning | CreatureStateFlags.HasMoved);
 				UpdateCreature();
@@ -106,8 +129,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 							, Back().ToVector()
 							, Right().ToVector()
 						];
-						// TODO: Shuffle choices
-						break;
+                        Random.Shared.Shuffle(moveChoices);
+                        break;
 
 					case GGConstants.ByteCodes.Entities.Bug:
 					case GGConstants.ByteCodes.Entities.Paramecium:
@@ -159,7 +182,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
                             , Back().ToVector()
                             , Right().ToVector()
                         ];
-						// TODO: Shuffle choices
+                        Random.Shared.Shuffle(moveChoices);
                         break;
 
                     case GGConstants.ByteCodes.Entities.Blob:
@@ -169,7 +192,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
                             , Back().ToVector()
                             , Right().ToVector()
                         ];
-                        // TODO: Shuffle choices
+                        Random.Shared.Shuffle(moveChoices);
                         break;
 
                     case GGConstants.ByteCodes.Entities.Bug:
@@ -243,13 +266,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
         if (IsPlayer)
         {
-            // This check is not in the base code, but it should be to
-            // accomplish the correct behavior. Maybe it's elsewhere.
-            if (GameData.Level.ChipTick < 3)
-			{
-				return false;
-			}
-
 			GameData.Level.ChipTick = 0;
 		}
 
@@ -341,14 +357,16 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public virtual bool CanMakeMove(Vector2I direction)
 	{
-		var newCoordinate = Coordinate + direction;
+		var destinationCoordinate = Coordinate + direction;
 		SetOrientation(direction);
-		if(false == GameData.Map.IsWithinDimensions(newCoordinate))
+		if(false == GameData.Map.IsWithinDimensions(destinationCoordinate))
 		{
 			return false;
 		}
 
-		var destinationTile = GameData.Map.GetTile2(newCoordinate);
+		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
+		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
+		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
 		if(destinationTile is CloneMachineTile2)
 		{
 			return false;
@@ -358,19 +376,18 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 		if (IsPlayer)
 		{
-			#region Move Law check
+            #region Entry Law checks
 
-			var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
+            // Tile
+            var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
 			if (entryLaw is null)
 			{
-                // GD.Print($"Entry law not defined for tile {destinationTile.Name} (0x{destinationTile.EntityID:X2})");
-				return false;
+				GD.Print($"Entry law for entity {destinationTile.MapObjectName} not found.");
 			}
 			else
 			{
 				if (false == entryLaw.CanPlayerEnter(direction))
 				{
-					// GD.Print("Entry law does not allow entry");
 					return false;
 				}
 			}
@@ -399,14 +416,127 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 		{
-			// TODO
-		}
-		else
+			if(destinationCreature is not null)
+			{
+				if(destinationCreature is not Player2)
+				{
+					return false;
+				}
+			}
+
+            #region Entry Law checks
+
+            // Tile
+            var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
+            if (entryLaw is null)
+            {
+                GD.Print($"Entry law for tile {destinationTile.MapObjectName} not found.");
+            }
+            else
+            {
+                if (false == entryLaw.CanCreatureEnter(direction))
+                {
+                    return false;
+                }
+            }
+
+            // Item
+            if (destinationItem is not null)
+            {
+                entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationItem.EntityID);
+                if (entryLaw is null)
+                {
+                    GD.Print($"Entry law for item {destinationItem.MapObjectName} not found.");
+                }
+                else
+                {
+                    if (false == entryLaw.CanCreatureEnter(direction))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // Creature
+            if (destinationCreature is not null)
+            {
+                entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
+                if (entryLaw is null)
+                {
+                    GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
+                }
+                else
+                {
+                    if (false == entryLaw.CanCreatureEnter(direction))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            #endregion
+        }
+        else
 		{
+			if(destinationCreature is not null)
+			{
+				return (destinationCreature is Player2);
+			}
 
-		}
+            #region Entry Law checks
 
-		return true;
+			// Tile
+            var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
+            if (entryLaw is null)
+            {
+                GD.Print($"Entry law for tile {destinationTile.MapObjectName} not found.");
+            }
+            else
+            {
+                if (false == entryLaw.CanCreatureEnter(direction))
+                {
+                    return false;
+                }
+            }
+
+			// Item
+			if(destinationItem is not null)
+			{
+				entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationItem.EntityID);
+                if (entryLaw is null)
+                {
+                    GD.Print($"Entry law for item {destinationItem.MapObjectName} not found.");
+                }
+                else
+                {
+                    if (false == entryLaw.CanCreatureEnter(direction))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+			// Creature
+            if (destinationCreature is not null)
+            {
+                entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
+                if (entryLaw is null)
+                {
+                    GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
+                }
+                else
+                {
+                    if (false == entryLaw.CanCreatureEnter(direction))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            #endregion
+        }
+
+        return true;
 	}
 
 

@@ -92,9 +92,17 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 	{
 		return byteCode switch
 		{
+			/* Tiles */
 			GGConstants.ByteCodes.Entities.Floor => new FloorTile2(coordinate),
 			GGConstants.ByteCodes.Entities.Wall => new WallTile2(coordinate),
+			GGConstants.ByteCodes.Entities.Water => new WaterTile2(coordinate),
+
+			/* Items */
+
+			/* Creatures */
 			GGConstants.ByteCodes.Entities.Player => new Player2(coordinate),
+			GGConstants.ByteCodes.Entities.Bug => new BugCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.DirtBlock => new DirtBlockCreature2(coordinate),
 			_ => LogUnknownObject(byteCode, coordinate)
 		};
 	}

@@ -14,37 +14,37 @@ namespace GalaxyGauntlet.scripts
 
 
 	public class MapData
-    {
-        private int NextMobID = 0;
-        public int TimeLimit = -1;
-        public Vector2I Dimensions = -Vector2I.One;
-        public byte[] FileBytes = [];
+	{
+		private int NextMobID = 0;
+		public int TimeLimit = -1;
+		public Vector2I Dimensions = -Vector2I.One;
+		public byte[] FileBytes = [];
 		private List<MapObject2> NewMapObjects = [];
-		public List<MapCreature2> CreaturesToProcess { get; private set; } = [];
+		private List<MapCreature2> CreaturesToProcess = [];
 
-        #region Map Layout Array
+		#region Map Layout Array
 
 		// Legacy
-        public MapEntity[,] Scenery = new MapEntity[0, 0];
-        public MapMob[,] Mobs = new MapMob[0, 0];
-        public MapMob[,] Players = new MapMob[0, 0];
-        public MapItem[,] Items = new MapItem[0, 0];
-        public MapTile[,] Tiles = new MapTile[0, 0];
+		public MapEntity[,] Scenery = new MapEntity[0, 0];
+		public MapMob[,] Mobs = new MapMob[0, 0];
+		public MapMob[,] Players = new MapMob[0, 0];
+		public MapItem[,] Items = new MapItem[0, 0];
+		public MapTile[,] Tiles = new MapTile[0, 0];
 
 		// 2
 		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
 		public MapItem2[,] Items2 = new MapItem2[0, 0];
 		public MapCreature2[,] Creatures2 = new MapCreature2[0, 0];
 
-        #endregion
+		#endregion
 
 
-        #region Entity Process Lists
+		#region Entity Process Lists
 
-        public List<MapMob> PlayerProcessList = [];
-        public List<MapMob> PlayerSliplist = [];
-        public List<MapMob> MobProcessList = [];
-        public List<MapMob> MobSlipList = [];
+		public List<MapMob> PlayerProcessList = [];
+		public List<MapMob> PlayerSliplist = [];
+		public List<MapMob> MobProcessList = [];
+		public List<MapMob> MobSlipList = [];
 		public List<MapButtonItem> ButtonsToProcess = [];
 
 		#endregion
@@ -54,47 +54,48 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public int PingPongStep = 0;
 
-        /// <summary>
-        /// Rotates from 0 to 3, allowing entities with 1.25 moves per second to be processed accurately.
-        /// </summary>
-        public int SquareStep = 0;
+		/// <summary>
+		/// Rotates from 0 to 3, allowing entities with 1.25 moves per second to be processed accurately.
+		/// </summary>
+		public int SquareStep = 0;
 
-        /// <summary>
-        /// Flags the level map to be rendered on the next frame.
-        /// </summary>
-        public bool Rerender = false;
+		/// <summary>
+		/// Flags the level map to be rendered on the next frame.
+		/// </summary>
+		public bool Rerender = false;
 
 
-        /*
+		/*
 		 * Contains event handlers to allow Map events to communicate with
 		 * other areas in GameData
 		 */
-        #region External Event Emitters
+		#region External Event Emitters
 
-        public delegate void OnPlayerCoordinateSetHandler(Vector2I coordinate);
+		public delegate void OnPlayerCoordinateSetHandler(Vector2I coordinate);
 
 		#endregion
 
 		public void Reset()
-        {
-            TimeLimit = -1;
-            Rerender = false;
-            Dimensions = -Vector2I.One;
-            NextMobID = 0;
-            PlayerProcessList = [];
-            PlayerSliplist = [];
-            MobProcessList = [];
-            MobSlipList = [];
-            ButtonsToProcess = [];
-            FileBytes = [];
-            Scenery = new MapEntity[0, 0];
-            Mobs = new MapMob[0, 0];
-            Players = new MapMob[0, 0];
-            Items = new MapItem[0, 0];
-            Tiles = new MapTile[0, 0];
+		{
+			TimeLimit = -1;
+			Rerender = false;
+			Dimensions = -Vector2I.One;
+			NextMobID = 0;
+			PlayerProcessList = [];
+			PlayerSliplist = [];
+			MobProcessList = [];
+			MobSlipList = [];
+			ButtonsToProcess = [];
+			FileBytes = [];
+			Scenery = new MapEntity[0, 0];
+			Mobs = new MapMob[0, 0];
+			Players = new MapMob[0, 0];
+			Items = new MapItem[0, 0];
+			Tiles = new MapTile[0, 0];
 			Tiles2 = new MapTile2[0, 0];
+			Items2 = new MapItem2[0, 0];
 			Creatures2 = new MapCreature2[0, 0];
-        }
+		}
 
 
 		/// <summary>
@@ -265,13 +266,12 @@ namespace GalaxyGauntlet.scripts
 					// TODO
 				}
 				if(mapObject is MapCreature2 creature)
-                {
-                    Creatures2[x, y] = (MapCreature2)MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
-                    if (creature.RequiresDirectionByte)
+				{
+					if (creature.RequiresDirectionByte)
 					{
 						i++;
 						byte directionByte = FileBytes[i];
-						Creatures2[x, y].Orientation = (EntityOrientation)directionByte;
+						creature.Orientation = (EntityOrientation)directionByte;
 					}
 					if(creature is Player2)
 					{
@@ -283,7 +283,7 @@ namespace GalaxyGauntlet.scripts
 					{
 						CreaturesToProcess.Add(creature);
 					}
-
+					Creatures2[x, y] = creature;
 
 					if(creature.RequiresLowerLayerTile)
 					{
@@ -302,22 +302,22 @@ namespace GalaxyGauntlet.scripts
 					Tiles2[x, y] = (MapTile2)MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
 				}
 
-                #region Iterate Coordinate
+				#region Iterate Coordinate
 
-                x++;
-                if (x >= Dimensions.X)
-                {
-                    x = 0;
-                    y++;
-                }
-                if (y >= Dimensions.Y)
-                {
-                    return;
-                }
+				x++;
+				if (x >= Dimensions.X)
+				{
+					x = 0;
+					y++;
+				}
+				if (y >= Dimensions.Y)
+				{
+					return;
+				}
 
-                #endregion
-            }
-        }
+				#endregion
+			}
+		}
 
 
 		public bool IsWithinDimensions(Vector2I coordinate)
@@ -335,6 +335,13 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public List<MapCreature2> GetCreaturesToProcess()
+		{
+			CreaturesToProcess = CreaturesToProcess.Where(e => false == e.IsDead).ToList();
+			return CreaturesToProcess;
+		}
+
+
 		public void SetDimensions(int x, int y)
 		{
 			Dimensions = new(x, y);
@@ -344,6 +351,7 @@ namespace GalaxyGauntlet.scripts
 			Items = new MapItem[x, y];
 			Tiles = new MapTile[x, y];
 			Tiles2 = new MapTile2[x, y];
+			Items2 = new MapItem2[x, y];
 			Creatures2 = new MapCreature2[x, y];
 
 			for (int i = 0; i < Dimensions.X; i++)
@@ -356,8 +364,9 @@ namespace GalaxyGauntlet.scripts
 					Items[i, j] = null;
 					Tiles[i, j] = null;
 					Tiles2[i, j] = null;
-                    Creatures2[i, j] = null;
-                }
+					Items2[i, j] = null;
+					Creatures2[i, j] = null;
+				}
 			}
 		}
 
@@ -605,6 +614,12 @@ namespace GalaxyGauntlet.scripts
 		public MapItem GetItem(Vector2I coordinate)
 		{
 			return Items[coordinate.X, coordinate.Y];
+		}
+
+
+		public MapItem2 GetItem2(Vector2I coordinate)
+		{
+			return Items2[coordinate.X, coordinate.Y];
 		}
 
 

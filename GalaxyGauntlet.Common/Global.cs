@@ -8,6 +8,7 @@ namespace GalaxyGauntlet.Common
     {
         private static readonly double VolumeMultiplier = 0.015;
 
+
         public static string ToJson(object value)
         {
             var jsonDocument = JsonSerializer.SerializeToDocument(value);

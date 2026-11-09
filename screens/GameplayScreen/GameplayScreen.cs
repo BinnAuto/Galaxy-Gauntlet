@@ -259,6 +259,7 @@ public partial class GameplayScreen : Node
 
 	private void OnPlayerDeath()
 	{
+		return;
 		GameData.OnPlayerDeath();
 		DialogWindow.ClearAllButtonEvents();
 		DialogWindow.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);
