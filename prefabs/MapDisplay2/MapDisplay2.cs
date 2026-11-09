@@ -127,6 +127,7 @@ public partial class MapDisplay2 : Node
 			}
 
 			GameData.Level.ChipTick++;
+			GD.Print(GameData.Level.ChipTick);
 			if(GameData.Level.ChipTick > 3)
 			{
 				GameData.Level.ChipTick = 3;

@@ -14,7 +14,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 
 	public virtual int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.DebugSprite;
 
-	public virtual int ByteCode => GGConstants.ByteCodes.Entities.None;
+	public virtual int EntityID => GGConstants.ByteCodes.Entities.None;
 
 	private AnimatedSprite2D Sprite;
 
@@ -94,7 +94,15 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		{
 			GGConstants.ByteCodes.Entities.Floor => new FloorTile2(coordinate),
 			GGConstants.ByteCodes.Entities.Wall => new WallTile2(coordinate),
-			_ => new MapObject2(coordinate)
+			GGConstants.ByteCodes.Entities.Player => new Player2(coordinate),
+			_ => LogUnknownObject(byteCode, coordinate)
 		};
+	}
+
+
+	private static MapObject2 LogUnknownObject(int byteCode, Vector2I coordinate)
+	{
+		FileLogger.LogMessage($"Entity with code 0x{byteCode:X2} not recognized");
+		return new(coordinate);
 	}
 }

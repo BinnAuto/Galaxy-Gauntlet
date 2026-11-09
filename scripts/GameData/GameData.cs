@@ -16,7 +16,6 @@ namespace GalaxyGauntlet.scripts
             Archipelago.OnDeathMessage += OnSetDeathMessage;
             Archipelago.OnItemReceived += OnArchipelagoItemReceived;
             Map = new();
-            Map.OnPlayerCoordinateSet += OnPlayerCoordinateSet;
             Level = new();
             LoadSettings();
         }
@@ -214,12 +213,6 @@ namespace GalaxyGauntlet.scripts
                     // been processed in the Archipelago subclass.
                     break;
             }
-        }
-
-
-        private static void OnPlayerCoordinateSet(Vector2I coordinate)
-        {
-            Level.PlayerCoordinate = coordinate;
         }
 
         public static Vector2I GetPlayerInput()

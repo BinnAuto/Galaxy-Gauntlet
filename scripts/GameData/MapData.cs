@@ -73,8 +73,6 @@ namespace GalaxyGauntlet.scripts
 
         public delegate void OnPlayerCoordinateSetHandler(Vector2I coordinate);
 
-		public event OnPlayerCoordinateSetHandler OnPlayerCoordinateSet = (coordinate) => { };
-
 		#endregion
 
 		public void Reset()
@@ -118,7 +116,7 @@ namespace GalaxyGauntlet.scripts
 				var entity = MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
 				if(entity is Player)
 				{
-					OnPlayerCoordinateSet.Invoke(mapCoordinate);
+					GameData.Level.PlayerCoordinate = mapCoordinate;
 				}
 				if (entity is MapTile tile)
 				{
@@ -303,7 +301,37 @@ namespace GalaxyGauntlet.scripts
 				{
 					Tiles2[x, y] = (MapTile2)MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
 				}
+
+                #region Iterate Coordinate
+
+                x++;
+                if (x >= Dimensions.X)
+                {
+                    x = 0;
+                    y++;
+                }
+                if (y >= Dimensions.Y)
+                {
+                    return;
+                }
+
+                #endregion
+            }
+        }
+
+
+		public bool IsWithinDimensions(Vector2I coordinate)
+		{
+			if(coordinate.X < 0 || coordinate.Y < 0)
+			{
+				return false;
 			}
+			if(coordinate.X >= Dimensions.X || coordinate.Y >= Dimensions.Y)
+			{
+				return false;
+			}
+
+			return true;
 		}
 
 
@@ -536,6 +564,22 @@ namespace GalaxyGauntlet.scripts
 			Rerender = true;
 		}
 
+
+		#endregion
+
+
+		#region Creatures (Mobs2)
+
+		public MapCreature2 GetCreature(Vector2I coordinate)
+		{
+			return Creatures2[coordinate.X, coordinate.Y];
+		}
+
+		public void RemoveCreature(Vector2I coordinate)
+		{
+			Creatures2[coordinate.X, coordinate.Y] = null;
+		}
+
 		#endregion
 
 
@@ -584,6 +628,19 @@ namespace GalaxyGauntlet.scripts
 			catch(IndexOutOfRangeException)
 			{
 				return new WallTile(coordinate);
+			}
+		}
+
+
+		public MapTile2 GetTile2(Vector2I coordinate)
+		{
+			try
+			{
+				return Tiles2[coordinate.X, coordinate.Y];
+			}
+			catch(IndexOutOfRangeException)
+			{
+				return new WallTile2(coordinate);
 			}
 		}
 

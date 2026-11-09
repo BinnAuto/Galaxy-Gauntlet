@@ -89,8 +89,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
                 GGConstants.ByteCodes.Entities.Flippers => new FlippersItem(coordinate),
                 GGConstants.ByteCodes.Entities.ToolThief => new ToolThief(coordinate),
                 GGConstants.ByteCodes.Entities.RedBomb => new RedBombMonster(coordinate),
-                GGConstants.ByteCodes.Entities.Trap
-                    or GGConstants.ByteCodes.Entities.OpenTrap => new TrapItem(coordinate),
+                GGConstants.ByteCodes.Entities.TrapActive
+                    or GGConstants.ByteCodes.Entities.TrapInactive => new TrapItem(coordinate),
                 GGConstants.ByteCodes.Entities.CloneMachine_V1
                     or GGConstants.ByteCodes.Entities.CloneMachine => new CloneMachineTile(coordinate),
                 GGConstants.ByteCodes.Entities.HintPanel => new HintPanelItem(coordinate),

@@ -178,8 +178,8 @@ namespace GalaxyGauntlet.Common
                 public const int Flippers = 0x3E;
                 public const int ToolThief = 0x3F;
                 public const int RedBomb = 0x40;
-                public const int OpenTrap = 0x41;
-                public const int Trap = 0x42;
+                public const int TrapInactive = 0x41;
+                public const int TrapActive = 0x42;
                 public const int CloneMachine_V1 = 0x43;
                 public const int CloneMachine = 0x44;
                 public const int HintPanel = 0x45;

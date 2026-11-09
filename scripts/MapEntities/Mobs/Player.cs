@@ -220,7 +220,7 @@ namespace GalaxyGauntlet.scripts.MapEntities
 			GameData.Map.RemovePlayer(Coordinate);
 			Coordinate = newCoordinate;
 			GameData.Map.Players[newCoordinate.X, newCoordinate.Y] = this;
-			GameData.Level.PlayerCoordinate = newCoordinate;
+			// GameData.Level.PlayerCoordinate = newCoordinate;
 			GameData.Map.Rerender = true;
 		}
 	}

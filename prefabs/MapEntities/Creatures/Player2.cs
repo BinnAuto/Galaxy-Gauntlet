@@ -1,9 +1,19 @@
+using GalaxyGauntlet.scripts;
+
 public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
 {
 	public override string MapObjectName => "Player";
 
-	public override int ByteCode => GGConstants.ByteCodes.Entities.Player;
+	public override int EntityID => GGConstants.ByteCodes.Entities.Player;
 
+    public override int SpriteFrameIndex => Orientation switch
+	{
+		EntityOrientation.North => GGConstants.SpriteFrameIndexes.Player_N,
+		EntityOrientation.East => GGConstants.SpriteFrameIndexes.Player_E,
+		EntityOrientation.South => GGConstants.SpriteFrameIndexes.Player_S,
+		EntityOrientation.West => GGConstants.SpriteFrameIndexes.Player_W,
+		_ => GGConstants.SpriteFrameIndexes.Player_S
+	};
 
 	public override void ChooseMove()
 	{
@@ -14,6 +24,24 @@ public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
 	private void ChooseChipMove()
 	{
 		bool isSlipping = HasState(CreatureStateFlags.Slipping);
-		// TODO
+		TDir = Vector2I.Zero;
+		int gameTick = GameData.Level.CurrentTick;
+		if((gameTick & 3) == 0)
+		{
+			State &= ~(CreatureStateFlags.HasMoved);
+		}
+		if(HasState(CreatureStateFlags.HasMoved))
+		{
+			return;
+		}
+
+		var direction = GameData.GetPlayerInput();
+		if(isSlipping
+			|| (HasState(CreatureStateFlags.Sliding) && direction == Forward))
+		{
+			return;
+		}
+
+		TDir = direction;
 	}
 }

@@ -16,8 +16,8 @@ namespace GalaxyGauntlet.scripts.MapEntities
             get
             {
                 return IsActive
-                    ? GGConstants.ByteCodes.Entities.Trap
-                    : GGConstants.ByteCodes.Entities.OpenTrap;
+                    ? GGConstants.ByteCodes.Entities.TrapActive
+                    : GGConstants.ByteCodes.Entities.TrapInactive;
             }
         }
 

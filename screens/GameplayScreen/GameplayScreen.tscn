@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="3_bfflv"]
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_cms3p"]
 [ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="4_l2pm1"]
+[ext_resource type="PackedScene" uid="uid://djaen87nr7uck" path="res://prefabs/MapDisplay2/MapDisplay2.tscn" id="5_cms3p"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="5_gpxbn"]
 
 [node name="GameplayScreen" type="Node2D" unique_id=43287349]
@@ -25,6 +26,10 @@ scale = Vector2(1168, 515.75)
 texture = ExtResource("3_cms3p")
 
 [node name="MapDisplay" parent="." unique_id=2092090514 instance=ExtResource("1_75xg4")]
+visible = false
+position = Vector2(192, 192)
+
+[node name="MapDisplay2" parent="." unique_id=1864321287 instance=ExtResource("5_cms3p")]
 position = Vector2(192, 192)
 
 [node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("3_bfflv")]
