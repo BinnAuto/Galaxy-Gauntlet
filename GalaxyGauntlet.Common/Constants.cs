@@ -6,7 +6,7 @@ namespace GalaxyGauntlet.Common
     {
         public static string GameName = "Galaxy Gauntlet";
 
-        public static string GameVersion = "0.0.6.1";
+        public static string GameVersion = "0.0.6.2";
 
         public static class AudioBuses
         {

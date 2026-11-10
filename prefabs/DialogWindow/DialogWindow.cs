@@ -1,3 +1,5 @@
+using GalaxyGauntlet.scripts;
+
 public enum DialogButtonType
 {
 	YesNo,
@@ -75,9 +77,24 @@ public partial class DialogWindow : Node2D
 
 	public override void _Process(double delta)
 	{
-		if(Visible && Input.IsActionJustPressed("player_ok") && OKButtonContainer.Visible)
+		if(false == Visible)
 		{
-			OnOKButtonPressed();
+			return;
+		}
+		if(Input.IsActionJustPressed("player_ok") && OKButtonContainer.Visible)
+		{
+			if(OKButtonContainer.Visible)
+			{
+				OnOKButtonPressed();
+			}
+			if(YesNoButtonContainer.Visible)
+			{
+				OnYesButtonPressed();
+			}
+		}
+		if(Input.IsActionJustPressed("player_no") && YesNoButtonContainer.Visible)
+		{
+			OnNoButtonPressed();
 		}
 	}
 
@@ -193,7 +210,8 @@ public partial class DialogWindow : Node2D
 
 	private void SetDialogPosition()
 	{
-		var windowSize = GetWindow().Size;
+		Vector2 windowSize = new(GetWindow().Size.X, GetWindow().Size.Y);
+		windowSize = windowSize * (float)(1 / GameData.WindowMagnifier);
 		var contentSize = Content.GetLabelSize();
 		YesNoButtonContainer.Position = new(
 			(contentSize.X / 2)
