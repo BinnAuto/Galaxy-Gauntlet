@@ -10,6 +10,8 @@ public partial class GameplayScreen : Node
 {
 	private MapDisplay MapDisplay;
 
+	private MapDisplay2 MapDisplay2;
+
 	private DialogWindow DialogWindow;
 
 	private Label LevelName;
@@ -35,6 +37,8 @@ public partial class GameplayScreen : Node
 		try
 		{
 			MapDisplay = (MapDisplay)GetNode(nameof(MapDisplay));
+
+			MapDisplay2 = (MapDisplay2)GetNode(nameof(MapDisplay2));
 
 			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
 
@@ -304,6 +308,7 @@ public partial class GameplayScreen : Node
 
 	private void RestartLevel()
 	{
+		MapDisplay2.ClearChildren();
 		GameData.Level.RestartCount++;
 		GameData.LoadCurrentLevel();
 		GameData.Level.Timer = GameData.Map.TimeLimit + 0.999999;

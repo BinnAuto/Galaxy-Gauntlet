@@ -95,7 +95,8 @@ namespace GalaxyGauntlet.scripts
 			Tiles2 = new MapTile2[0, 0];
 			Items2 = new MapItem2[0, 0];
 			Creatures2 = new MapCreature2[0, 0];
-		}
+			CreaturesToProcess.Clear();
+        }
 
 
 		/// <summary>
@@ -117,7 +118,7 @@ namespace GalaxyGauntlet.scripts
 				var entity = MapEntity.GetMapEntity(FileBytes[i], mapCoordinate);
 				if(entity is Player)
 				{
-					GameData.Level.PlayerCoordinate = mapCoordinate;
+					// GameData.Level.PlayerCoordinate = mapCoordinate;
 				}
 				if (entity is MapTile tile)
 				{
@@ -274,8 +275,8 @@ namespace GalaxyGauntlet.scripts
 						creature.Orientation = (EntityOrientation)directionByte;
 					}
 					if(creature is Player2)
-					{
-						GameData.Level.PlayerCoordinate = mapCoordinate;
+                    {
+                        GameData.Level.PlayerCoordinate = mapCoordinate;
 						creature.Orientation = EntityOrientation.South;
 						CreaturesToProcess = CreaturesToProcess.Prepend(creature).ToList();
 					}

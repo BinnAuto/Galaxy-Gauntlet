@@ -23,13 +23,13 @@ public partial class MapDisplay2 : Node
 		int gameTick = GameData.Level.CurrentTick;
 		InitialHousekeeping();
 		GameData.Level.CurrentTick++;
-        var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
+		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
 
-        #region Advance Creatures
+		#region Advance Creatures
 
-        if (gameTick != 0 && (gameTick & 1) == 0)
-        {
-            foreach (var creature in creaturesToProcess)
+		if (gameTick != 0 && (gameTick & 1) == 0)
+		{
+			foreach (var creature in creaturesToProcess)
 			{
 				if(creature is Player2)
 				{
@@ -75,11 +75,11 @@ public partial class MapDisplay2 : Node
 			}
 		}
 
-        #endregion
+		#endregion
 
-        #region Advance Player
+		#region Advance Player
 
-        foreach (var creature in creaturesToProcess)
+		foreach (var creature in creaturesToProcess)
 		{
 			if(creature is not Player2)
 			{
@@ -105,6 +105,15 @@ public partial class MapDisplay2 : Node
 		FinalHousekeeping();
 	}
 
+
+	public void ClearChildren()
+	{
+		foreach(var child in GetChildren())
+		{
+			RemoveChild(child);
+			child.QueueFree();
+		}
+	}
 
 	#region Tile World adaptation methods
 
@@ -132,7 +141,7 @@ public partial class MapDisplay2 : Node
 			if(GameData.Level.ChipTick > 3)
 			{
 				GameData.Level.ChipTick = 3;
-                foreach (var creature in creaturesToProcess)
+				foreach (var creature in creaturesToProcess)
 				{
 					if(creature is not Player2)
 					{
@@ -173,7 +182,7 @@ public partial class MapDisplay2 : Node
 	private void FinalHousekeeping()
 	{
 		// Nothing. It's literally nothing.
-    }
+	}
 
-    #endregion
+	#endregion
 }
