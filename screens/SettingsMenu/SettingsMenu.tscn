@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_8gnst"]
 [ext_resource type="PackedScene" uid="uid://b0l44g3u1jlr4" path="res://prefabs/UISlider/UISlider.tscn" id="5_8gnst"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="6_v1qaq"]
+[ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="7_57kji"]
 
 [node name="SettingsMenu" type="Node2D" unique_id=249067466]
 script = ExtResource("1_id505")
@@ -69,3 +70,6 @@ ValueLabelSuffix = "x"
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("6_v1qaq")]
 SourceFolder = "./custom/music/menu"
 IncludeSharedFiles = false
+
+[node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("7_57kji")]
+visible = false
