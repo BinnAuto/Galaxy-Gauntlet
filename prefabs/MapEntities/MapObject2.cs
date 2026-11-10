@@ -55,7 +55,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		Visible = false;
 		IsDead = true;
 		var parent = GetParent();
-		parent.RemoveChild(this);
+		parent?.RemoveChild(this);
 		QueueFree();
 	}
 

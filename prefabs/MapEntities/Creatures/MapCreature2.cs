@@ -13,7 +13,46 @@ public class CreatureStateFlags
 	public const int Sliding = 0x20;
 	public const int DeferPush = 0x40;
 	public const int Mutant = 0x80;
+}
 
+public static class CanMakeMoveFlags
+{
+	/// <summary>
+	/// Automatically assumes that the creature can leave the 
+	/// tile they are currently on.
+	/// </summary>
+	public const int NoLeaveCheck = 0x01;
+
+	/// <summary>
+	/// Causes blue walls and hidden walls to remain unexposed.
+	/// </summary>
+    public const int NoExposeWalls = 0x02;
+
+	/// <summary>
+	/// Creature will not be prevented from moving by another creature in the way.
+	/// </summary>
+    public const int CloneCantBlock = 0x04;
+
+	/// <summary>
+	/// Prevents the player from pushing any blocks.
+	/// </summary>
+    public const int NoPushing = 0x08;
+
+	/// <summary>
+	/// Indicates to block-pushing logic that the player is moving
+	/// through a teleporter.
+	/// </summary>
+    public const int TeleportPush = 0x10;
+
+	/// <summary>
+	/// Causes bugs and walkers to walk directly into fire.
+	/// </summary>
+    public const int NoFireCheck = 0x20;
+
+	/// <summary>
+	/// Causes buttons pressed by pushed blocks to take effect immediately.
+	/// </summary>
+    public const int NoDeferButtons = 0x40;
 }
 
 public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
@@ -35,6 +74,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public Vector2I TDir { get; protected set; } = Vector2I.Zero;
 
+	public List<MapItem2> Inventory = [];
 
 	public Vector2I Forward
 	{
@@ -234,7 +274,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 
 				TDir = moveChoices[i];
-				if(CanMakeMove(TDir))
+				if(CanMakeMove(TDir, 0))
 				{
 					return;
 				}
@@ -291,7 +331,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	public bool StartMovement(Vector2I direction)
 	{
 		var currentTile = GameData.Map.GetTile2(Coordinate);
-		if(false == CanMakeMove(direction))
+		if(false == CanMakeMove(direction, 0))
 		{
 			if(IsPlayer
                 || (currentTile is not TrapTile2
@@ -325,11 +365,93 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 		var currentTile = GameData.Map.GetTile2(currentCoordinate);
 		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
-		if(IsPlayer)
+		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
+		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
+
+		if (IsPlayer)
 		{
+			switch (destinationTile.EntityID)
+			{
+				case GGConstants.ByteCodes.Entities.Water:
+					// TODO: Flipper check
+					break;
 
+				case GGConstants.ByteCodes.Entities.Fire:
+					// TODO: Fire Boots check
+					break;
+
+				case GGConstants.ByteCodes.Entities.Dirt:
+				case GGConstants.ByteCodes.Entities.FakeBlueWall:
+					GameData.Map.SetTile(new FloorTile2(destinationCoordinate));
+					break;
+
+				case GGConstants.ByteCodes.Entities.RecessedWall:
+					GameData.Map.SetTile(new WallTile2(destinationCoordinate));
+					break;
+
+				case GGConstants.ByteCodes.Entities.RedDoor:
+				case GGConstants.ByteCodes.Entities.BlueDoor:
+				case GGConstants.ByteCodes.Entities.YellowDoor:
+				case GGConstants.ByteCodes.Entities.GreenDoor:
+					// TODO
+					break;
+
+				case GGConstants.ByteCodes.Entities.ToolThief:
+					// TODO
+					break;
+
+				case GGConstants.ByteCodes.Entities.KeyThief:
+					// TODO
+					break;
+
+				case GGConstants.ByteCodes.Entities.Socket:
+					// TODO
+					break;
+			}
+			if (destinationItem is not null)
+			{
+				switch (destinationItem.EntityID)
+				{
+					case GGConstants.ByteCodes.Entities.IceSkates:
+					case GGConstants.ByteCodes.Entities.FireBoots:
+					case GGConstants.ByteCodes.Entities.SuctionBoots:
+					case GGConstants.ByteCodes.Entities.Flippers:
+					case GGConstants.ByteCodes.Entities.RedKey:
+					case GGConstants.ByteCodes.Entities.BlueKey:
+					case GGConstants.ByteCodes.Entities.YellowKey:
+					case GGConstants.ByteCodes.Entities.GreenKey:
+						// TODO
+						break;
+
+					case GGConstants.ByteCodes.Entities.Chip:
+					case GGConstants.ByteCodes.Entities.ExtraChip:
+						// TODO
+						break;
+				}
+			}
+			if(destinationCreature is not null)
+			{
+				switch(destinationCreature.EntityID)
+				{
+					case GGConstants.ByteCodes.Entities.RedBomb:
+						// TODO
+						break;
+				}
+
+				// TODO: Creature collision
+			}
 		}
-
+		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
+		{
+			if(destinationTile is WaterTile2)
+			{
+				// TODO: Play splash sound effect
+				GameData.Map.SetTile(new DirtTile2(destinationCoordinate));
+				Kill();
+			}
+			// TODO: Bomb
+			// TODO: Teleporter
+		}
 		SetCoordinateAndOrientation(destinationCoordinate);
 	}
 
@@ -355,7 +477,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	}
 
 
-	public virtual bool CanMakeMove(Vector2I direction)
+	public virtual bool CanMakeMove(Vector2I direction, int flags)
 	{
 		var destinationCoordinate = Coordinate + direction;
 		SetOrientation(direction);
@@ -412,7 +534,23 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 			// TODO: Hidden/Blue wall check
 
-			// TODO: Dirt Block check
+			if(destinationCreature is DirtBlockCreature2 dirtBlock)
+			{
+				if(false == dirtBlock.CanPushBlock(direction, flags))
+				{
+					return false;
+                }
+                else if ((flags & CanMakeMoveFlags.NoPushing) != 0)
+                {
+                    return false;
+                }
+                if (destinationTile is CloneMachineTile2)
+                {
+                    return false;
+                }
+                // TODO: Teleporter check
+                return CanMakeMove(direction, flags | CanMakeMoveFlags.NoPushing);
+            }
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 		{

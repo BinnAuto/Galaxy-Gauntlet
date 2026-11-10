@@ -667,6 +667,15 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void SetTile(MapTile2 newTile)
+		{
+			var coordinate = newTile.Coordinate;
+			Tiles2[coordinate.X, coordinate.Y].Kill();
+			AddMapObject(newTile);
+			Tiles2[coordinate.X, coordinate.Y] = newTile;
+		}
+
+
 		public void RemoveTile(Vector2I coordinate)
 		{
 			Tiles[coordinate.X, coordinate.Y] = null;
