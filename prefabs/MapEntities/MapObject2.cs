@@ -116,14 +116,14 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.Fire => new FireTile2(coordinate),
 			GGConstants.ByteCodes.Entities.IceTile
 				or GGConstants.ByteCodes.Entities.Ice_NE
-                or GGConstants.ByteCodes.Entities.Ice_NW
-                or GGConstants.ByteCodes.Entities.Ice_SE
-                or GGConstants.ByteCodes.Entities.Ice_SW => new IceTile2(byteCode, coordinate),
+				or GGConstants.ByteCodes.Entities.Ice_NW
+				or GGConstants.ByteCodes.Entities.Ice_SE
+				or GGConstants.ByteCodes.Entities.Ice_SW => new IceTile2(byteCode, coordinate),
 			GGConstants.ByteCodes.Entities.ForceFloor_N
 				or GGConstants.ByteCodes.Entities.ForceFloor_E
-                or GGConstants.ByteCodes.Entities.ForceFloor_S
-                or GGConstants.ByteCodes.Entities.ForceFloor_W
-                or GGConstants.ByteCodes.Entities.ForceFloor_R => new ForceFloorTile2(byteCode, coordinate),
+				or GGConstants.ByteCodes.Entities.ForceFloor_S
+				or GGConstants.ByteCodes.Entities.ForceFloor_W
+				or GGConstants.ByteCodes.Entities.ForceFloor_R => new ForceFloorTile2(byteCode, coordinate),
 			GGConstants.ByteCodes.Entities.BlueButton => new BlueButtonTile2(coordinate),
 			GGConstants.ByteCodes.Entities.GreenButton => new GreenButtonTile2(coordinate),
 			GGConstants.ByteCodes.Entities.GreenToggleFloor => new GreenToggleTile2(false, coordinate),
@@ -133,19 +133,25 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 				or GGConstants.ByteCodes.Entities.CloneMachine_V1 => new CloneMachineTile2(coordinate),
 			GGConstants.ByteCodes.Entities.BrownButton => new BrownButtonTile2(coordinate),
 
-            /* Items */
-            GGConstants.ByteCodes.Entities.Chip => new ChipItem2(coordinate),
+			/* Thin Wall or Canopy */
+			GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),
+			GGConstants.ByteCodes.Entities.ThinWall_S => new ThinWallOrCanopy2(coordinate, 4),
+			GGConstants.ByteCodes.Entities.ThinWall_SE => new ThinWallOrCanopy2(coordinate, 6),
+			GGConstants.ByteCodes.Entities.ThinWallOrCanopy => new ThinWallOrCanopy2(coordinate),
+
+			/* Items */
+			GGConstants.ByteCodes.Entities.Chip => new ChipItem2(coordinate),
 			GGConstants.ByteCodes.Entities.RedKey => new RedKeyItem2(coordinate),
 			GGConstants.ByteCodes.Entities.BlueKey => new BlueKeyItem2(coordinate),
 			GGConstants.ByteCodes.Entities.YellowKey => new YellowKeyItem2(coordinate),
 			GGConstants.ByteCodes.Entities.GreenKey => new GreenKeyItem2(coordinate),
 			GGConstants.ByteCodes.Entities.Flippers => new FlippersItem2(coordinate),
-            GGConstants.ByteCodes.Entities.FireBoots => new FireBootsItem2(coordinate),
-            GGConstants.ByteCodes.Entities.SuctionBoots => new SuctionBootsItem2(coordinate),
-            GGConstants.ByteCodes.Entities.IceSkates => new IceSkatesItem2(coordinate),
+			GGConstants.ByteCodes.Entities.FireBoots => new FireBootsItem2(coordinate),
+			GGConstants.ByteCodes.Entities.SuctionBoots => new SuctionBootsItem2(coordinate),
+			GGConstants.ByteCodes.Entities.IceSkates => new IceSkatesItem2(coordinate),
 
-            /* Creatures */
-            GGConstants.ByteCodes.Entities.Player => new Player2(coordinate),
+			/* Creatures */
+			GGConstants.ByteCodes.Entities.Player => new Player2(coordinate),
 			GGConstants.ByteCodes.Entities.Bug => new BugCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.DirtBlock => new DirtBlockCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.RedBomb => new RedBombCreature2(coordinate),
@@ -153,6 +159,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.Ball => new BallCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Glider => new GliderCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Fireball => new FireballCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Teeth => new TeethCreature2(coordinate),
 			_ => LogUnknownObject(byteCode, coordinate)
 		};
 	}

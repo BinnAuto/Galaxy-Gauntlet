@@ -32,9 +32,10 @@ namespace GalaxyGauntlet.scripts
 		public MapTile[,] Tiles = new MapTile[0, 0];
 
 		// 2
-		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
-		public MapItem2[,] Items2 = new MapItem2[0, 0];
 		public MapCreature2[,] Creatures2 = new MapCreature2[0, 0];
+		public MapItem2[,] Items2 = new MapItem2[0, 0];
+		public ThinWallOrCanopy2[,] ThinWalls2 = new ThinWallOrCanopy2[0,0];
+		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
 
 		#endregion
 
@@ -94,7 +95,8 @@ namespace GalaxyGauntlet.scripts
 			Tiles = new MapTile[0, 0];
 			Tiles2 = new MapTile2[0, 0];
 			Items2 = new MapItem2[0, 0];
-			Creatures2 = new MapCreature2[0, 0];
+			ThinWalls2 = new ThinWallOrCanopy2[0, 0];
+            Creatures2 = new MapCreature2[0, 0];
 			CreaturesToProcess.Clear();
         }
 
@@ -276,6 +278,22 @@ namespace GalaxyGauntlet.scripts
 					}
 					AddMapObject(mapObject);
 				}
+				if(mapObject is ThinWallOrCanopy2 thinWallCanopy)
+				{
+					if(thinWallCanopy.WallBitmask is null)
+					{
+						i++;
+						byte bitmaskByte = FileBytes[i];
+						thinWallCanopy.WallBitmask = bitmaskByte;
+					}
+					ThinWalls2[x, y] = thinWallCanopy;
+					if(thinWallCanopy.RequiresLowerLayerTile)
+					{
+						i++;
+						mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+						AddMapObject(mapObject);
+					}
+				}
 				if(mapObject is MapCreature2 creature)
 				{
 					if (creature.RequiresDirectionByte)
@@ -363,6 +381,7 @@ namespace GalaxyGauntlet.scripts
 			Tiles = new MapTile[x, y];
 			Tiles2 = new MapTile2[x, y];
 			Items2 = new MapItem2[x, y];
+			ThinWalls2 = new ThinWallOrCanopy2[x, y];
 			Creatures2 = new MapCreature2[x, y];
 
 			for (int i = 0; i < Dimensions.X; i++)
@@ -376,6 +395,7 @@ namespace GalaxyGauntlet.scripts
 					Tiles[i, j] = null;
 					Tiles2[i, j] = null;
 					Items2[i, j] = null;
+					ThinWalls2[i, j] = null;
 					Creatures2[i, j] = null;
 				}
 			}
@@ -598,6 +618,16 @@ namespace GalaxyGauntlet.scripts
 		public void RemoveCreature(Vector2I coordinate)
 		{
 			Creatures2[coordinate.X, coordinate.Y] = null;
+		}
+
+		#endregion
+
+
+		#region Thin Walls
+
+		public ThinWallOrCanopy2 GetThinWall(Vector2I coordinate)
+		{
+			return ThinWalls2[coordinate.X, coordinate.Y];
 		}
 
 		#endregion

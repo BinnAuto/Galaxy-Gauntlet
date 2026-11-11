@@ -3,6 +3,7 @@ using GalaxyGauntlet.scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 public class CreatureStateFlags
 {
@@ -142,14 +143,15 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 			if(HasState(CreatureStateFlags.HasMoved))
 			{
-				// Stalled tank
-				// TODO
+				// Stalled tank (TODO?)
 			}
 
 			if(HasState(CreatureStateFlags.Slipping) || HasState(CreatureStateFlags.Sliding))
 			{
 				return;
 			}
+
+			Vector2I pDir = Orientation.ToVector();
 
 			#region Set Choices array
 
@@ -177,9 +179,35 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 						break;
 
 					case GGConstants.ByteCodes.Entities.Bug:
+						moveChoices = [
+							Left().ToVector()
+							, Forward
+							, Right().ToVector()
+							, Back().ToVector()
+						];
+						break;
+
 					case GGConstants.ByteCodes.Entities.Paramecium:
+						moveChoices = [
+							Right().ToVector()
+							, Forward
+							, Left().ToVector()
+							, Back().ToVector()
+						];
+						break;
+					
 					case GGConstants.ByteCodes.Entities.Teeth:
-						// TODO
+						// Have Teeth follow the player from inside the trap (spooky!)
+						var chipPosition = GameData.Level.PlayerCoordinate;
+						var delta = Coordinate - chipPosition;
+						Vector2I choiceY = (delta.Y < 0) ? new(0, -1)
+							: (delta.Y > 0) ? new(0, 1) : Vector2I.Zero;
+						Vector2I choiceX = (delta.X < 0) ? new(-1, 0)
+							: (delta.X > 0) ? new(1, 0) : Vector2I.Zero;
+						Vector2I orientationVector = (delta.Y > delta.X)
+							? choiceY
+							: choiceX;
+						SetOrientation(orientationVector);
 						return;
 
 					default:
@@ -190,7 +218,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			else
 			{
 				// Normal behavior
-				switch(EntityID)
+				switch (EntityID)
 				{
 					case GGConstants.ByteCodes.Entities.BlueTank:
 						moveChoices[0] = Forward;
@@ -258,8 +286,23 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 						break;
 
 					case GGConstants.ByteCodes.Entities.Teeth:
+						if(Coordinate == GameData.Level.PlayerCoordinate)
+						{
+							// Teeth is on Player. No movement needed.
+							return;
+						}
+
 						var chipPosition = GameData.Level.PlayerCoordinate;
-						// TODO: Determine Teeth movement
+						var delta = chipPosition - Coordinate;
+						Vector2I choiceY = (delta.Y < 0) ? new(0, -1)
+							: (delta.Y > 0) ? new(0, 1) : Vector2I.Zero;
+						delta.Y = Math.Abs(delta.Y);
+						Vector2I choiceX = (delta.X < 0) ? new(-1, 0)
+							: (delta.X > 0) ? new(1, 0) : Vector2I.Zero;
+						delta.X = Math.Abs(delta.X);
+						moveChoices = (delta.X > delta.Y)
+							? [choiceX, choiceY] : [choiceY, choiceX];
+						pDir = moveChoices[0];
 						break;
 
 					default:
@@ -284,6 +327,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 			}
 
+			// Below only runs if all movement checks have failed
+
 			if(EntityID == GGConstants.ByteCodes.Entities.BlueTank)
 			{
 				if(HasState(CreatureStateFlags.Released)
@@ -291,11 +336,11 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				{
 					State |= CreatureStateFlags.HasMoved;
 				}
-				TDir = Vector2I.Zero;
+				TDir = Vector2I.Zero; // Handle "stacked tanks"?
 			}
 			else
 			{
-				// TODO
+				TDir = pDir; // Handle "stacked tanks"?
 			}
 		}
 	}
