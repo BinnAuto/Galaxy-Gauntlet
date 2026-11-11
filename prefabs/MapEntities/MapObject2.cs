@@ -132,6 +132,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.CloneMachine
 				or GGConstants.ByteCodes.Entities.CloneMachine_V1 => new CloneMachineTile2(coordinate),
 			GGConstants.ByteCodes.Entities.BrownButton => new BrownButtonTile2(coordinate),
+			GGConstants.ByteCodes.Entities.TrapActive => new TrapTile2(coordinate),
 
 			/* Thin Wall or Canopy */
 			GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),
