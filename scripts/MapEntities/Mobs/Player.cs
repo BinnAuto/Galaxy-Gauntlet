@@ -121,10 +121,12 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				GameData.Level.AddItem(currentItem);
 			}
 
+			/*
 			if (currentItem is ChipItem chip1)
 			{
 				GameData.OnChipCollected(chip1);
 			}
+			*/
 
 			#endregion
 
@@ -196,10 +198,12 @@ namespace GalaxyGauntlet.scripts.MapEntities
 				GameData.Level.AddItem(item);
 			}
 
+			/*
 			if(item is ChipItem chip2)
 			{
 				GameData.OnChipCollected(chip2);
 			}
+			*/
 
 			currentTile = GameData.Map.GetTile(Coordinate);
 			if((currentTile is MapIceTile && false == GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.IceSkates))

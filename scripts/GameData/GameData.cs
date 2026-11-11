@@ -134,7 +134,7 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void OnChipCollected(ChipItem chip)
+		public static void OnChipCollected(ChipItem2 chip)
 		{
 			Level.ChipsCollected++;
 			if (Level.GameMode is GameMode.Archipelago)
@@ -142,7 +142,7 @@ namespace GalaxyGauntlet.scripts
 				string locationName = chip.GetArchipelagoLocationName();
 				Archipelago.SendLocationCheck(locationName);
 			}
-			RemoveMapItem(chip.Coordinate);
+			Map.RemoveItem2(chip.Coordinate);
 		}
 
 

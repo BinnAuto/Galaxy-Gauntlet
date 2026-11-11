@@ -6,8 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+
 public partial class GameplayScreen : Node
 {
+	private bool DebugMode = true;
+
 	private MapDisplay MapDisplay;
 
 	private MapDisplay2 MapDisplay2;
@@ -21,6 +24,14 @@ public partial class GameplayScreen : Node
 	private Label Timer;
 
 	private Label HintLabel;
+
+	private Node2D DebugDisplay;
+
+	private Label ChipTick;
+
+	private Label GameTick;
+
+	private Sprite2D AcceptingInput;
 
 	private DateTime _previousPlayerProcessTime = DateTime.Parse("01/01/2000");
 
@@ -55,6 +66,11 @@ public partial class GameplayScreen : Node
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.Level.Hint;
 			GameData.Level.Timer = GameData.Map.TimeLimit + 0.99999;
+
+			DebugDisplay = (Node2D)GetNode(nameof(DebugDisplay));
+			ChipTick = (Label)DebugDisplay.GetNode(nameof(ChipTick));
+			GameTick = (Label)DebugDisplay.GetNode(nameof(GameTick));
+			AcceptingInput = (Sprite2D)DebugDisplay.GetNode(nameof(AcceptingInput));
 		}
 		catch (Exception e)
 		{
@@ -66,17 +82,17 @@ public partial class GameplayScreen : Node
 	public override void _Process(double delta)
 	{
 		// Render map if necessary
-		if(GameData.Map.Rerender)
+		if (GameData.Map.Rerender)
 		{
 			MapDisplay.RenderMapData();
 		}
 
-		if(Input.IsActionJustPressed("level_reset"))
+		if (Input.IsActionJustPressed("level_reset"))
 		{
 			RestartLevel();
 			return;
 		}
-		if(Input.IsActionJustPressed("player_pause"))
+		if (Input.IsActionJustPressed("player_pause"))
 		{
 			GameData.Level.ProcessMobs = false;
 			GameData.Level.TimerEnabled = false;
@@ -87,6 +103,7 @@ public partial class GameplayScreen : Node
 
 		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
 		ProcessGameTick();
+		DebugUpdate();
 		CheckPlayerStatus();
 		UpdateTimer(delta);
 		UpdateLabels();
@@ -102,7 +119,34 @@ public partial class GameplayScreen : Node
 		}
 	}
 
+
+	private void _Process2(double delta)
+	{
+		if (Input.IsActionJustPressed("level_reset"))
+		{
+			RestartLevel();
+			return;
+		}
+		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
+	}
+
 	#endregion
+
+	private void DebugUpdate()
+	{
+		if(false == DebugMode)
+		{
+			DebugDisplay.Visible = false;
+			return;
+		}
+
+		DebugDisplay.Visible = true;
+		ChipTick.Text = $"Chip Tick: {GameData.Level.ChipTick}";
+		GameTick.Text = $"Game Tick: {GameData.Level.CurrentTick}";
+		AcceptingInput.Modulate = (GameData.Level.ChipTick >= 3)
+			? Godot.Color.Color8(0, 200, 0)
+			: Godot.Color.Color8(200, 0, 0);
+	}
 
 	private void UpdateLabels()
 	{

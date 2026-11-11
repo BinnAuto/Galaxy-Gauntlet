@@ -18,7 +18,6 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 
 	private AnimatedSprite2D Sprite;
 
-
 	private AudioStreamPlayer2D Audio;
 
 
@@ -27,6 +26,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 	public override void _Ready()
 	{
 		// Construct Sprite object
+		Name = $"GG_{MapObjectName}";
 		Sprite = new()
 		{
 			SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
@@ -55,8 +55,18 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		Visible = false;
 		IsDead = true;
 		var parent = GetParent();
+		if(parent is null)
+		{
+			GD.Print($"!!! No parent for {MapObjectName} at {Coordinate}");
+		}
 		parent?.RemoveChild(this);
 		QueueFree();
+	}
+
+
+	public void PlaySoundEffect(string soundName)
+	{
+		// TODO
 	}
 
 
@@ -96,8 +106,20 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.Floor => new FloorTile2(coordinate),
 			GGConstants.ByteCodes.Entities.Wall => new WallTile2(coordinate),
 			GGConstants.ByteCodes.Entities.Water => new WaterTile2(coordinate),
+			GGConstants.ByteCodes.Entities.RedDoor => new RedDoorTile2(coordinate),
+			GGConstants.ByteCodes.Entities.BlueDoor => new BlueDoorTile2(coordinate),
+			GGConstants.ByteCodes.Entities.YellowDoor => new YellowDoorTile2(coordinate),
+			GGConstants.ByteCodes.Entities.GreenDoor => new GreenDoorTile2(coordinate),
+			GGConstants.ByteCodes.Entities.HintPanel => new HintTile2(coordinate),
+			GGConstants.ByteCodes.Entities.Exit => new ExitTile2(coordinate),
+			GGConstants.ByteCodes.Entities.Socket => new SocketTile2(coordinate),
 
 			/* Items */
+			GGConstants.ByteCodes.Entities.Chip => new ChipItem2(coordinate),
+			GGConstants.ByteCodes.Entities.RedKey => new RedKeyItem2(coordinate),
+			GGConstants.ByteCodes.Entities.BlueKey => new BlueKeyItem2(coordinate),
+			GGConstants.ByteCodes.Entities.YellowKey => new YellowKeyItem2(coordinate),
+			GGConstants.ByteCodes.Entities.GreenKey => new GreenKeyItem2(coordinate),
 
 			/* Creatures */
 			GGConstants.ByteCodes.Entities.Player => new Player2(coordinate),

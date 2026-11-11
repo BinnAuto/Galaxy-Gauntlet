@@ -12,6 +12,7 @@ public partial class MapDisplay2 : Node
 	}
 
 
+	// AdvanceGame
 	public override void _PhysicsProcess(double delta)
 	{
 		if(false == GameData.Level.TimerEnabled)
@@ -51,11 +52,11 @@ public partial class MapDisplay2 : Node
 
 		#endregion
 
-		#region Floor Movements
+		#region Process "Slip List"
 
 		if (gameTick != 0 && (gameTick & 1) == 0)
 		{
-			FloorMovements();
+			SliplistMovements();
 			if(CheckForEnding())
 			{
 				return;
@@ -79,22 +80,25 @@ public partial class MapDisplay2 : Node
 
 		#region Advance Player
 
-		foreach (var creature in creaturesToProcess)
+		if(GameData.Level.ChipTick >= 3)
 		{
-			if(creature is not Player2)
+			foreach (var creature in creaturesToProcess)
 			{
-				continue;
-			}
-
-			creature.ChooseMove();
-			if(creature.TDir != Vector2I.Zero)
-			{
-				creature.AdvanceCreature(creature.TDir);
-				if (CheckForEnding())
+				if(creature is not Player2)
 				{
-					return;
+					continue;
 				}
-				creature.State |= CreatureStateFlags.HasMoved;
+
+				creature.ChooseMove();
+				if(creature.TDir != Vector2I.Zero)
+				{
+					creature.AdvanceCreature(creature.TDir);
+					if (CheckForEnding())
+					{
+						return;
+					}
+					creature.State |= CreatureStateFlags.HasMoved;
+				}
 			}
 		}
 
@@ -136,20 +140,22 @@ public partial class MapDisplay2 : Node
 					creature.UpdateCreature();
 				}
 			}
+		}
 
-			GameData.Level.ChipTick++;
-			if(GameData.Level.ChipTick > 3)
+		// In Tile World, this block is inside the above if.
+		// But it feels more natural if it's put here?
+		GameData.Level.ChipTick++;
+		if(GameData.Level.ChipTick > 3)
+		{
+			GameData.Level.ChipTick = 3;
+			foreach (var creature in creaturesToProcess)
 			{
-				GameData.Level.ChipTick = 3;
-				foreach (var creature in creaturesToProcess)
+				if(creature is not Player2)
 				{
-					if(creature is not Player2)
-					{
-						continue;
-					}
-
-					creature.UpdateCreature();
+					continue;
 				}
+
+				creature.UpdateCreature();
 			}
 		}
 	}
@@ -161,7 +167,28 @@ public partial class MapDisplay2 : Node
 	}
 
 
-	private void FloorMovements()
+	// FloorMovements
+	private void SliplistMovements()
+	{
+		ChipSlipMovements();
+		UpdateSlipList();
+		if(false == CheckForEnding())
+		{
+			CreatureSlipMovements();
+		}
+		// TODO
+	}
+
+
+	// FloorMovements_Of_Chip
+	private void ChipSlipMovements()
+	{
+		// TODO
+	}
+
+
+	// FloorMovements_Of_Blocks_And_Monsters
+	private void CreatureSlipMovements()
 	{
 		// TODO
 	}

@@ -1,10 +1,25 @@
 using GalaxyGauntlet.scripts;
 
+public enum PlayerStatus
+{
+	Okay,
+	Drowned,
+	Burned,
+	Bombed,
+	OutOfTime,
+	Collided,
+	Squished,
+	SquishedDeath,
+	NotOkay
+}
+
 public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
 {
 	public override string MapObjectName => "Player";
 
 	public override int EntityID => GGConstants.ByteCodes.Entities.Player;
+
+	public PlayerStatus PlayerStatus = PlayerStatus.Okay;
 
     public override int SpriteFrameIndex => Orientation switch
 	{

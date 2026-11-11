@@ -264,7 +264,18 @@ namespace GalaxyGauntlet.scripts
 				AddMapObject(mapObject);
 				if(mapObject is MapItem2 mapItem)
 				{
-					// TODO
+					Items2[x, y] = mapItem;
+					if(mapItem.RequiresLowerLayerTile)
+                    {
+                        i++;
+                        mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+                    }
+                    else
+                    {
+						// Shouldn't be reached, but assume item sits on floor tile.
+						mapObject = new FloorTile2(mapCoordinate);
+					}
+					AddMapObject(mapObject);
 				}
 				if(mapObject is MapCreature2 creature)
 				{
@@ -275,8 +286,8 @@ namespace GalaxyGauntlet.scripts
 						creature.Orientation = (EntityOrientation)directionByte;
 					}
 					if(creature is Player2)
-                    {
-                        GameData.Level.PlayerCoordinate = mapCoordinate;
+					{
+						GameData.Level.PlayerCoordinate = mapCoordinate;
 						creature.Orientation = EntityOrientation.South;
 						CreaturesToProcess = CreaturesToProcess.Prepend(creature).ToList();
 					}
@@ -624,10 +635,35 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void SetItem2(MapItem2 item)
+		{
+			var itemCoordinate = item.Coordinate;
+			if (Items2[itemCoordinate.X, itemCoordinate.Y] is not null)
+			{
+				return;
+			}
+
+			AddMapObject(item);
+			Items2[itemCoordinate.X, itemCoordinate.Y] = item;
+		}
+
+
 		public void RemoveItem(Vector2I coordinate)
 		{
 			Items[coordinate.X, coordinate.Y] = null;
 			Rerender = true;
+		}
+
+
+		public void RemoveItem2(Vector2I coordinate)
+		{
+			if(Items2[coordinate.X, coordinate.Y] is null)
+			{
+				return;
+			}
+
+			Items2[coordinate.X, coordinate.Y].Kill();
+			Items2[coordinate.X, coordinate.Y] = null;
 		}
 
 		#endregion
@@ -672,7 +708,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			var coordinate = newTile.Coordinate;
 			Tiles2[coordinate.X, coordinate.Y].Kill();
-			AddMapObject(newTile);
+            AddMapObject(newTile);
 			Tiles2[coordinate.X, coordinate.Y] = newTile;
 		}
 

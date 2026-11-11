@@ -60,10 +60,29 @@ text = "Timer"
 position = Vector2(858, 218)
 
 [node name="HintLabel" type="Label" parent="." unique_id=1183504913]
-offset_left = 851.0
-offset_top = 329.0
-offset_right = 891.0
-offset_bottom = 352.0
+offset_left = 852.0
+offset_top = 351.0
+offset_right = 892.0
+offset_bottom = 374.0
 
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("5_gpxbn")]
 SourceFolder = "./custom/music/game"
+
+[node name="DebugDisplay" type="Node2D" parent="." unique_id=1087344666]
+position = Vector2(150, 452)
+
+[node name="ChipTick" type="Label" parent="DebugDisplay" unique_id=143426148]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Chip Tick:"
+
+[node name="GameTick" type="Label" parent="DebugDisplay" unique_id=376519886]
+offset_left = 160.0
+offset_right = 245.0
+offset_bottom = 23.0
+text = "Game Tick:"
+
+[node name="AcceptingInput" type="Sprite2D" parent="DebugDisplay" unique_id=1659125672]
+position = Vector2(123, 14.00001)
+scale = Vector2(24.249977, 24.75002)
+texture = ExtResource("2_lwhh6")

@@ -2,6 +2,7 @@ using GalaxyGauntlet.prefabs.MapEntities;
 using GalaxyGauntlet.scripts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CreatureStateFlags
 {
@@ -26,33 +27,33 @@ public static class CanMakeMoveFlags
 	/// <summary>
 	/// Causes blue walls and hidden walls to remain unexposed.
 	/// </summary>
-    public const int NoExposeWalls = 0x02;
+	public const int NoExposeWalls = 0x02;
 
 	/// <summary>
 	/// Creature will not be prevented from moving by another creature in the way.
 	/// </summary>
-    public const int CloneCantBlock = 0x04;
+	public const int CloneCantBlock = 0x04;
 
 	/// <summary>
 	/// Prevents the player from pushing any blocks.
 	/// </summary>
-    public const int NoPushing = 0x08;
+	public const int NoPushing = 0x08;
 
 	/// <summary>
 	/// Indicates to block-pushing logic that the player is moving
 	/// through a teleporter.
 	/// </summary>
-    public const int TeleportPush = 0x10;
+	public const int TeleportPush = 0x10;
 
 	/// <summary>
 	/// Causes bugs and walkers to walk directly into fire.
 	/// </summary>
-    public const int NoFireCheck = 0x20;
+	public const int NoFireCheck = 0x20;
 
 	/// <summary>
 	/// Causes buttons pressed by pushed blocks to take effect immediately.
 	/// </summary>
-    public const int NoDeferButtons = 0x40;
+	public const int NoDeferButtons = 0x40;
 }
 
 public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
@@ -74,6 +75,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public Vector2I TDir { get; protected set; } = Vector2I.Zero;
 
+	private Vector2I SlipDirection;
+
 	public List<MapItem2> Inventory = [];
 
 	public Vector2I Forward
@@ -85,12 +88,13 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	}
 
 
-    public override void _Ready()
-    {
-        base._Ready();
+	public override void _Ready()
+	{
+		base._Ready();
 		ZIndex = 10;
-    }
+	}
 
+	#region Movement logic methods
 
 	public virtual void ChooseMove()
 	{
@@ -109,9 +113,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			];
 			TDir = Vector2I.Zero;
 
-            #region Entity and Tick Checks
+			#region Entity and Tick Checks
 
-            if (EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
+			if (EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 			{
 				return;
 			}
@@ -147,9 +151,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				return;
 			}
 
-            #region Set Choices array
+			#region Set Choices array
 
-            if (currentTile is CloneMachineTile2 || currentTile is TrapTile2)
+			if (currentTile is CloneMachineTile2 || currentTile is TrapTile2)
 			{
 				// Behavior in cloning machine or in trap
 				switch(EntityID)
@@ -169,8 +173,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 							, Back().ToVector()
 							, Right().ToVector()
 						];
-                        Random.Shared.Shuffle(moveChoices);
-                        break;
+						Random.Shared.Shuffle(moveChoices);
+						break;
 
 					case GGConstants.ByteCodes.Entities.Bug:
 					case GGConstants.ByteCodes.Entities.Paramecium:
@@ -206,62 +210,62 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 						];
 						break;
 
-                    case GGConstants.ByteCodes.Entities.Fireball:
-                        moveChoices = [
-                            Forward
-                            , Right().ToVector()
-                            , Left().ToVector()
-                            , Back().ToVector()
-                        ];
-                        break;
+					case GGConstants.ByteCodes.Entities.Fireball:
+						moveChoices = [
+							Forward
+							, Right().ToVector()
+							, Left().ToVector()
+							, Back().ToVector()
+						];
+						break;
 
-                    case GGConstants.ByteCodes.Entities.Walker:
-                        moveChoices = [
-                            Forward
-                            , Left().ToVector()
-                            , Back().ToVector()
-                            , Right().ToVector()
-                        ];
-                        Random.Shared.Shuffle(moveChoices);
-                        break;
+					case GGConstants.ByteCodes.Entities.Walker:
+						moveChoices = [
+							Forward
+							, Left().ToVector()
+							, Back().ToVector()
+							, Right().ToVector()
+						];
+						Random.Shared.Shuffle(moveChoices);
+						break;
 
-                    case GGConstants.ByteCodes.Entities.Blob:
-                        moveChoices = [
-                            Forward
-                            , Left().ToVector()
-                            , Back().ToVector()
-                            , Right().ToVector()
-                        ];
-                        Random.Shared.Shuffle(moveChoices);
-                        break;
+					case GGConstants.ByteCodes.Entities.Blob:
+						moveChoices = [
+							Forward
+							, Left().ToVector()
+							, Back().ToVector()
+							, Right().ToVector()
+						];
+						Random.Shared.Shuffle(moveChoices);
+						break;
 
-                    case GGConstants.ByteCodes.Entities.Bug:
-                        moveChoices = [
-                            Left().ToVector()
+					case GGConstants.ByteCodes.Entities.Bug:
+						moveChoices = [
+							Left().ToVector()
 							, Forward
-                            , Right().ToVector()
-                            , Back().ToVector()
-                        ];
-                        break;
+							, Right().ToVector()
+							, Back().ToVector()
+						];
+						break;
 
-                    case GGConstants.ByteCodes.Entities.Paramecium:
-                        moveChoices = [
-                            Right().ToVector()
-                            , Forward
-                            , Left().ToVector()
-                            , Back().ToVector()
-                        ];
-                        break;
+					case GGConstants.ByteCodes.Entities.Paramecium:
+						moveChoices = [
+							Right().ToVector()
+							, Forward
+							, Left().ToVector()
+							, Back().ToVector()
+						];
+						break;
 
-                    case GGConstants.ByteCodes.Entities.Teeth:
+					case GGConstants.ByteCodes.Entities.Teeth:
 						var chipPosition = GameData.Level.PlayerCoordinate;
 						// TODO: Determine Teeth movement
 						break;
 
-                    default:
-                        FileLogger.QuietLogMessage($"Unknown creature 0x{EntityID:X2} trying to move");
-                        return;
-                }
+					default:
+						FileLogger.QuietLogMessage($"Unknown creature 0x{EntityID:X2} trying to move");
+						return;
+				}
 			}
 
 			#endregion
@@ -304,8 +308,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			return true;
 		}
 
-        if (IsPlayer)
-        {
+		if (IsPlayer)
+		{
 			GameData.Level.ChipTick = 0;
 		}
 
@@ -334,12 +338,12 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		if(false == CanMakeMove(direction, 0))
 		{
 			if(IsPlayer
-                || (currentTile is not TrapTile2
+				|| (currentTile is not TrapTile2
 					&& currentTile is not CloneMachineTile2
 					&& false == HasState(CreatureStateFlags.Slipping)))
 			{
 				if(false == IsPlayer
-                    || direction != Vector2I.Zero)
+					|| direction != Vector2I.Zero)
 				{
 					Dir = direction;
 				}
@@ -368,16 +372,22 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
 		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
 
-		if (IsPlayer)
+		if (this is Player2 player)
 		{
 			switch (destinationTile.EntityID)
 			{
 				case GGConstants.ByteCodes.Entities.Water:
-					// TODO: Flipper check
+					if(false == HasItem(new FlippersItem2(Vector2I.Zero)))
+					{
+						player.PlayerStatus = PlayerStatus.Drowned;
+					}
 					break;
 
 				case GGConstants.ByteCodes.Entities.Fire:
-					// TODO: Fire Boots check
+					if(false == HasItem(new FireBootsItem2(Vector2I.Zero)))
+					{
+						player.PlayerStatus = PlayerStatus.Burned;
+					}
 					break;
 
 				case GGConstants.ByteCodes.Entities.Dirt:
@@ -393,19 +403,25 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				case GGConstants.ByteCodes.Entities.BlueDoor:
 				case GGConstants.ByteCodes.Entities.YellowDoor:
 				case GGConstants.ByteCodes.Entities.GreenDoor:
-					// TODO
+					// Assume open check has already happened
+					GameData.Map.SetTile(new FloorTile2(destinationCoordinate));
 					break;
 
 				case GGConstants.ByteCodes.Entities.ToolThief:
-					// TODO
+					StealTools();
 					break;
 
 				case GGConstants.ByteCodes.Entities.KeyThief:
-					// TODO
+					StealKeys();
 					break;
 
 				case GGConstants.ByteCodes.Entities.Socket:
-					// TODO
+					if(false == GameData.Level.ChipRequirementMet)
+					{
+						return;
+					}
+
+					GameData.Map.SetTile(new FloorTile2(destinationCoordinate));
 					break;
 			}
 			if (destinationItem is not null)
@@ -420,12 +436,13 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					case GGConstants.ByteCodes.Entities.BlueKey:
 					case GGConstants.ByteCodes.Entities.YellowKey:
 					case GGConstants.ByteCodes.Entities.GreenKey:
-						// TODO
+						PickUpItem(destinationItem);
 						break;
 
 					case GGConstants.ByteCodes.Entities.Chip:
 					case GGConstants.ByteCodes.Entities.ExtraChip:
-						// TODO
+						var chipItem = (ChipItem2)destinationItem;
+						GameData.OnChipCollected(chipItem);
 						break;
 				}
 			}
@@ -434,30 +451,41 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				switch(destinationCreature.EntityID)
 				{
 					case GGConstants.ByteCodes.Entities.RedBomb:
-						// TODO
+						player.PlayerStatus = PlayerStatus.Bombed;
 						break;
 				}
 
-				// TODO: Creature collision
+				player.PlayerStatus = PlayerStatus.Collided;
 			}
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 		{
 			if(destinationTile is WaterTile2)
 			{
-				// TODO: Play splash sound effect
+				PlaySoundEffect("Splash");
 				GameData.Map.SetTile(new DirtTile2(destinationCoordinate));
 				Kill();
 			}
-			// TODO: Bomb
+			if(destinationCreature is RedBombCreature2)
+			{
+				destinationCreature.PlaySoundEffect("Explosion");
+				destinationCreature.Kill();
+				Kill();
+			}
 			// TODO: Teleporter
 		}
 		SetCoordinateAndOrientation(destinationCoordinate);
+		if(IsDead)
+		{
+			GameData.Map.RemoveCreature(Coordinate);
+		}
 	}
 
 
+	// Updates the creature's display on the grid. Is this even needed?
 	public virtual void UpdateCreature()
 	{
+		/*
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 		if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 		{
@@ -474,6 +502,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			Orientation = Right();
 		}
 		// TODO
+		*/
 	}
 
 
@@ -496,12 +525,12 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 		// TODO: Check for thin wall exit
 
-		if (IsPlayer)
+		if(this is Player2 player)
 		{
-            #region Entry Law checks
+			#region Entry Law checks
 
-            // Tile
-            var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
+			// Tile
+			var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
 			if (entryLaw is null)
 			{
 				GD.Print($"Entry law for entity {destinationTile.MapObjectName} not found.");
@@ -528,9 +557,14 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 			#endregion
 
-			// TODO: Key Door check
-
-			// TODO: Creature check
+			if(destinationTile is KeyDoorTile2 keyDoor)
+			{
+				if(false == keyDoor.CanOpen(this))
+				{
+					return false;
+				}
+				keyDoor.PlaySoundEffect("Door_Open");
+			}
 
 			// TODO: Hidden/Blue wall check
 
@@ -539,18 +573,27 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				if(false == dirtBlock.CanPushBlock(direction, flags))
 				{
 					return false;
-                }
-                else if ((flags & CanMakeMoveFlags.NoPushing) != 0)
-                {
-                    return false;
-                }
-                if (destinationTile is CloneMachineTile2)
-                {
-                    return false;
-                }
-                // TODO: Teleporter check
-                return CanMakeMove(direction, flags | CanMakeMoveFlags.NoPushing);
-            }
+				}
+				else if ((flags & CanMakeMoveFlags.NoPushing) != 0)
+				{
+					return false;
+				}
+				if (destinationTile is CloneMachineTile2)
+				{
+					return false;
+				}
+				// TODO: Teleporter check
+				return CanMakeMove(direction, flags | CanMakeMoveFlags.NoPushing);
+			}
+
+			if(destinationCreature is not null)
+			{
+				if(HasItem(new HelmetItem2(Vector2I.Zero)))
+				{
+					return false;
+				}
+				player.PlayerStatus = PlayerStatus.Collided;
+			}
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 		{
@@ -562,119 +605,119 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 			}
 
-            #region Entry Law checks
+			#region Entry Law checks
 
-            // Tile
-            var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
-            if (entryLaw is null)
-            {
-                GD.Print($"Entry law for tile {destinationTile.MapObjectName} not found.");
-            }
-            else
-            {
-                if (false == entryLaw.CanCreatureEnter(direction))
-                {
-                    return false;
-                }
-            }
+			// Tile
+			var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
+			if (entryLaw is null)
+			{
+				GD.Print($"Entry law for tile {destinationTile.MapObjectName} not found.");
+			}
+			else
+			{
+				if (false == entryLaw.CanCreatureEnter(direction))
+				{
+					return false;
+				}
+			}
 
-            // Item
-            if (destinationItem is not null)
-            {
-                entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationItem.EntityID);
-                if (entryLaw is null)
-                {
-                    GD.Print($"Entry law for item {destinationItem.MapObjectName} not found.");
-                }
-                else
-                {
-                    if (false == entryLaw.CanCreatureEnter(direction))
-                    {
-                        return false;
-                    }
-                }
-            }
+			// Item
+			if (destinationItem is not null)
+			{
+				entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationItem.EntityID);
+				if (entryLaw is null)
+				{
+					GD.Print($"Entry law for item {destinationItem.MapObjectName} not found.");
+				}
+				else
+				{
+					if (false == entryLaw.CanCreatureEnter(direction))
+					{
+						return false;
+					}
+				}
+			}
 
-            // Creature
-            if (destinationCreature is not null)
-            {
-                entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
-                if (entryLaw is null)
-                {
-                    GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
-                }
-                else
-                {
-                    if (false == entryLaw.CanCreatureEnter(direction))
-                    {
-                        return false;
-                    }
-                }
-            }
+			// Creature
+			if (destinationCreature is not null)
+			{
+				entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
+				if (entryLaw is null)
+				{
+					GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
+				}
+				else
+				{
+					if (false == entryLaw.CanCreatureEnter(direction))
+					{
+						return false;
+					}
+				}
+			}
 
-            #endregion
-        }
-        else
+			#endregion
+		}
+		else
 		{
 			if(destinationCreature is not null)
 			{
 				return (destinationCreature is Player2);
 			}
 
-            #region Entry Law checks
+			#region Entry Law checks
 
 			// Tile
-            var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
-            if (entryLaw is null)
-            {
-                GD.Print($"Entry law for tile {destinationTile.MapObjectName} not found.");
-            }
-            else
-            {
-                if (false == entryLaw.CanCreatureEnter(direction))
-                {
-                    return false;
-                }
-            }
+			var entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationTile.EntityID);
+			if (entryLaw is null)
+			{
+				GD.Print($"Entry law for tile {destinationTile.MapObjectName} not found.");
+			}
+			else
+			{
+				if (false == entryLaw.CanCreatureEnter(direction))
+				{
+					return false;
+				}
+			}
 
 			// Item
 			if(destinationItem is not null)
 			{
 				entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationItem.EntityID);
-                if (entryLaw is null)
-                {
-                    GD.Print($"Entry law for item {destinationItem.MapObjectName} not found.");
-                }
-                else
-                {
-                    if (false == entryLaw.CanCreatureEnter(direction))
-                    {
-                        return false;
-                    }
-                }
-            }
+				if (entryLaw is null)
+				{
+					GD.Print($"Entry law for item {destinationItem.MapObjectName} not found.");
+				}
+				else
+				{
+					if (false == entryLaw.CanCreatureEnter(direction))
+					{
+						return false;
+					}
+				}
+			}
 
 			// Creature
-            if (destinationCreature is not null)
-            {
-                entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
-                if (entryLaw is null)
-                {
-                    GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
-                }
-                else
-                {
-                    if (false == entryLaw.CanCreatureEnter(direction))
-                    {
-                        return false;
-                    }
-                }
-            }
+			if (destinationCreature is not null)
+			{
+				entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
+				if (entryLaw is null)
+				{
+					GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
+				}
+				else
+				{
+					if (false == entryLaw.CanCreatureEnter(direction))
+					{
+						return false;
+					}
+				}
+			}
 
-            #endregion
-        }
+			#endregion
+		}
 
-        return true;
+		return true;
 	}
 
 
@@ -713,24 +756,26 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 
 	public void SetOrientation(Vector2I direction)
-    {
-        if (direction == new Vector2I(0, -1))
-        {
-            Orientation = EntityOrientation.North;
-        }
-        if (direction == new Vector2I(0, 1))
-        {
-            Orientation = EntityOrientation.South;
-        }
-        if (direction == new Vector2I(1, 0))
-        {
-            Orientation = EntityOrientation.East;
-        }
-        if (direction == new Vector2I(-1, 0))
-        {
-            Orientation = EntityOrientation.West;
-        }
-    }
+	{
+		if (direction == new Vector2I(0, -1))
+		{
+			Orientation = EntityOrientation.North;
+		}
+		if (direction == new Vector2I(0, 1))
+		{
+			Orientation = EntityOrientation.South;
+		}
+		if (direction == new Vector2I(1, 0))
+		{
+			Orientation = EntityOrientation.East;
+		}
+		if (direction == new Vector2I(-1, 0))
+		{
+			Orientation = EntityOrientation.West;
+		}
+	}
+
+	#endregion 
 
 
 	#region Orientation Methods
@@ -745,33 +790,101 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			EntityOrientation.West => EntityOrientation.North,
 			_ => EntityOrientation.North
 		};
-    }
+	}
 
 
-    public EntityOrientation Left()
-    {
-        return Orientation switch
-        {
-            EntityOrientation.North => EntityOrientation.West,
-            EntityOrientation.East => EntityOrientation.North,
-            EntityOrientation.South => EntityOrientation.East,
-            EntityOrientation.West => EntityOrientation.South,
-            _ => EntityOrientation.North
-        };
-    }
+	public EntityOrientation Left()
+	{
+		return Orientation switch
+		{
+			EntityOrientation.North => EntityOrientation.West,
+			EntityOrientation.East => EntityOrientation.North,
+			EntityOrientation.South => EntityOrientation.East,
+			EntityOrientation.West => EntityOrientation.South,
+			_ => EntityOrientation.North
+		};
+	}
 
 
-    public EntityOrientation Back()
-    {
-        return Orientation switch
-        {
-            EntityOrientation.North => EntityOrientation.South,
-            EntityOrientation.East => EntityOrientation.West,
-            EntityOrientation.South => EntityOrientation.North,
-            EntityOrientation.West => EntityOrientation.East,
-            _ => EntityOrientation.North
-        };
-    }
+	public EntityOrientation Back()
+	{
+		return Orientation switch
+		{
+			EntityOrientation.North => EntityOrientation.South,
+			EntityOrientation.East => EntityOrientation.West,
+			EntityOrientation.South => EntityOrientation.North,
+			EntityOrientation.West => EntityOrientation.East,
+			_ => EntityOrientation.North
+		};
+	}
 
-    #endregion
+	#endregion
+
+
+	#region Inventory Methods
+
+	public void PickUpItem(MapItem2 item)
+	{
+		Inventory.Add(item);
+		GameData.Map.RemoveItem2(item.Coordinate);
+	}
+
+
+	public bool UseItem(MapItem2 item)
+	{
+		int index = Inventory.FindIndex(e => e.EntityID == item.EntityID);
+		if(index == -1)
+		{
+			return false;
+		}
+
+		Inventory.RemoveAt(index);
+		return true;
+	}
+
+
+	public bool HasItem(MapItem2 item)
+	{
+		return Inventory.FindIndex(e => e.EntityID == item.EntityID) > -1;
+	}
+
+
+	public void StealKeys()
+	{
+		if (UseItem(new BribeItem2(Vector2I.Zero)))
+		{
+			return;
+		}
+
+		List<MapItem2> newInventory = [];
+		foreach(var item in Inventory)
+		{
+			if(item is not KeyItem2)
+			{
+				newInventory.Add(item);
+			}
+		}
+		Inventory = newInventory;
+	}
+
+
+	public void StealTools()
+	{
+		if(UseItem(new BribeItem2(Vector2I.Zero)))
+		{
+			return;
+		}
+
+		List<MapItem2> newInventory = [];
+		foreach (var item in Inventory)
+		{
+			if (item is KeyItem2)
+			{
+				newInventory.Add(item);
+			}
+		}
+		Inventory = newInventory;
+	}
+
+	#endregion
 }

@@ -146,7 +146,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 			SetOrientation(direction);
 			SetCoordinate(coordinate);
 
-        }
+		}
 
 		public virtual void ProcessTick()
 		{
@@ -193,8 +193,8 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 						ReverseOrientation();
 						Orientation = iceTile.SetEntityOrientation(Orientation);
 						iceCoordinate = ProposeMove(Forward);
-                    }
-                    SetCoordinate(iceCoordinate);
+					}
+					SetCoordinate(iceCoordinate);
 					return;
 				}
 
@@ -339,47 +339,47 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 				}
 			}
 
-            #endregion
+			#endregion
 
-            #region Key Doors
+			#region Key Doors
 
-            if (destinationItem is MapDoorItem doorItem)
-            {
-                if (false == isPlayer)
-                {
-                    return Coordinate;
-                }
+			if (destinationItem is MapDoorItem doorItem)
+			{
+				if (false == isPlayer)
+				{
+					return Coordinate;
+				}
 
-                if (false == doorItem.CanOpenDoor())
-                {
-                    return Coordinate;
-                }
+				if (false == doorItem.CanOpenDoor())
+				{
+					return Coordinate;
+				}
 
-                // Player opens door
-                GameData.Map.RemoveItem(newCoordinate);
-                GameData.Map.SetTile(newCoordinate, new FloorTile(newCoordinate));
-                return newCoordinate;
-            }
+				// Player opens door
+				GameData.Map.RemoveItem(newCoordinate);
+				GameData.Map.SetTile(newCoordinate, new FloorTile(newCoordinate));
+				return newCoordinate;
+			}
 
-            #endregion
+			#endregion
 
-            #region Hard Stop tiles
+			#region Hard Stop tiles
 
-            if (destinationTile is WallTile
-                || destinationTile is CloneMachineTile
-                || destinationTile is InvisibleWallTile
-                || (destinationTile is GravelTile && false == CanWalkOnGravel)
-                || (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
-            )
-            {
-                return Coordinate;
-            }
+			if (destinationTile is WallTile
+				|| destinationTile is CloneMachineTile
+				|| destinationTile is InvisibleWallTile
+				|| (destinationTile is GravelTile && false == CanWalkOnGravel)
+				|| (destinationTile is GreenToggleTile greenToggle && greenToggle.IsWall)
+			)
+			{
+				return Coordinate;
+			}
 
-            #endregion
+			#endregion
 
-            #region Monsters 
+			#region Monsters 
 
-            if (destinationMob is BugMonster
+			if (destinationMob is BugMonster
 				|| destinationMob is FireballMonster
 				|| destinationMob is WalkerMonster
 				|| destinationMob is GliderMonster
