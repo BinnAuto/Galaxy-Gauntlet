@@ -10,8 +10,6 @@ public partial class GameplayScreen : Node
 {
 	private bool DebugMode = true;
 
-	private MapDisplay MapDisplay;
-
 	private MapDisplay2 MapDisplay2;
 
 	private DialogWindow DialogWindow;
@@ -46,8 +44,6 @@ public partial class GameplayScreen : Node
 	{
 		try
 		{
-			MapDisplay = (MapDisplay)GetNode(nameof(MapDisplay));
-
 			MapDisplay2 = (MapDisplay2)GetNode(nameof(MapDisplay2));
 
 			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
