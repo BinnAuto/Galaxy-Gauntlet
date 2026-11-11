@@ -224,6 +224,9 @@ namespace GalaxyGauntlet.Common
                 public const int LetterTile = 0x71;
                 public const int PurpleToggleFloor = 0x72;
                 public const int PurpleToggleWall = 0x73;
+                public const int Modifier_8Bit = 0x76;
+                public const int Modifier_16Bit = 0x77;
+                public const int Modifier_32Bit = 0x78;
                 public const int PointFlag10 = 0x7A;
                 public const int PointFlag100 = 0x7B;
                 public const int PointFlag1000 = 0x7C;

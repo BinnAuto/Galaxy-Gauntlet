@@ -12,6 +12,8 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 
 	public virtual bool RequiresLowerLayerTile => false;
 
+	public virtual bool RequiresModifier => false;
+
 	public virtual int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.DebugSprite;
 
 	public virtual int EntityID => GGConstants.ByteCodes.Entities.None;
@@ -61,6 +63,12 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		}
 		parent?.RemoveChild(this);
 		QueueFree();
+	}
+
+
+	public virtual void AcceptModifier(byte[] modifierValues)
+	{
+		GD.Print($"Modifier logic not implemented for {MapObjectName}");
 	}
 
 
@@ -161,6 +169,11 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.Glider => new GliderCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Fireball => new FireballCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Teeth => new TeethCreature2(coordinate),
+
+			/* Other */
+			GGConstants.ByteCodes.Entities.Modifier_8Bit
+				or GGConstants.ByteCodes.Entities.Modifier_16Bit
+				or GGConstants.ByteCodes.Entities.Modifier_32Bit => null,
 			_ => LogUnknownObject(byteCode, coordinate)
 		};
 	}
