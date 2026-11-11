@@ -243,7 +243,7 @@ namespace GalaxyGauntlet.Common
                 public const int SteelFoil = 0x8C;
                 public const int Turtle = 0x8D;
                 public const int SecretEye = 0x8E;
-                public const int ThiefBribe = 0x8F;
+                public const int Bribe = 0x8F;
                 public const int SpeedBoots = 0x90;
                 public const int Hook = 0x92;
             }
@@ -428,6 +428,7 @@ namespace GalaxyGauntlet.Common
             public const int IceBlock_XRay = 43;
             public const int GreenChip = 57;
             public const int Chip = 58;
+            public const int Bribe = 60;
             public const int RedBomb = 69;
             public const int GreenBomb = 70;
             public const int NoSprite = 71;
