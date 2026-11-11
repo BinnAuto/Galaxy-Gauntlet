@@ -13,22 +13,30 @@ namespace GalaxyGauntlet.scripts
 
         public static string GetLevelName(string filePath)
         {
-            _currentIndex = 0;
-            _fileBytes = File.ReadAllBytes(filePath);
-            bool doContinue = true;
-            while(doContinue)
+            try
             {
-                string sectionHeader = GetSectionHeader();
-                if(sectionHeader == "TITL")
+                _currentIndex = 0;
+                _fileBytes = File.ReadAllBytes(filePath);
+                bool doContinue = true;
+                while(doContinue)
                 {
-                    return GetMapTitle();
+                    string sectionHeader = GetSectionHeader();
+                    if(sectionHeader == "TITL")
+                    {
+                        return GetMapTitle();
+                    }
+
+                    int length = GetSectionLength();
+                    _currentIndex += length;
                 }
 
-                int length = GetSectionLength();
-                _currentIndex += length;
+                return Path.GetFileNameWithoutExtension(filePath);
             }
-
-            return Path.GetFileNameWithoutExtension(filePath);
+            catch(Exception e)
+            {
+                FileLogger.LogException($"Error getting level name from {filePath}", e);
+                return string.Empty;
+            }
         }
 
 

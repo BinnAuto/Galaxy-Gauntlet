@@ -90,13 +90,18 @@ public partial class LevelSelect : Node2D
 			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
 			GameData.Level.LevelSet = GameData.Level.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 		}
-		GD.Print($"{GameData.Level.LevelSet.Length} levels found");
+		GD.Print($"{GameData.Level.LevelSet.Length} level files found");
 		int levelIndex = 0;
 		foreach(string file in GameData.Level.LevelSet)
 		{
 			int tempLevel = levelIndex;
-			levelIndex++;
 			string levelName = LevelLoader.GetLevelName(file);
+			if(string.IsNullOrEmpty(levelName))
+			{
+				continue;
+			}
+
+			levelIndex++;
 			Button button = (Button)ButtonRef.Duplicate();
 			if(GameData.Level.GameMode == GameMode.QuickPlay)
 			{
