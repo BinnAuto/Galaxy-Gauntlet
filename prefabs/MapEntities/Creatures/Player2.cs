@@ -27,8 +27,15 @@ public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
 		EntityOrientation.East => GGConstants.SpriteFrameIndexes.Player_E,
 		EntityOrientation.South => GGConstants.SpriteFrameIndexes.Player_S,
 		EntityOrientation.West => GGConstants.SpriteFrameIndexes.Player_W,
-		_ => GGConstants.SpriteFrameIndexes.Player_S
+		_ => GGConstants.SpriteFrameIndexes.DebugSprite
 	};
+
+    public override void _Ready()
+    {
+        base._Ready();
+		ZIndex = 9;
+    }
+
 
 	public override void ChooseMove()
 	{

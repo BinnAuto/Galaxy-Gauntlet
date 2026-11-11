@@ -272,7 +272,6 @@ namespace GalaxyGauntlet.scripts
                     }
                     else
                     {
-						// Shouldn't be reached, but assume item sits on floor tile.
 						mapObject = new FloorTile2(mapCoordinate);
 					}
 					AddMapObject(mapObject);
@@ -708,7 +707,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			var coordinate = newTile.Coordinate;
 			Tiles2[coordinate.X, coordinate.Y].Kill();
-            AddMapObject(newTile);
+			AddMapObject(newTile);
 			Tiles2[coordinate.X, coordinate.Y] = newTile;
 		}
 

@@ -1,6 +1,5 @@
 using GalaxyGauntlet.scripts;
 using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Shared;
 using GalaxyGauntlet.scripts.SaveData;
 using System;
 using System.Collections.Generic;
@@ -81,12 +80,6 @@ public partial class GameplayScreen : Node
 
 	public override void _Process(double delta)
 	{
-		// Render map if necessary
-		if (GameData.Map.Rerender)
-		{
-			MapDisplay.RenderMapData();
-		}
-
 		if (Input.IsActionJustPressed("level_reset"))
 		{
 			RestartLevel();
@@ -102,14 +95,14 @@ public partial class GameplayScreen : Node
 		}
 
 		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
-		ProcessGameTick();
-		DebugUpdate();
+		// ProcessGameTick();
+		CheckForInitializationByPlayer();
+		UpdateDebugUI();
 		CheckPlayerStatus();
 		UpdateTimer(delta);
 		UpdateLabels();
 		if(false == DialogWindow.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
 		{
-			MapDisplay.RenderMapData();
 			OnPlayerDeath();
 		}
 		if(GameData.Level.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
@@ -119,20 +112,9 @@ public partial class GameplayScreen : Node
 		}
 	}
 
-
-	private void _Process2(double delta)
-	{
-		if (Input.IsActionJustPressed("level_reset"))
-		{
-			RestartLevel();
-			return;
-		}
-		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
-	}
-
 	#endregion
 
-	private void DebugUpdate()
+	private void UpdateDebugUI()
 	{
 		if(false == DebugMode)
 		{
@@ -148,6 +130,7 @@ public partial class GameplayScreen : Node
 			: Godot.Color.Color8(200, 0, 0);
 	}
 
+
 	private void UpdateLabels()
 	{
 		LevelName.Text = GameData.Level.Name;
@@ -156,70 +139,6 @@ public partial class GameplayScreen : Node
 
 		var currentItem = GameData.Map.GetItem(GameData.Level.PlayerCoordinate);
 		HintLabel.Visible = (currentItem != null && currentItem is HintPanelItem);
-	}
-
-
-	private void ProcessGameTick()
-	{
-		// Freeze mob lists before the process swaps mobs between lists,
-		// which can cause double processing.
-		var playerList = GameData.Map.PlayerProcessList;
-		var playerSlipList = GameData.Map.PlayerSliplist;
-		var slipList = GameData.Map.MobSlipList;
-		List<MapMob> mobList = [..GameData.Map.MobProcessList];
-
-		DateTime now = DateTime.Now;
-		double regularTick = 0.2;
-		double slipListTick = regularTick / 2.0;
-
-		var timeSincePlayerProcess = (now - _previousPlayerProcessTime).TotalSeconds;
-		var playerInput = GameData.GetPlayerInput();
-		if(playerInput != Vector2I.Zero && timeSincePlayerProcess >= regularTick)
-		{
-			if(playerList.Count != 0)
-			{
-				GameData.ProcessMobList(playerList);
-				_previousPlayerProcessTime = now;
-				_previousPlayerSlipListProcessTime = now;
-			}
-		}
-
-		var timeSincePlayerSlipListProcess = (now - _previousPlayerSlipListProcessTime).TotalSeconds;
-		if(timeSincePlayerSlipListProcess >= slipListTick)
-		{
-			if(playerSlipList.Count != 0)
-			{
-				GameData.ProcessMobList(playerSlipList);
-				_previousPlayerSlipListProcessTime = now;
-			}
-		}
-
-		var timeSinceMobListProcess = (now - _previousMobProcessTime).TotalSeconds;
-		var timeSinceSlipListProcess = (now - _previousSlipListProcessTime).TotalSeconds;
-		
-		// Process monsters that move 5 times or less per second
-		if (timeSinceMobListProcess >= regularTick)
-		{
-			if (GameData.Level.ProcessMobs)
-			{
-				GameData.ProcessMobList(mobList);
-				_previousMobProcessTime = now;
-				GameData.Map.PingPongStep = (GameData.Map.PingPongStep + 1) % 2;
-				GameData.Map.SquareStep = (GameData.Map.SquareStep + 1) % 4;
-				ProcessButtonPresses();
-			}
-			CheckForInitializationByPlayer();
-		}
-
-		// Process monsters that move 10 times per second (slip list)
-		if (timeSinceSlipListProcess >= slipListTick)
-		{
-			if (GameData.Level.ProcessMobs)
-			{
-				GameData.ProcessMobList(slipList);
-			}
-			_previousSlipListProcessTime = now;
-		}
 	}
 
 

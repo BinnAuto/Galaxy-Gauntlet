@@ -1,6 +1,4 @@
 using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Shared;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GalaxyGauntlet.scripts
@@ -87,21 +85,6 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void ProcessMobList(List<MapMob> mobs)
-		{
-			foreach (var mob in mobs)
-			{
-				if (mob.CanProcess)
-				{
-					mob.ProcessTick();
-				}
-				if (false == Level.PlayerAlive)
-				{
-					break;
-				}
-			}
-		}
-
 		public static void RemoveMapItem(Vector2I coordinate)
 		{
 			Map.RemoveItem(coordinate);
@@ -112,8 +95,6 @@ namespace GalaxyGauntlet.scripts
 		{
 			Level.DeathMessage = message;
 		}
-
-
 
 
 		public static void OnLevelComplete()

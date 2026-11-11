@@ -515,13 +515,15 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			return false;
 		}
 
-		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
-		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
-		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
-		if(destinationTile is CloneMachineTile2)
+		var currentTile = GameData.Map.GetTile2(Coordinate);
+		if(currentTile is CloneMachineTile2)
 		{
 			return false;
 		}
+
+		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
+		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
+		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
 
 		// TODO: Check for thin wall exit
 
