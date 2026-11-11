@@ -1,14 +1,20 @@
 using GalaxyGauntlet.scripts;
 
-public partial class MapDisplay2 : Node
+public partial class MapDisplay2 : Node2D
 {
 	public override void _Process(double delta)
 	{
+		// Add new children to display
 		var newChildren = GameData.Map.GetNewMapObjects();
 		foreach(var child in newChildren)
 		{
 			AddChild(child);
 		}
+
+		// Set position in world
+		int viewportSize = GameData.Level.MapViewportSize;
+		int deltaFromRegular = viewportSize - GameData.Level.StandardMapViewportSize;
+		Position = new Vector2I(192, 192) - (16 * deltaFromRegular * Vector2I.One);
 	}
 
 
