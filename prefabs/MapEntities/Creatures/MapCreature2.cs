@@ -72,7 +72,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public Vector2I Dir { get; protected set; } = Vector2I.Zero;
 
-	public Vector2I TDir { get; protected set; } = Vector2I.Zero;
+	public Vector2I TDir { get; set; } = Vector2I.Zero;
 
 	private Vector2I SlipDirection;
 
@@ -630,7 +630,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 
 		var currentTile = GameData.Map.GetTile2(Coordinate);
-		if(currentTile is CloneMachineTile2)
+		if(currentTile is CloneMachineTile2
+			&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
 		{
 			return false;
 		}

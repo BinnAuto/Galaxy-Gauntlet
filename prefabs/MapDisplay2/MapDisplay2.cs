@@ -44,10 +44,13 @@ public partial class MapDisplay2 : Node2D
 				}
 				if(creature.HasState(CreatureStateFlags.Cloning))
 				{
-					GD.Print($"Creature {creature.MapObjectName} at {creature.Coordinate} is busy cloning");
-					continue;
+					GD.Print("Cloned creature");
+					creature.TDir = creature.Forward;
 				}
-				creature.ChooseMove();
+				else
+				{
+					creature.ChooseMove();
+				}
 				if(creature.TDir == Vector2I.Zero)
 				{
 					continue;

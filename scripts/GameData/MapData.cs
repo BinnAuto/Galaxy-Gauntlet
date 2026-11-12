@@ -416,19 +416,6 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void AddCreatureToProcess(MapCreature2 creature)
-		{
-			CreaturesToProcess.Add(creature);
-		}
-
-
-		public List<MapCreature2> GetCreaturesToProcess()
-		{
-			CreaturesToProcess = CreaturesToProcess.Where(e => false == e.IsDead).ToList();
-			return [..CreaturesToProcess];
-		}
-
-
 		public void SetDimensions(int x, int y)
 		{
 			Dimensions = new(x, y);
@@ -677,6 +664,39 @@ namespace GalaxyGauntlet.scripts
 		public void RemoveCreature(Vector2I coordinate)
 		{
 			Creatures2[coordinate.X, coordinate.Y] = null;
+		}
+
+
+		public void AddCreatureToProcess(MapCreature2 creature)
+		{
+			CreaturesToProcess.Add(creature);
+		}
+
+
+		public List<MapCreature2> GetCreaturesToProcess()
+		{
+			CreaturesToProcess = CreaturesToProcess.Where(e => false == e.IsDead).ToList();
+			return [.. CreaturesToProcess];
+		}
+
+
+		public void CloneCreature(Vector2I sourceCoordinate)
+		{
+			var mapTile = GetTile2(sourceCoordinate);
+			if(mapTile is not CloneMachineTile2 cloneMachine)
+			{
+				FileLogger.QuietLogMessage($"Huh? The tile at {sourceCoordinate} is not a cloning machine! ({mapTile.MapObjectName})");
+				return;
+			}
+
+			var creature = GetCreature(sourceCoordinate);
+			if(creature is null)
+			{
+				FileLogger.QuietLogMessage($"Whoops! There is no creature in the cloning machine at {sourceCoordinate}");
+				return;
+			}
+
+			// TODO: Clone creature
 		}
 
 		#endregion

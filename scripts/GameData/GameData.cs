@@ -118,8 +118,7 @@ namespace GalaxyGauntlet.scripts
 				var mapTile = Map.GetTile2(mapCoordinate);
 				if(mapTile is CloneMachineTile2)
 				{
-					GD.Print($"Cloning machine found at {mapCoordinate}");
-					// TODO: Clone
+					Map.CloneCreature(mapCoordinate);
 					return;
 				}
 
