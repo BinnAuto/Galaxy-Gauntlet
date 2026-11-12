@@ -2,8 +2,6 @@ using GalaxyGauntlet.prefabs.MapEntities;
 using GalaxyGauntlet.scripts;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
 
 public class CreatureStateFlags
 {
@@ -59,7 +57,7 @@ public static class CanMakeMoveFlags
 
 public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 {
-	public int State = 0;
+	public int CreatureState = 0;
 
 	public override bool RequiresDirectionByte => true;
 
@@ -138,7 +136,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			var currentTile = GameData.Map.GetTile2(Coordinate);
 
 			if(HasState(CreatureStateFlags.Turning)) {
-				State &= ~(CreatureStateFlags.Turning | CreatureStateFlags.HasMoved);
+				CreatureState &= ~(CreatureStateFlags.Turning | CreatureStateFlags.HasMoved);
 				UpdateCreature();
 			}
 			if(HasState(CreatureStateFlags.HasMoved))
@@ -334,7 +332,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				if(HasState(CreatureStateFlags.Released)
 					|| currentTile is not TrapTile2)
 				{
-					State |= CreatureStateFlags.HasMoved;
+					CreatureState |= CreatureStateFlags.HasMoved;
 				}
 				TDir = Vector2I.Zero; // Handle "stacked tanks"?
 			}
@@ -401,7 +399,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		{
 			// TODO
 		}
-		State &= ~(CreatureStateFlags.Released);
+		CreatureState &= ~(CreatureStateFlags.Released);
 		Dir = direction;
 		return true;
 	}
@@ -519,10 +517,81 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 			// TODO: Teleporter
 		}
-		SetCoordinateAndOrientation(destinationCoordinate);
+		else
+		{
+			// TODO: Death by water
+
+			// TODO: Death by fire
+
+			// TODO: Death by bomb
+
+			// TODO: Teleport
+		}
+
 		if(IsDead)
 		{
 			GameData.Map.RemoveCreature(Coordinate);
+			if(currentTile is CloneMachineTile2)
+			{
+				currentTile.FloorState &= ~(FloorStateFlags.Cloning);
+			}
+			return;
+		}
+
+		// TODO: Player Teleportation
+
+		SetCoordinateAndOrientation(destinationCoordinate);
+
+		if(destinationTile is ButtonTile2 button)
+		{
+			button.PlaySoundEffect("Button_Pushed");
+			switch(button.EntityID)
+			{
+				case GGConstants.ByteCodes.Entities.BlueButton:
+					if(HasState(CreatureStateFlags.DeferPush))
+					{
+						button.FloorState |= FloorStateFlags.ButtonDown;
+						break;
+					}
+					else
+					{
+						GameData.BlueButtonPressed(destinationCoordinate);
+					}
+					break;
+
+                case GGConstants.ByteCodes.Entities.GreenButton:
+                    if (HasState(CreatureStateFlags.DeferPush))
+                    {
+                        button.FloorState |= FloorStateFlags.ButtonDown;
+                    }
+					else
+					{
+						GameData.GreenButtonPressed(destinationCoordinate);
+					}
+                    break;
+
+                case GGConstants.ByteCodes.Entities.RedButton:
+                    if (HasState(CreatureStateFlags.DeferPush))
+                    {
+                        button.FloorState |= FloorStateFlags.ButtonDown;
+                    }
+					else
+					{
+						GameData.RedButtonPressed(destinationCoordinate);
+					}
+                    break;
+
+                case GGConstants.ByteCodes.Entities.BrownButton:
+                    if (HasState(CreatureStateFlags.DeferPush))
+                    {
+                        button.FloorState |= FloorStateFlags.ButtonDown;
+                    }
+					else
+					{
+						GameData.BrownButtonPressed(destinationCoordinate);
+					}
+                    break;
+            }
 		}
 	}
 
@@ -770,13 +839,51 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	private void HandleButtons()
 	{
+		for(int x = 0; x < GameData.Map.Dimensions.X; x++)
+		{
+			for(int y = 0; y < GameData.Map.Dimensions.Y; y++)
+			{
+				if(GameData.Map.Tiles2[x, y] is not ButtonTile2 button)
+				{
+					continue;
+				}
 
+				if(false == button.HasFloorState(FloorStateFlags.ButtonDown))
+				{
+					continue;
+				}
+
+				button.PlaySoundEffect("Button_Pressed");
+				switch(button.EntityID)
+				{
+					case GGConstants.ByteCodes.Entities.BlueButton:
+						GameData.BlueButtonPressed(new(-1, -1));
+						break;
+
+					case GGConstants.ByteCodes.Entities.GreenButton:
+						GameData.GreenButtonPressed(button.Coordinate);
+						break;
+
+					case GGConstants.ByteCodes.Entities.RedButton:
+						GameData.RedButtonPressed(button.Coordinate);
+						break;
+
+					case GGConstants.ByteCodes.Entities.BrownButton:
+						GameData.BrownButtonPressed(button.Coordinate);
+						break;
+
+					default:
+						FileLogger.QuietLogMessage($"Fooey! Tile {button.MapObjectName} (0x{button.EntityID:X2}) is not a button!");
+						break;
+				}
+			}
+		}
 	}
 
 
 	public bool HasState(int state)
 	{
-		return (State & state) != 0;
+		return (CreatureState & state) != 0;
 	}
 
 
@@ -837,6 +944,24 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			EntityOrientation.West => EntityOrientation.North,
 			_ => EntityOrientation.North
 		};
+	}
+
+
+	public void TurnRight()
+	{
+		Orientation = Right();
+	}
+
+
+	public void TurnLeft()
+	{
+		Orientation = Left();
+	}
+
+
+	public void AboutFace()
+	{
+		Orientation = Back();
 	}
 
 
@@ -934,4 +1059,5 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	}
 
 	#endregion
+
 }

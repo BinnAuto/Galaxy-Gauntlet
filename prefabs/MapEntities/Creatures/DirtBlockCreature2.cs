@@ -24,16 +24,16 @@ public partial class DirtBlockCreature2(Vector2I coordinate) : MapCreature2(coor
 			// TODO
 		}
 		if((flags & CanMakeMoveFlags.NoDeferButtons) == 0) {
-			State |= CreatureStateFlags.DeferPush;
+			CreatureState |= CreatureStateFlags.DeferPush;
 		}
 		var creatureAdvanced = AdvanceCreature(direction);
 		if((flags & CanMakeMoveFlags.NoDeferButtons) == 0)
 		{
-			State &= ~(CreatureStateFlags.DeferPush);
+			CreatureState &= ~(CreatureStateFlags.DeferPush);
 		}
 		if(false == creatureAdvanced)
 		{
-			State &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
+			CreatureState &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
 		}
 		return creatureAdvanced;
 	}

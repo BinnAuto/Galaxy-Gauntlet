@@ -73,6 +73,55 @@ namespace GalaxyGauntlet.scripts
 
 		#endregion
 
+		#region Button Press Methods
+
+		// TurnTanks
+		public static void BlueButtonPressed(Vector2I sourceCoordinate)
+		{
+			for (int x = 0; x < Map.Dimensions.X; x++)
+			{
+				for (int y = 0; y < Map.Dimensions.Y; y++)
+				{
+					if (Map.Creatures2[x, y] is BlueTankCreature2 tank)
+					{
+						tank.AboutFace();
+					}
+				}
+			}
+		}
+
+
+		// ToggleWalls
+		public static void GreenButtonPressed(Vector2I sourceCoordinate)
+		{
+			for(int x = 0; x < Map.Dimensions.X; x++)
+			{
+				for(int y = 0; y < Map.Dimensions.Y; y++)
+				{
+					if (Map.Tiles2[x, y] is GreenToggleTile2 toggle)
+					{
+						toggle.Toggle();
+					}
+				}
+			}
+		}
+
+
+		// ActivateCloner
+		public static void RedButtonPressed(Vector2I sourceCoordinate)
+		{
+
+		}
+
+
+		// SpringTrap
+		public static void BrownButtonPressed(Vector2I sourceCoordinate)
+		{
+
+		}
+
+		#endregion
+
 		#region Global Methods
 
 		public static void LoadCurrentLevel()

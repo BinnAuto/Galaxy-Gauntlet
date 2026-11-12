@@ -1,6 +1,6 @@
 public partial class GreenToggleTile2(bool isWall, Vector2I coordinate) : MapTile2(coordinate)
 {
-	public bool IsWall => isWall;
+	public bool IsWall { get; set; } = isWall;
 
 	public override int EntityID => IsWall
 		? GGConstants.ByteCodes.Entities.GreenToggleWall
@@ -37,5 +37,11 @@ public partial class GreenToggleTile2(bool isWall, Vector2I coordinate) : MapTil
 	{
 		base._Process(delta);
 		Wall.Visible = IsWall;
+	}
+
+
+	public void Toggle()
+	{
+		IsWall = !IsWall;
 	}
 }

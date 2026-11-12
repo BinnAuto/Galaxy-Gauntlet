@@ -50,7 +50,7 @@ public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
 		int gameTick = GameData.Level.CurrentTick;
 		if((gameTick & 3) == 0)
 		{
-			State &= ~(CreatureStateFlags.HasMoved);
+			CreatureState &= ~(CreatureStateFlags.HasMoved);
 		}
 		if(HasState(CreatureStateFlags.HasMoved))
 		{

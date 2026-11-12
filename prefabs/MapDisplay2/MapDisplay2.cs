@@ -42,6 +42,11 @@ public partial class MapDisplay2 : Node2D
 				{
 					continue;
 				}
+				if(creature.HasState(CreatureStateFlags.Cloning))
+				{
+					GD.Print($"Creature {creature.MapObjectName} at {creature.Coordinate} is busy cloning");
+					continue;
+				}
 				creature.ChooseMove();
 				if(creature.TDir == Vector2I.Zero)
 				{
@@ -103,7 +108,7 @@ public partial class MapDisplay2 : Node2D
 					{
 						return;
 					}
-					creature.State |= CreatureStateFlags.HasMoved;
+					creature.CreatureState |= CreatureStateFlags.HasMoved;
 				}
 			}
 		}
@@ -142,7 +147,7 @@ public partial class MapDisplay2 : Node2D
 
 				if(creature.HasState(CreatureStateFlags.Turning))
 				{
-					creature.State &= ~(CreatureStateFlags.Turning | CreatureStateFlags.HasMoved);
+					creature.CreatureState &= ~(CreatureStateFlags.Turning | CreatureStateFlags.HasMoved);
 					creature.UpdateCreature();
 				}
 			}
@@ -206,10 +211,10 @@ public partial class MapDisplay2 : Node2D
 	}
 
 
-	private void CreateClones()
-	{
+	private static void CreateClones()
+    {
 		// TODO
-	}
+    }
 
 
 	private void FinalHousekeeping()

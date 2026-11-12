@@ -252,16 +252,17 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void PopulateFromFileBytes2()
+        /// <summary>
+        /// Populate entity lists based off of unpacked C2M file data
+        /// </summary>
+        public void PopulateFromFileBytes2()
 		{
-			GD.Print("1");
 			if(FileBytes.Length == 0)
 			{
 				FileLogger.QuietLogMessage("No map data to process");
 				return;
 			}
 
-            GD.Print("2");
             int x = 0;
 			int y = 0;
 			for(int i = 0; i < FileBytes.Length; i++)
@@ -415,10 +416,16 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void AddCreatureToProcess(MapCreature2 creature)
+		{
+			CreaturesToProcess.Add(creature);
+		}
+
+
 		public List<MapCreature2> GetCreaturesToProcess()
 		{
 			CreaturesToProcess = CreaturesToProcess.Where(e => false == e.IsDead).ToList();
-			return CreaturesToProcess;
+			return [..CreaturesToProcess];
 		}
 
 
@@ -665,6 +672,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			return Creatures2[coordinate.X, coordinate.Y];
 		}
+
 
 		public void RemoveCreature(Vector2I coordinate)
 		{
