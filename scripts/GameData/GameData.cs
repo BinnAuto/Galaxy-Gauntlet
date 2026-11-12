@@ -110,7 +110,37 @@ namespace GalaxyGauntlet.scripts
 		// ActivateCloner
 		public static void RedButtonPressed(Vector2I sourceCoordinate)
 		{
+			int x = sourceCoordinate.X;
+			int y = sourceCoordinate.Y;
+			while(true)
+			{
+				Vector2I mapCoordinate = new(x, y);
+				var mapTile = Map.GetTile2(mapCoordinate);
+				if(mapTile is CloneMachineTile2)
+				{
+					GD.Print($"Cloning machine found at {mapCoordinate}");
+					// TODO: Clone
+					return;
+				}
 
+				// Move to next coordinate
+				x++;
+				if (x >= Map.Dimensions.X)
+				{
+					x = 0;
+					y++;
+				}
+				if (y >= Map.Dimensions.Y)
+				{
+					x = 0;
+					y = 0;
+				}
+				if(sourceCoordinate == new Vector2I(x, y))
+				{
+					FileLogger.QuietLogMessage($"Fiddlesticks! This level has red buttons but no cloning machines!");
+					return;
+				}
+			}
 		}
 
 
