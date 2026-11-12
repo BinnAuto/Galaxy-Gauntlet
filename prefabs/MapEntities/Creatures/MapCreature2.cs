@@ -199,14 +199,14 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					case GGConstants.ByteCodes.Entities.Teeth:
 						// Have Teeth follow the player from inside the trap (spooky!)
 						var chipPosition = GameData.Level.PlayerCoordinate;
-						var delta = Coordinate - chipPosition;
+						var delta = chipPosition - Coordinate;
 						Vector2I choiceY = (delta.Y < 0) ? new(0, -1)
 							: (delta.Y > 0) ? new(0, 1) : Vector2I.Zero;
 						Vector2I choiceX = (delta.X < 0) ? new(-1, 0)
 							: (delta.X > 0) ? new(1, 0) : Vector2I.Zero;
-						Vector2I orientationVector = (delta.Y > delta.X)
-							? choiceY
-							: choiceX;
+						Vector2I orientationVector = (delta.X > delta.Y)
+							? choiceX
+							: choiceY;
 						SetOrientation(orientationVector);
 						return;
 

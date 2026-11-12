@@ -1,3 +1,5 @@
+using Godot;
+
 namespace GalaxyGauntlet.Common
 {
     public static class PACKDecoder
@@ -31,12 +33,34 @@ namespace GalaxyGauntlet.Common
                 int mapByte = compressedData[pointerIndex];
                 if(mapByte < 0x80)
                 {
-                    // Data block
-                    int readNextBytes = compressedData[pointerIndex]; // Same as mapByte
-                    for(int i = 0; i < readNextBytes; i++)
+                    int modifierLength = mapByte switch
                     {
+                        0x76 => 1,
+                        0x77 => 2,
+                        0x78 => 4,
+                        _ => 0
+                    };
+                    if(modifierLength > 0)
+                    {
+                        // Add modifier and associated data
+                        resultList.Add((byte)mapByte);
+                        for(int i = 0; i < modifierLength; i++)
+                        {
+                            pointerIndex++;
+                            resultList.Add(compressedData[pointerIndex]);
+                        }
                         pointerIndex++;
                         resultList.Add(compressedData[pointerIndex]);
+                    }
+                    else
+                    {
+                        // Standard data block
+                        int readNextBytes = compressedData[pointerIndex]; // Same as mapByte
+                        for(int i = 0; i < readNextBytes; i++)
+                        {
+                            pointerIndex++;
+                            resultList.Add(compressedData[pointerIndex]);
+                        }
                     }
                 }
                 else

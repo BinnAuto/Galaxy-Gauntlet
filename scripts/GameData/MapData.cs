@@ -101,11 +101,14 @@ namespace GalaxyGauntlet.scripts
         }
 
 
-		/// <summary>
-		/// Populate entity lists based off of unpacked C2M file data
-		/// </summary>
-		public void PopulateFromFileBytes()
+        #region Map Load Methods
+
+        /// <summary>
+        /// Populate entity lists based off of unpacked C2M file data
+        /// </summary>
+        public void PopulateFromFileBytes()
 		{
+			return;
 			if (FileBytes.Length == 0)
 			{
 				FileLogger.QuietLogMessage("No map data to process.");
@@ -251,18 +254,20 @@ namespace GalaxyGauntlet.scripts
 
 		public void PopulateFromFileBytes2()
 		{
+			GD.Print("1");
 			if(FileBytes.Length == 0)
 			{
 				FileLogger.QuietLogMessage("No map data to process");
 				return;
 			}
 
-			int x = 0;
+            GD.Print("2");
+            int x = 0;
 			int y = 0;
 			for(int i = 0; i < FileBytes.Length; i++)
 			{
 				Vector2I mapCoordinate = new(x, y);
-				var mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+				var mapObject = GetMapObject(ref i, mapCoordinate);
 				AddMapObject(mapObject);
 				if(mapObject is MapItem2 mapItem)
 				{
@@ -270,7 +275,7 @@ namespace GalaxyGauntlet.scripts
 					if(mapItem.RequiresLowerLayerTile)
                     {
                         i++;
-                        mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+						mapObject = GetMapObject(ref i, mapCoordinate);
                     }
                     else
                     {
@@ -290,7 +295,7 @@ namespace GalaxyGauntlet.scripts
 					if(thinWallCanopy.RequiresLowerLayerTile)
 					{
 						i++;
-						mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+						mapObject = GetMapObject(ref i, mapCoordinate);
 						AddMapObject(mapObject);
 					}
 				}
@@ -317,8 +322,8 @@ namespace GalaxyGauntlet.scripts
 					if(creature.RequiresLowerLayerTile)
 					{
 						i++;
-						mapObject = MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
-					}
+						mapObject = GetMapObject(ref i, mapCoordinate);
+                    }
 					else
 					{
 						// Shouldn't be reached, but assume creature stands on floor tile.
@@ -326,9 +331,15 @@ namespace GalaxyGauntlet.scripts
 					}
 					AddMapObject(mapObject);
 				}
-				if(mapObject is MapTile2)
+				if(mapObject is MapTile2 mapTile)
 				{
-					Tiles2[x, y] = (MapTile2)MapObject2.GetMapObject(FileBytes[i], mapCoordinate);
+					Tiles2[x, y] = mapTile;
+					if(mapObject is CloneMachineTile2 cloneTile
+						&& Creatures2[x, y] is not null
+						&& cloneTile.CreatureOrientation.HasValue)
+					{
+						Creatures2[x, y].Orientation = cloneTile.CreatureOrientation.Value;
+					}
 				}
 
 				#region Iterate Coordinate
@@ -348,6 +359,46 @@ namespace GalaxyGauntlet.scripts
 			}
 		}
 
+
+		private MapObject2 GetMapObject(ref int fileByteIndex, Vector2I mapCoordinate)
+		{
+			var modifierValue = GetModifierValue(ref fileByteIndex);
+			var result = MapObject2.GetMapObject(FileBytes[fileByteIndex], mapCoordinate);
+			if(result.AcceptsModifier)
+			{
+				result.AcceptModifier(modifierValue);
+			}
+			return result;
+		}
+
+
+		private byte[] GetModifierValue(ref int index)
+		{
+			// Get modifier size
+			int modifierSize = FileBytes[index] switch
+			{
+				0x76 => 1,
+				0x77 => 2,
+				0x78 => 4,
+				_ => 0
+			};
+			if(modifierSize == 0)
+			{
+				return [];
+			}
+
+			// Build modifier values
+			byte[] result = new byte[modifierSize];
+			for (int i = 0; i < modifierSize; i++)
+			{
+				index++;
+				result[i] = FileBytes[index];
+			}
+			index++;
+			return result;
+		}
+
+		#endregion
 
 		public bool IsWithinDimensions(Vector2I coordinate)
 		{

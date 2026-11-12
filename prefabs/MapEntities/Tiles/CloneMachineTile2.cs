@@ -8,7 +8,7 @@ public partial class CloneMachineTile2(Vector2I coordinate) : MapTile2(coordinat
 
 	public override int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.CloneMachine;
 
-    public EntityOrientation CreatureOrientation { get; private set; } = EntityOrientation.South;
+    public EntityOrientation? CreatureOrientation { get; private set; } = null;
 
 
     public override void AcceptModifier(byte[] modifierValues)

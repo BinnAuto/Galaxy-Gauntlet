@@ -12,7 +12,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 
 	public virtual bool RequiresLowerLayerTile => false;
 
-	public virtual bool RequiresModifier => false;
+	public virtual bool AcceptsModifier => false;
 
 	public virtual int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.DebugSprite;
 
