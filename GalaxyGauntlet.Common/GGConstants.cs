@@ -441,8 +441,8 @@ namespace GalaxyGauntlet.Common
             public const int SuctionBoots = 99;
             public const int BlueButton = 104;
             public const int GreenButton = 105;
-            public const int RedButton = 105;
-            public const int BrownButton = 105;
+            public const int RedButton = 106;
+            public const int BrownButton = 107;
             public const int Bug_N = 112;
             public const int Bug_E = 116;
             public const int Bug_S = 120;
