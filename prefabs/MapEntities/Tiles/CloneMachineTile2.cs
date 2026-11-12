@@ -2,6 +2,8 @@ using GalaxyGauntlet.scripts;
 
 public partial class CloneMachineTile2(Vector2I coordinate) : MapTile2(coordinate)
 {
+    public override bool AcceptsModifier => true;
+
 	public override string MapObjectName => "Clone Machine";
 
 	public override int EntityID => GGConstants.ByteCodes.Entities.CloneMachine;
@@ -13,6 +15,11 @@ public partial class CloneMachineTile2(Vector2I coordinate) : MapTile2(coordinat
 
     public override void AcceptModifier(byte[] modifierValues)
     {
+        if(modifierValues.Length == 0)
+        {
+            return;
+        }
+
         CreatureOrientation = modifierValues[0] switch
         {
             0x01 => EntityOrientation.North,
