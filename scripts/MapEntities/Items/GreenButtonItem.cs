@@ -11,11 +11,5 @@ namespace GalaxyGauntlet.scripts.MapEntities
         public override string Name => "Green Button";
 
         public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.GreenButton;
-
-
-        public override void OnPressed()
-        {
-            GameData.Map.FlipGreenToggles();
-        }
     }
 }

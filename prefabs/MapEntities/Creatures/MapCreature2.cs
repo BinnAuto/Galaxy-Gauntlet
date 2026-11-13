@@ -59,6 +59,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 {
 	public int CreatureState = 0;
 
+	public int CreatureID = GameData.Map.GetNextCreatureID();
+
 	public override bool RequiresDirectionByte => true;
 
 	public override bool RequiresLowerLayerTile => true;

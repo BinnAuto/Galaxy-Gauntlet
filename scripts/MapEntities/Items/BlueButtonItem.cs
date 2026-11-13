@@ -11,11 +11,5 @@ namespace GalaxyGauntlet.scripts.MapEntities
         public override string Name => "Blue Button";
 
         public override Vector2I TextureCoordinate => GGConstants.SpriteCoordinates.BlueButton;
-
-
-        public override void OnPressed()
-        {
-            GameData.Map.FlipBlueTanks();
-        }
     }
 }

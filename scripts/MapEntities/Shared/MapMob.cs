@@ -4,7 +4,7 @@ namespace GalaxyGauntlet.scripts.MapEntities.Shared
 {
 	public class MapMob(Vector2I coordinate) : MapEntity(coordinate)
 	{
-		public int MobID = GameData.Map.GetNextMobID();
+		public int MobID = GameData.Map.GetNextCreatureID();
 
 		public override bool NeedsOrientation => true;
 

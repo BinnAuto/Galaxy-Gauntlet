@@ -1,5 +1,4 @@
 using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Mobs;
 using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System;
 using System.Collections.Generic;
@@ -25,7 +24,6 @@ namespace GalaxyGauntlet.scripts
 		#region Map Layout Array
 
 		// Legacy
-		public MapEntity[,] Scenery = new MapEntity[0, 0];
 		public MapMob[,] Mobs = new MapMob[0, 0];
 		public MapMob[,] Players = new MapMob[0, 0];
 		public MapItem[,] Items = new MapItem[0, 0];
@@ -88,7 +86,6 @@ namespace GalaxyGauntlet.scripts
 			MobSlipList = [];
 			ButtonsToProcess = [];
 			FileBytes = [];
-			Scenery = new MapEntity[0, 0];
 			Mobs = new MapMob[0, 0];
 			Players = new MapMob[0, 0];
 			Items = new MapItem[0, 0];
@@ -270,7 +267,6 @@ namespace GalaxyGauntlet.scripts
 		public void SetDimensions(int x, int y)
 		{
 			Dimensions = new(x, y);
-			Scenery = new MapEntity[x, y];
 			Mobs = new MapMob[x, y];
 			Players = new MapMob[x, y];
 			Items = new MapItem[x, y];
@@ -284,7 +280,6 @@ namespace GalaxyGauntlet.scripts
 			{
 				for (int j = 0; j < Dimensions.Y; j++)
 				{
-					Scenery[i, j] = null;
 					Mobs[i, j] = null;
 					Players[i, j] = null;
 					Items[i, j] = null;
@@ -298,7 +293,7 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public int GetNextMobID()
+		public int GetNextCreatureID()
 		{
 			NextMobID++;
 			return NextMobID;
@@ -381,48 +376,7 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void FlipGreenToggles()
-		{
-			foreach(var tile in Tiles)
-			{
-				if(tile is GreenToggleTile toggleTile)
-				{
-					toggleTile.IsWall = !toggleTile.IsWall;
-				}
-			}
-			Rerender = true;
-		}
-
-
-		public void FlipBlueTanks()
-		{
-			foreach(var mob in Mobs)
-			{
-				if(mob is BlueTankMonster blueTank)
-				{
-					blueTank.AboutFace();
-				}
-			}
-		}
-
-
 		#region Map Tile Management
-
-		#region Scenery
-
-		public MapEntity GetSceneryAtCoordinate(Vector2I coordinate)
-		{
-			return Scenery[coordinate.X, coordinate.Y];
-		}
-
-
-		public void RemoveSceneryFromCoordinate(Vector2I coordinate)
-		{
-			Scenery[coordinate.X, coordinate.Y] = null;
-			Rerender = true;
-		}
-
-		#endregion
 
 
 		#region Mobs
