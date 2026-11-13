@@ -142,9 +142,11 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.BrownButton => new BrownButtonTile2(coordinate),
 			GGConstants.ByteCodes.Entities.TrapActive => new TrapTile2(coordinate),
 			GGConstants.ByteCodes.Entities.ToolThief => new ToolThiefTile2(coordinate),
+			GGConstants.ByteCodes.Entities.BlueWall => new BlueWallTile2(true, coordinate),
+            GGConstants.ByteCodes.Entities.FakeBlueWall => new BlueWallTile2(true, coordinate),
 
-			/* Thin Wall or Canopy */
-			GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),
+            /* Thin Wall or Canopy */
+            GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),
 			GGConstants.ByteCodes.Entities.ThinWall_S => new ThinWallOrCanopy2(coordinate, 4),
 			GGConstants.ByteCodes.Entities.ThinWall_SE => new ThinWallOrCanopy2(coordinate, 6),
 			GGConstants.ByteCodes.Entities.ThinWallOrCanopy => new ThinWallOrCanopy2(coordinate),

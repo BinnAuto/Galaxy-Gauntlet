@@ -561,39 +561,39 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					}
 					break;
 
-                case GGConstants.ByteCodes.Entities.GreenButton:
-                    if (HasState(CreatureStateFlags.DeferPush))
-                    {
-                        button.FloorState |= FloorStateFlags.ButtonDown;
-                    }
+				case GGConstants.ByteCodes.Entities.GreenButton:
+					if (HasState(CreatureStateFlags.DeferPush))
+					{
+						button.FloorState |= FloorStateFlags.ButtonDown;
+					}
 					else
 					{
 						GameData.GreenButtonPressed(destinationCoordinate);
 					}
-                    break;
+					break;
 
-                case GGConstants.ByteCodes.Entities.RedButton:
-                    if (HasState(CreatureStateFlags.DeferPush))
-                    {
-                        button.FloorState |= FloorStateFlags.ButtonDown;
-                    }
+				case GGConstants.ByteCodes.Entities.RedButton:
+					if (HasState(CreatureStateFlags.DeferPush))
+					{
+						button.FloorState |= FloorStateFlags.ButtonDown;
+					}
 					else
 					{
 						GameData.RedButtonPressed(destinationCoordinate);
 					}
-                    break;
+					break;
 
-                case GGConstants.ByteCodes.Entities.BrownButton:
-                    if (HasState(CreatureStateFlags.DeferPush))
-                    {
-                        button.FloorState |= FloorStateFlags.ButtonDown;
-                    }
+				case GGConstants.ByteCodes.Entities.BrownButton:
+					if (HasState(CreatureStateFlags.DeferPush))
+					{
+						button.FloorState |= FloorStateFlags.ButtonDown;
+					}
 					else
 					{
 						GameData.BrownButtonPressed(destinationCoordinate);
 					}
-                    break;
-            }
+					break;
+			}
 		}
 	}
 
