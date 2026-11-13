@@ -78,7 +78,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 	}
 
 
-	private void SetDisplayPosition()
+	public void SetDisplayPosition()
 	{
 		var mapDimensions = GameData.Map.Dimensions;
 		var playerCoordinate = GameData.Level.PlayerCoordinate;

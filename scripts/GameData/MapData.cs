@@ -184,10 +184,10 @@ namespace GalaxyGauntlet.scripts
 				{
 					Tiles2[x, y] = mapTile;
 					if(mapObject is CloneMachineTile2 cloneTile
-						&& Creatures2[x, y] is not null
-						&& cloneTile.CreatureOrientation.HasValue)
+						&& Creatures2[x, y] is not null)
 					{
-						Creatures2[x, y].Orientation = cloneTile.CreatureOrientation.Value;
+						Creatures2[x, y].Orientation = cloneTile.CreatureOrientation ?? Creatures2[x, y].Orientation;
+						RemoveCreatureFromProcessList(Creatures2[x, y].CreatureID);
 					}
 				}
 
@@ -485,6 +485,13 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public void RemoveCreatureFromProcessList(int creatureID)
+		{
+			GD.Print($"Removing creature {creatureID}");
+			CreaturesToProcess = CreaturesToProcess.Where(e => e.CreatureID != creatureID).ToList();
+		}
+
+
 		public void CloneCreature(Vector2I sourceCoordinate)
 		{
 			var mapTile = GetTile2(sourceCoordinate);
@@ -501,7 +508,21 @@ namespace GalaxyGauntlet.scripts
 				return;
 			}
 
-			// TODO: Clone creature
+			var clonedCreature = (MapCreature2)MapObject2.GetMapObject(cloneMachine.CreatureToClone.EntityID, sourceCoordinate);
+			clonedCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone.Orientation;
+			GD.Print($"Cloning {clonedCreature.MapObjectName}...");
+			if(clonedCreature is DirtBlockCreature2 dirtBlock)
+			{
+				// Immediately produce block
+				Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = dirtBlock;
+				AddMapObject(dirtBlock);
+                dirtBlock.AdvanceCreature(dirtBlock.Forward);
+				dirtBlock.SetDisplayPosition();
+			}
+			else
+			{
+
+			}
 		}
 
 		#endregion

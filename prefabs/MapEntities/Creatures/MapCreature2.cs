@@ -632,11 +632,13 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 
 		var currentTile = GameData.Map.GetTile2(Coordinate);
+		/*
 		if(currentTile is CloneMachineTile2
 			&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
 		{
 			return false;
 		}
+		 * */
 
 		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
 		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);

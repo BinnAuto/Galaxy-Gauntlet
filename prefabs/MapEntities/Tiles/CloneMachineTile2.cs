@@ -12,6 +12,21 @@ public partial class CloneMachineTile2(Vector2I coordinate) : MapTile2(coordinat
 
     public EntityOrientation? CreatureOrientation { get; private set; } = null;
 
+    public MapCreature2 CreatureToClone = null;
+
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+        if(CreatureToClone is not null)
+        {
+            GameData.Map.Creatures2[Coordinate.X, Coordinate.Y] ??= CreatureToClone;
+            return;
+        }
+
+        CreatureToClone = GameData.Map.GetCreature(Coordinate);
+    }
+
 
     public override void AcceptModifier(byte[] modifierValues)
     {
