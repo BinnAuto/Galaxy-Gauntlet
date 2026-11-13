@@ -164,7 +164,7 @@ namespace GalaxyGauntlet.scripts
 					}
 					else
 					{
-						CreaturesToProcess.Add(creature);
+						AddCreatureToProcess(creature);
 					}
 					Creatures2[x, y] = creature;
 
@@ -488,6 +488,10 @@ namespace GalaxyGauntlet.scripts
 		public void RemoveCreatureFromProcessList(int creatureID)
 		{
 			GD.Print($"Removing creature {creatureID}");
+			if(CreaturesToProcess.Any(e => e.CreatureID == creatureID))
+			{
+				GD.Print("Creature found");
+			}
 			CreaturesToProcess = CreaturesToProcess.Where(e => e.CreatureID != creatureID).ToList();
 		}
 
@@ -510,7 +514,6 @@ namespace GalaxyGauntlet.scripts
 
 			var clonedCreature = (MapCreature2)MapObject2.GetMapObject(cloneMachine.CreatureToClone.EntityID, sourceCoordinate);
 			clonedCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone.Orientation;
-			GD.Print($"Cloning {clonedCreature.MapObjectName}...");
 			if(clonedCreature is DirtBlockCreature2 dirtBlock)
 			{
 				// Immediately produce block
@@ -521,8 +524,19 @@ namespace GalaxyGauntlet.scripts
 			}
 			else
 			{
+                if (false == clonedCreature.CanMakeMove(clonedCreature.Forward, CanMakeMoveFlags.CloneCantBlock))
+                {
+					GD.Print("Can't make move");
+                    return;
+                }
 
-			}
+                clonedCreature.CreatureState |= CreatureStateFlags.Cloning;
+                AddMapObject(clonedCreature);
+                Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = clonedCreature;
+				clonedCreature.Coordinate = sourceCoordinate;
+                AddCreatureToProcess(clonedCreature);
+                clonedCreature.SetDisplayPosition();
+            }
 		}
 
 		#endregion

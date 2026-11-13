@@ -780,7 +780,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 		else
 		{
-			if(destinationCreature is not null)
+			if(destinationCreature is not null
+				&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
 			{
 				return (destinationCreature is Player2);
 			}

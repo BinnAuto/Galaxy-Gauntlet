@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts;
+using System.Reflection.Metadata.Ecma335;
 
 public partial class MapDisplay2 : Node2D
 {
@@ -44,7 +45,6 @@ public partial class MapDisplay2 : Node2D
 				}
 				if(creature.HasState(CreatureStateFlags.Cloning))
 				{
-					GD.Print("Cloned creature");
 					creature.TDir = creature.Forward;
 				}
 				else
@@ -216,7 +216,20 @@ public partial class MapDisplay2 : Node2D
 
 	private static void CreateClones()
     {
-		// TODO
+		for(int x = 0; x < GameData.Map.Dimensions.X; x++)
+		{
+			for(int y = 0; y < GameData.Map.Dimensions.Y; y++)
+			{
+				Vector2I mapCoordinate = new(x, y);
+				var creature = GameData.Map.GetCreature(mapCoordinate);
+				if(creature is null)
+				{
+					continue;
+				}
+
+				creature.CreatureState &= ~(CreatureStateFlags.Cloning);
+			}
+		}
     }
 
 
