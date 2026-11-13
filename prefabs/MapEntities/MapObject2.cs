@@ -146,6 +146,9 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
             GGConstants.ByteCodes.Entities.FakeBlueWall => new BlueWallTile2(false, coordinate),
 			GGConstants.ByteCodes.Entities.HiddenWall => new HiddenWallTile2(coordinate),
 			GGConstants.ByteCodes.Entities.InvisibleWall => new InvisibleWallTile2(coordinate),
+			GGConstants.ByteCodes.Entities.BlueTeleporter => new BlueTeleporterTile2(coordinate),
+			GGConstants.ByteCodes.Entities.RedTeleporter => new RedTeleporterTile2(coordinate),
+			GGConstants.ByteCodes.Entities.GreenTeleporter => new GreenTeleporterTile2(coordinate),
 
             /* Thin Wall or Canopy */
             GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),

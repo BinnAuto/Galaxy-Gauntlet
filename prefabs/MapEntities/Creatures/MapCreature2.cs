@@ -541,10 +541,19 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			return;
 		}
 
-		// TODO: Player Teleportation
+		// Blue teleporter
+		if(IsPlayer 
+			&& destinationTile is BlueTeleporterTile2 
+			&& false == destinationTile.HasFloorState(FloorStateFlags.Broken))
+		{
+			Vector2I startingPosition = destinationCoordinate;
+			destinationCoordinate = BlueTeleportCreature(destinationCoordinate);
+			// TODO: Block logic
+		}
 
 		SetCoordinateAndOrientation(destinationCoordinate);
 
+		// Button logic
 		if(destinationTile is ButtonTile2 button)
 		{
 			button.PlaySoundEffect("Button_Pushed");
@@ -914,23 +923,32 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void SetCoordinateAndOrientation(Vector2I newCoordinate)
 	{
-		if (Coordinate == newCoordinate)
+		if(false == SetCoordinate(newCoordinate))
 		{
 			return;
 		}
 
 		var direction = newCoordinate - Coordinate;
+		SetOrientation(direction);
+	}
+
+
+	public bool SetCoordinate(Vector2I newCoordinate)
+	{
+		if(Coordinate == newCoordinate)
+		{
+			return false;
+		}
 
 		// Update creature position
 		GameData.Map.RemoveCreature(Coordinate);
 		Coordinate = newCoordinate;
 		GameData.Map.Creatures2[newCoordinate.X, newCoordinate.Y] = this;
-		if(IsPlayer)
+		if (IsPlayer)
 		{
 			GameData.Level.PlayerCoordinate = newCoordinate;
 		}
-
-		SetOrientation(direction);
+		return true;
 	}
 
 
@@ -952,6 +970,59 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		{
 			Orientation = EntityOrientation.West;
 		}
+	}
+
+
+	private Vector2I BlueTeleportCreature(Vector2I searchStart)
+	{
+		var checkPosition = searchStart;
+		var originalCoordinate = Coordinate.Clone();
+		var originalOrientation = Orientation;
+		while(true)
+		{
+			checkPosition -= new Vector2I(1, 0);
+			if(checkPosition.X < 0)
+			{
+				// Check position has left the minimum X bound.
+				// Wrap to the rightmost cell on the row above.
+				checkPosition.X = GameData.Map.Dimensions.X - 1;
+				checkPosition.Y--;
+				if(checkPosition.Y < 0)
+				{
+					// Check position has left the minimum Y bound.
+					// Reset to the bottom right corner of the map.
+					checkPosition = GameData.Map.Dimensions - Vector2I.One;
+				}
+			}
+			if(checkPosition == searchStart)
+			{
+				GD.Print("Teleport search has wrapped around to start");
+				break;
+			}
+
+			var mapTile = GameData.Map.GetTile2(checkPosition);
+			if(mapTile is not BlueTeleporterTile2)
+			{
+				continue;
+			}
+			GD.Print($"Teleporter found at {checkPosition}");
+			SetCoordinate(checkPosition);
+			int flags = CanMakeMoveFlags.NoLeaveCheck
+				| CanMakeMoveFlags.NoExposeWalls
+				| CanMakeMoveFlags.NoDeferButtons
+				| CanMakeMoveFlags.NoFireCheck
+				| CanMakeMoveFlags.TeleportPush;
+			bool canMakeMove = CanMakeMove(Forward, flags);
+			Orientation = originalOrientation;
+			Coordinate = originalCoordinate;
+			if(canMakeMove)
+			{
+				GD.Print("Move attempt succeeded");
+				break;
+			}
+			GD.Print("Move attempt failed");
+		}
+		return checkPosition;
 	}
 
 	#endregion 
