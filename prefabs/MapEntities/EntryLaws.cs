@@ -51,8 +51,19 @@ namespace GalaxyGauntlet.prefabs.MapEntities
             , { GGConstants.ByteCodes.Entities.GreenTeleporter, new() }
             , { GGConstants.ByteCodes.Entities.YellowTeleporter, new() }
             , { GGConstants.ByteCodes.Entities.Wall, new(0) }
-            , { GGConstants.ByteCodes.Entities.HiddenWall, new(0) }
-            , { GGConstants.ByteCodes.Entities.BlueWall, new(0) }
+            , { GGConstants.ByteCodes.Entities.HiddenWall, new(0)
+                {
+                    // Necessary for wall transformation
+                    Player = BuildEntryLaw("NWSE")
+                }
+            }
+            , { GGConstants.ByteCodes.Entities.InvisibleWall, new(0) }
+            , { GGConstants.ByteCodes.Entities.BlueWall, new(0)
+                {
+                    // Necessary for wall transformation
+                    Player = BuildEntryLaw("NWSE") 
+                }
+            }
             , { GGConstants.ByteCodes.Entities.FakeBlueWall, new(0)
                 {
                     Player = BuildEntryLaw("NWSE")

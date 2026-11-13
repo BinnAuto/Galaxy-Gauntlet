@@ -2,6 +2,7 @@ using GalaxyGauntlet.prefabs.MapEntities;
 using GalaxyGauntlet.scripts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public class CreatureStateFlags
 {
@@ -249,12 +250,12 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 					case GGConstants.ByteCodes.Entities.Walker:
 						moveChoices = [
-							Forward
-							, Left().ToVector()
+							Left().ToVector()
 							, Back().ToVector()
 							, Right().ToVector()
 						];
 						Random.Shared.Shuffle(moveChoices);
+						moveChoices = moveChoices.Prepend(Forward).ToArray();
 						break;
 
 					case GGConstants.ByteCodes.Entities.Blob:
@@ -687,7 +688,25 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				keyDoor.PlaySoundEffect("Door_Open");
 			}
 
-			// TODO: Hidden/Blue wall check
+			if(destinationTile is BlueWallTile2 blueWall)
+			{
+				if(blueWall.IsReal)
+				{
+					GameData.Map.SetTile(new WallTile2(destinationCoordinate));
+					return false;
+				}
+			}
+
+			if(destinationTile is HiddenWallTile2)
+			{
+				GameData.Map.SetTile(new WallTile2(destinationCoordinate));
+				return false;
+			}
+
+			if(destinationTile is InvisibleWallTile2)
+			{
+				return false;
+			}
 
 			if(destinationCreature is DirtBlockCreature2 dirtBlock)
 			{

@@ -143,7 +143,9 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.TrapActive => new TrapTile2(coordinate),
 			GGConstants.ByteCodes.Entities.ToolThief => new ToolThiefTile2(coordinate),
 			GGConstants.ByteCodes.Entities.BlueWall => new BlueWallTile2(true, coordinate),
-            GGConstants.ByteCodes.Entities.FakeBlueWall => new BlueWallTile2(true, coordinate),
+            GGConstants.ByteCodes.Entities.FakeBlueWall => new BlueWallTile2(false, coordinate),
+			GGConstants.ByteCodes.Entities.HiddenWall => new HiddenWallTile2(coordinate),
+			GGConstants.ByteCodes.Entities.InvisibleWall => new InvisibleWallTile2(coordinate),
 
             /* Thin Wall or Canopy */
             GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),
@@ -152,7 +154,8 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.ThinWallOrCanopy => new ThinWallOrCanopy2(coordinate),
 
 			/* Items */
-			GGConstants.ByteCodes.Entities.Chip => new ChipItem2(coordinate),
+			GGConstants.ByteCodes.Entities.Chip 
+				or GGConstants.ByteCodes.Entities.ExtraChip => new ChipItem2(coordinate),
 			GGConstants.ByteCodes.Entities.RedKey => new RedKeyItem2(coordinate),
 			GGConstants.ByteCodes.Entities.BlueKey => new BlueKeyItem2(coordinate),
 			GGConstants.ByteCodes.Entities.YellowKey => new YellowKeyItem2(coordinate),
