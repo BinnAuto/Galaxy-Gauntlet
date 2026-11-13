@@ -149,6 +149,9 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.BlueTeleporter => new BlueTeleporterTile2(coordinate),
 			GGConstants.ByteCodes.Entities.RedTeleporter => new RedTeleporterTile2(coordinate),
 			GGConstants.ByteCodes.Entities.GreenTeleporter => new GreenTeleporterTile2(coordinate),
+			GGConstants.ByteCodes.Entities.Gravel => new GravelTile2(coordinate),
+			GGConstants.ByteCodes.Entities.Dirt => new DirtTile2(coordinate),
+			GGConstants.ByteCodes.Entities.RecessedWall => new RecessedWallTile2(coordinate),
 
             /* Thin Wall or Canopy */
             GGConstants.ByteCodes.Entities.ThinWall_E => new ThinWallOrCanopy2(coordinate, 2),
@@ -179,6 +182,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.Fireball => new FireballCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Teeth => new TeethCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Walker => new WalkerCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Paramecium => new ParameciumCreature2(coordinate),
 
 			/* Other */
 			GGConstants.ByteCodes.Entities.Modifier_8Bit
