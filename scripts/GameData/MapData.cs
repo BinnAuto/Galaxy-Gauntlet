@@ -381,54 +381,6 @@ namespace GalaxyGauntlet.scripts
 
 		#region Mobs
 
-		/// <summary>
-		/// Adds a mob at a random valid location in the map
-		/// </summary>
-		public void AddMobAtRandom(MapMob mob)
-		{
-			int attempts = 0;
-			RandomNumberGenerator rng = new();
-			while(attempts < 1000)
-			{
-				attempts++;
-				Vector2I mapCoordinate = new(
-					rng.RandiRange(0, Dimensions.X - 1),
-					rng.RandiRange(0, Dimensions.Y - 1)
-				);
-				var mapTile = GetTile(mapCoordinate);
-				if(mapTile is not FloorTile
-					&& mapTile is not MapForceFloorTile)
-				{
-					continue;
-				}
-
-				var mapItem = GetItem(mapCoordinate);
-				if(mapItem is not null
-					&& mapItem is not MapButtonItem
-					&& mapItem is not TrapItem)
-				{
-					continue;
-				}
-
-				var mapMob = GetMob(mapCoordinate);
-				if(mapMob is not null)
-				{
-					continue;
-				}
-
-				var mapPlayer = GetPlayer(mapCoordinate);
-				if(mapPlayer is not null)
-				{
-					continue;
-				}
-
-				mob.Coordinate = mapCoordinate;
-				AddMob(mob);
-				break;
-			}
-		}
-
-
 		public void AddMob(MapMob mob)
 		{
 			var coordinate = mob.Coordinate;
@@ -537,14 +489,56 @@ namespace GalaxyGauntlet.scripts
                 AddCreatureToProcess(clonedCreature);
                 clonedCreature.SetDisplayPosition();
             }
-		}
-
-		#endregion
+        }
 
 
-		#region Thin Walls
+        public void AddCreatureAtRandom(MapCreature2 creature)
+        {
+            int attempts = 0;
+            RandomNumberGenerator rng = new();
+            while (attempts < GameData.Map.Dimensions.X * GameData.Map.Dimensions.Y)
+            {
+                attempts++;
+                Vector2I mapCoordinate = new(
+                    rng.RandiRange(0, Dimensions.X - 1),
+                    rng.RandiRange(0, Dimensions.Y - 1)
+                );
+                var mapTile = GetTile2(mapCoordinate);
+                if (mapTile is not FloorTile2
+                    && mapTile is not ForceFloorTile2)
+                {
+                    // Creatures can only be added on floors or force floors
+                    continue;
+                }
 
-		public ThinWallOrCanopy2 GetThinWall(Vector2I coordinate)
+                var mapItem = GetItem2(mapCoordinate);
+                if (mapItem is not null)
+                {
+					// Creatures cannot be added on top of an item 
+                    continue;
+                }
+
+                var mapCreature = GetCreature(mapCoordinate);
+                if (mapCreature is not null)
+                {
+					// Creatures cannot be added on top of another creature
+                    continue;
+                }
+
+                creature.Coordinate = mapCoordinate;
+                AddCreatureToProcess(creature);
+                Creatures2[mapCoordinate.X, mapCoordinate.Y] = creature;
+                AddMapObject(creature);
+				break;
+            }
+        }
+
+        #endregion
+
+
+        #region Thin Walls
+
+        public ThinWallOrCanopy2 GetThinWall(Vector2I coordinate)
 		{
 			return ThinWalls2[coordinate.X, coordinate.Y];
 		}

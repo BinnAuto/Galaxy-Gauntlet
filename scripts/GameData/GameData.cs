@@ -286,15 +286,15 @@ namespace GalaxyGauntlet.scripts
 					break;
 
 				case GGConstants.Archipelago.TrapNames.WalkerTrap:
-					Map.AddMobAtRandom(new WalkerMonster(Vector2I.Zero));
+					Map.AddCreatureAtRandom(new WalkerCreature2(Vector2I.Zero));
 					break;
 
 				case GGConstants.Archipelago.TrapNames.BlobTrap:
-					Map.AddMobAtRandom(new BlobMonster(Vector2I.Zero));
+					Map.AddCreatureAtRandom(new BlobCreature2(Vector2I.Zero));
 					break;
 
 				case GGConstants.Archipelago.TrapNames.TeethTrap:
-					Map.AddMobAtRandom(new TeethMonster(Vector2I.Zero));
+					Map.AddCreatureAtRandom(new TeethCreature2(Vector2I.Zero));
 					break;
 
 				case GGConstants.Archipelago.ItemNames.BigMap:
