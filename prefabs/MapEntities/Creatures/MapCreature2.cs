@@ -381,7 +381,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	public bool StartMovement(Vector2I direction)
 	{
 		var currentTile = GameData.Map.GetTile2(Coordinate);
-		if(false == CanMakeMove(direction, 0))
+        if (false == CanMakeMove(direction, 0))
 		{
 			if(IsPlayer
 				|| (currentTile is not TrapTile2
@@ -400,7 +400,11 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 		if(currentTile is TrapTile2)
 		{
-			// TODO
+			// Assume creature has been released
+			if(HasState(CreatureStateFlags.Mutant))
+			{
+				currentTile.FloorState &= ~(FloorStateFlags.HasMutant);
+			}
 		}
 		CreatureState &= ~(CreatureStateFlags.Released);
 		Dir = direction;
@@ -518,7 +522,13 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				destinationCreature.Kill();
 				Kill();
 			}
-			// TODO: Teleporter
+			if(destinationTile is BlueTeleporterTile2)
+			{
+				if((destinationTile.FloorState & FloorStateFlags.Broken) == 0)
+				{
+					destinationCoordinate = BlueTeleportCreature(destinationCoordinate);
+				}
+			}
 		}
 		else
 		{
@@ -540,7 +550,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
                     destinationCoordinate = BlueTeleportCreature(destinationCoordinate);
                 }
             }
-		}
+        }
 
 		if(IsDead)
 		{
