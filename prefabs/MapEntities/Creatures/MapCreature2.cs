@@ -522,13 +522,24 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 		else
 		{
-			// TODO: Death by water
-
-			// TODO: Death by fire
-
-			// TODO: Death by bomb
-
-			// TODO: Teleport
+			if((destinationTile is WaterTile2 && EntityID != GGConstants.ByteCodes.Entities.Glider)
+				|| (destinationTile is FireTile2 && EntityID != GGConstants.ByteCodes.Entities.Fireball))
+			{
+				Kill();
+            }
+            if (destinationCreature is RedBombCreature2)
+            {
+                destinationCreature.PlaySoundEffect("Explosion");
+                destinationCreature.Kill();
+                Kill();
+            }
+            if (destinationTile is BlueTeleporterTile2)
+            {
+                if ((destinationTile.FloorState & FloorStateFlags.Broken) == 0)
+                {
+                    destinationCoordinate = BlueTeleportCreature(destinationCoordinate);
+                }
+            }
 		}
 
 		if(IsDead)
