@@ -39,7 +39,7 @@ public partial class IceTile2(int entityId, Vector2I coordinate) : MapTile2(coor
 				{
 					return EntityOrientation.West.ToVector();
                 }
-                if (inputDirection == EntityOrientation.West.ToVector())
+                if (inputDirection == EntityOrientation.East.ToVector())
                 {
                     return EntityOrientation.South.ToVector();
                 }

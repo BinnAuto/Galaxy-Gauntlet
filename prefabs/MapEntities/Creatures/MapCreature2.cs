@@ -521,7 +521,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 			if(destinationCreature is RedBombCreature2)
 			{
-				GD.Print("BOMB!!");
 				destinationCreature.PlaySoundEffect("Explosion");
 				destinationCreature.Kill();
 				Kill();
