@@ -3,6 +3,7 @@ using GalaxyGauntlet.scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 public class CreatureStateFlags
 {
@@ -77,9 +78,17 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public Vector2I TDir { get; set; } = Vector2I.Zero;
 
-	private Vector2I SlipDirection;
+	public Vector2I SlipDirection = Vector2I.Zero;
 
 	public List<MapItem2> Inventory = [];
+
+	public bool IsInSliplist
+	{
+		get
+		{
+			return (CreatureState & (CreatureStateFlags.Slipping | CreatureStateFlags.Sliding)) != 0;
+		}
+	}
 
 	public Vector2I Forward
 	{
@@ -413,8 +422,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 
 	public void EndMovement(Vector2I direction)
-	{
-		var currentCoordinate = Coordinate.Clone();
+    {
+        GD.Print($"Ending movement for {MapObjectName} (ID:{CreatureID}, {Coordinate})");
+        var currentCoordinate = Coordinate.Clone();
 		var destinationCoordinate = Coordinate + direction;
 
 		var currentTile = GameData.Map.GetTile2(currentCoordinate);
@@ -626,6 +636,125 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					break;
 			}
 		}
+
+		// TODO: Squish patch
+
+		if(currentTile is CloneMachineTile2)
+		{
+			currentTile.FloorState &= ~(FloorStateFlags.Cloning);
+		}
+
+		if(destinationTile is TrapTile2 trapTile)
+		{
+			if(false == trapTile.IsActive)
+			{
+				CreatureState |= CreatureStateFlags.Released;
+			}
+		}
+
+		// TODO Set completed status
+		if(IsPlayer)
+		{
+
+		}
+		else
+		{
+
+		}
+
+		bool wasSlipping = HasState(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
+
+		if(destinationTile is BlueTeleporterTile2)
+		{
+			StartFloorMovement(destinationTile, Vector2I.Zero);
+		}
+        else if (destinationTile is IceTile2
+			&& (false == IsPlayer || false == HasItem(new IceSkatesItem2(Vector2I.Zero))))
+		{
+			StartFloorMovement(destinationTile, Vector2I.Zero);
+		}
+		else if(destinationTile is ForceFloorTile2
+            && (false == IsPlayer || false == HasItem(new SuctionBootsItem2(Vector2I.Zero))))
+        {
+            StartFloorMovement(destinationTile, Vector2I.Zero);
+        }
+		else if(destinationTile is TrapTile2 && EntityID == GGConstants.ByteCodes.Entities.DirtBlock && wasSlipping)
+		{
+			StartFloorMovement(destinationTile, Vector2I.Zero);
+		}
+		else
+		{
+			CreatureState &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
+		}
+
+		if(false == wasSlipping && (false == IsPlayer || ((CreatureState & (CreatureStateFlags.Slipping | CreatureStateFlags.Sliding)) != 0)))
+		{
+			// Controller direction = get slip direction
+		}
+    }
+
+
+	public void StartFloorMovement(MapTile2 tile, Vector2I direction)
+	{
+		GD.Print($"Starting floor movement for {MapObjectName} (ID:{CreatureID}, {Coordinate})");
+		var initialDirection = direction.Clone();
+		CreatureState &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
+
+		if(tile is IceTile2 iceFloor)
+		{
+			if(direction == Vector2I.Zero)
+			{
+				initialDirection = iceFloor.SetCreatureDirection(Forward);
+			}
+		}
+		else if(tile is ForceFloorTile2 forceFloor)
+		{
+			initialDirection = forceFloor.SetCreatureDirection();
+		}
+		else if(tile is BlueTeleporterTile2)
+		{
+			if(direction == Vector2I.Zero)
+			{
+				initialDirection = Forward;
+			}
+		}
+		else if(tile is TrapTile2 && EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
+		{
+			initialDirection = Forward;
+		}
+		else if(false == IsPlayer)
+		{
+			return;
+		}
+		else
+		{
+			direction = Forward;
+		}
+
+		if(IsPlayer)
+		{
+			if(tile is IceTile2 || (tile is BlueTeleporterTile2 && initialDirection != Vector2I.Zero))
+			{
+				CreatureState |= CreatureStateFlags.Slipping;
+			}
+			else
+			{
+				CreatureState |= CreatureStateFlags.Sliding;
+			}
+			SetOrientation(initialDirection);
+		}
+		else
+		{
+			CreatureState |= CreatureStateFlags.Slipping;
+		}
+		SlipDirection = initialDirection;
+	}
+
+
+	public void EndFloorMovement()
+    {
+        GD.Print($"Ending floor movement for {MapObjectName} (ID:{CreatureID}, {Coordinate})");
+        CreatureState &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
 	}
 
 

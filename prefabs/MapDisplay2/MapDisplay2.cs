@@ -190,27 +190,136 @@ public partial class MapDisplay2 : Node2D
 		{
 			CreatureSlipMovements();
 		}
-		// TODO
+		// TODO: Chip status
 	}
 
 
 	// FloorMovements_Of_Chip
 	private void ChipSlipMovements()
 	{
-		// TODO
+		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
+		foreach(var creature in creaturesToProcess)
+		{
+			if(false == creature.IsInSliplist)
+			{
+				continue;
+			}
+			if(false == creature.IsPlayer)
+			{
+				continue;
+			}
+			Vector2I slipDirection = creature.SlipDirection;
+			if(slipDirection == Vector2I.Zero)
+			{
+				continue;
+            }
+            // lastSlipDirection = slipDirection
+            bool creatureAdvanced = creature.AdvanceCreature(slipDirection);
+			if(creatureAdvanced)
+			{
+				creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
+			}
+			else
+			{
+				var tile = GameData.Map.GetTile2(creature.Coordinate);
+				if(tile is ForceFloorTile2)
+                {
+                    creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
+                }
+				else if(tile is IceTile2 iceTile)
+				{
+					slipDirection = iceTile.SetCreatureDirection(slipDirection);
+					// lastSlipDirection = slipDirection
+					creatureAdvanced = creature.AdvanceCreature(slipDirection);
+					if(creatureAdvanced)
+                    {
+                        creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
+                    }
+				}
+				else if(tile is BlueTeleporterTile2) // or is block
+				{
+					slipDirection *= -1;
+					if(creature.AdvanceCreature(slipDirection))
+                    {
+                        creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
+                    }
+				}
+				if(creature.IsInSliplist)
+				{
+					tile = GameData.Map.GetTile2(creature.Coordinate);
+					creature.EndFloorMovement();
+					creature.StartFloorMovement(tile, Vector2I.Zero);
+				}
+			}
+			if(CheckForEnding())
+			{
+				return;
+			}
+		}
 	}
 
 
 	// FloorMovements_Of_Blocks_And_Monsters
 	private void CreatureSlipMovements()
-	{
-		// TODO
-	}
+    {
+        var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
+		foreach(var creature in creaturesToProcess)
+		{
+			if(creature.IsPlayer)
+			{
+				continue;
+			}
+			if(false == creature.IsInSliplist)
+			{
+				continue;
+			}
+			var slipDirection = creature.SlipDirection.Clone();
+			var originalDirection = creature.SlipDirection.Clone();
+			if(creature.SlipDirection == Vector2I.Zero)
+			{
+				continue;
+			}
+			bool creatureAdvanced = creature.AdvanceCreature(creature.SlipDirection);
+			if(false == creatureAdvanced)
+			{
+				var tile = GameData.Map.GetTile2(creature.Coordinate);
+				if(tile is IceTile2 ice)
+				{
+					slipDirection = ice.SetCreatureDirection(slipDirection);
+					creatureAdvanced = creature.AdvanceCreature(slipDirection);
+				}
+				if (creature.IsInSliplist)
+				{
+					creature.EndFloorMovement();
+					Vector2I moveDirection = creatureAdvanced
+						? Vector2I.Zero
+						: originalDirection;
+					creature.StartFloorMovement(tile, moveDirection);
+				}
+			}
+			if(creature.HasState(CreatureStateFlags.Slipping) && creatureAdvanced)
+			{
+				creature.CreatureState |= CreatureStateFlags.Sliding;
+			}
+			if(CheckForEnding())
+			{
+				return;
+			}
+		}
+    }
 
 
 	private void UpdateSlipList()
 	{
-		// TODO
+		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
+		foreach(var creature in creaturesToProcess)
+		{
+			if(false == creature.IsInSliplist)
+			{
+				var tile = GameData.Map.GetTile2(creature.Coordinate);
+				creature.EndFloorMovement();
+			}
+		}
 	}
 
 
