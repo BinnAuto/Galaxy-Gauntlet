@@ -432,6 +432,8 @@ namespace GalaxyGauntlet.Common
             public const int GreenChip = 57;
             public const int Chip = 58;
             public const int Bribe = 60;
+            public const int Canopy = 62;
+            public const int Canopy_XRay = 63;
             public const int RedBomb = 69;
             public const int GreenBomb = 70;
             public const int NoSprite = 71;
@@ -505,6 +507,19 @@ namespace GalaxyGauntlet.Common
             public const int Water = 396;
             public const int Fire = 476;
             public const int Dirt = 500;
+        }
+
+
+        public static class ThinWallSpriteFrameIndexes
+        {
+            public const int North_West = 0;
+            public const int North_East = 1;
+            public const int East_North = 2;
+            public const int East_South = 3;
+            public const int South_West = 4;
+            public const int South_East = 5;
+            public const int West_North = 6;
+            public const int West_South = 7;
         }
 
 

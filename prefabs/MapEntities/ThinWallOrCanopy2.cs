@@ -44,8 +44,13 @@ public partial class ThinWallOrCanopy2 : MapObject2
 
 	public int? WallBitmask { get; set; }
 
+	private bool IsNorth => (WallBitmask & 1) == 1;
+	private bool IsEast => (WallBitmask & 2) == 2;
+    private bool IsSouth => (WallBitmask & 4) == 4;
+    private bool IsWest => (WallBitmask & 8) == 8;
+	private bool IsCanopy => (WallBitmask & 16) == 16;
 
-	public ThinWallOrCanopy2(Vector2I coordinate)
+    public ThinWallOrCanopy2(Vector2I coordinate)
 		: base(coordinate) { }
 
 
@@ -56,10 +61,69 @@ public partial class ThinWallOrCanopy2 : MapObject2
 	}
 
 
+	private AnimatedSprite2D CanopySprite;
+
+
 	public override void _Ready()
 	{
 		base._Ready();
-		// TODO: Build wall sprites
+		CanopySprite = new();
+
+		#region Build wall sprites
+
+		if(IsNorth)
+		{
+			var sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.North_West);
+			AddChild(sprite);
+			sprite.Position = new(-16, -16);
+
+			sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.North_East);
+			AddChild(sprite);
+			sprite.Position = new(0, -16);
+		}
+		if(IsEast)
+		{
+			var sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.East_North);
+			AddChild(sprite);
+			sprite.Position = new(0, -16);
+
+            sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.East_South);
+            AddChild(sprite);
+            sprite.Position = new(0, 0);
+        }
+		if(IsSouth)
+		{
+			var sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.South_West);
+			AddChild(sprite);
+			sprite.Position = new(-16, 0);
+
+			sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.South_East);
+			AddChild(sprite);
+			sprite.Position = new(0, 0);
+		}
+		if(IsWest)
+		{
+			var sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.West_North);
+			AddChild(sprite);
+			sprite.Position = new(-16, -16);
+
+            sprite = BuildWallSprite(GGConstants.ThinWallSpriteFrameIndexes.West_South);
+            AddChild(sprite);
+            sprite.Position = new(-16, 0);
+        }
+		if(IsCanopy)
+		{
+			CanopySprite = new()
+			{
+				SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
+				TextureFilter = TextureFilterEnum.Nearest,
+				Frame = GGConstants.SpriteFrameIndexes.Canopy,
+				ZIndex = 20
+			};
+			AddChild(CanopySprite);
+        }
+
+		#endregion
 	}
 
 
@@ -69,27 +133,19 @@ public partial class ThinWallOrCanopy2 : MapObject2
 		{
 			return true;
 		}
-		// North
-		if((WallBitmask & 1) == 1
-			&& direction.Y < 0)
+		if(IsNorth && direction.Y < 0)
 		{
 			return false;
 		}
-		// East
-		if((WallBitmask & 2) == 2
-			&& direction.X > 0)
+		if(IsEast && direction.X > 0)
 		{
 			return false;
 		}
-		// South
-		if((WallBitmask & 4) == 4
-			&& direction.Y > 0)
+		if(IsSouth && direction.Y > 0)
 		{
 			return false;
 		}
-		// West
-		if((WallBitmask & 8) == 8
-			&& direction.X < 0)
+		if(IsWest && direction.X < 0)
 		{
 			return false;
 		}
@@ -104,31 +160,37 @@ public partial class ThinWallOrCanopy2 : MapObject2
         {
             return true;
         }
-        // North
-        if ((WallBitmask & 1) == 1
-            && direction.Y > 0)
+        if (IsNorth && direction.Y > 0)
         {
             return false;
         }
-        // East
-        if ((WallBitmask & 2) == 2
-            && direction.X < 0)
+        if (IsEast && direction.X < 0)
         {
             return false;
         }
-        // South
-        if ((WallBitmask & 4) == 4
-            && direction.Y < 0)
+        if (IsSouth && direction.Y < 0)
         {
             return false;
         }
-        // West
-        if ((WallBitmask & 8) == 8
-            && direction.X > 0)
+        if (IsWest && direction.X > 0)
         {
             return false;
         }
 
 		return true;
+    }
+
+
+	private AnimatedSprite2D BuildWallSprite(int frameIndex)
+    {
+        AnimatedSprite2D sprite = new()
+        {
+            SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/thin_wall_sprites.tres"),
+            TextureFilter = TextureFilterEnum.Nearest,
+			ZIndex = ZIndex + 1,
+			Centered = false,
+            Frame = frameIndex
+        };
+		return sprite;
     }
 }
