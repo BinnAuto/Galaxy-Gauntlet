@@ -61,6 +61,10 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		{
 			GD.Print($"!!! No parent for {MapObjectName} at {Coordinate}");
 		}
+		if(this is MapCreature2 creature)
+		{
+			GameData.Map.RemoveCreatureFromProcessList(creature.CreatureID);
+		}
 		parent?.RemoveChild(this);
 		QueueFree();
 	}
@@ -74,7 +78,15 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 
 	public void PlaySoundEffect(string soundName)
 	{
-		// TODO
+		float volume = 1;
+		float distance = Coordinate.DistanceTo(GameData.Level.PlayerCoordinate);
+		if(distance > 5)
+		{
+			return;
+		}
+		// TODO: Determine proximity volume
+
+		// TODO: Play audio
 	}
 
 
