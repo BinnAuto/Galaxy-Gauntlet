@@ -199,6 +199,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.Teeth => new TeethCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Walker => new WalkerCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.Paramecium => new ParameciumCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Blob => new BlobCreature2(coordinate),
 
 			/* Other */
 			GGConstants.ByteCodes.Entities.Modifier_8Bit
