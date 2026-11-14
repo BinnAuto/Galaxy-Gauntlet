@@ -175,6 +175,11 @@ public partial class MapDisplay2 : Node2D
 
 	private bool CheckForEnding()
 	{
+		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
+		if(currentTile is ExitTile2 && GameData.Level.ChipRequirementMet)
+		{
+			return true;
+		}
 		// TODO
 		return false;
 	}

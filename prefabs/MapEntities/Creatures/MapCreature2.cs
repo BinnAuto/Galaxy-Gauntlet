@@ -3,7 +3,6 @@ using GalaxyGauntlet.scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 
 public class CreatureStateFlags
 {
@@ -428,6 +427,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					if(false == HasItem(new FlippersItem2(Vector2I.Zero)))
 					{
 						player.PlayerStatus = PlayerStatus.Drowned;
+						GameData.Level.DeathMessage = GGConstants.DeathMessages.Water;
 					}
 					break;
 
@@ -435,7 +435,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					if(false == HasItem(new FireBootsItem2(Vector2I.Zero)))
 					{
 						player.PlayerStatus = PlayerStatus.Burned;
-					}
+                        GameData.Level.DeathMessage = GGConstants.DeathMessages.Fire;
+                    }
 					break;
 
 				case GGConstants.ByteCodes.Entities.Dirt:
@@ -500,10 +501,14 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				{
 					case GGConstants.ByteCodes.Entities.RedBomb:
 						player.PlayerStatus = PlayerStatus.Bombed;
+						GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
+						break;
+
+					default:
+						player.PlayerStatus = PlayerStatus.Collided;
+						GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
 						break;
 				}
-
-				player.PlayerStatus = PlayerStatus.Collided;
 			}
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
@@ -516,6 +521,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 			if(destinationCreature is RedBombCreature2)
 			{
+				GD.Print("BOMB!!");
 				destinationCreature.PlaySoundEffect("Explosion");
 				destinationCreature.Kill();
 				Kill();
@@ -540,6 +546,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
                 destinationCreature.PlaySoundEffect("Explosion");
                 destinationCreature.Kill();
                 Kill();
+            }
+			if(destinationCreature is Player2)
+			{
+				GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
             }
             if (destinationTile is BlueTeleporterTile2)
             {
@@ -905,9 +915,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if(destinationCreature is not null)
 			{
 				if(destinationCreature is not Player2)
-				{
-					return false;
-				}
+                {
+                    return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
+                }
 			}
 
 			#region Entry Law checks
@@ -966,9 +976,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		{
 			if(destinationCreature is not null
 				&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
-			{
-				return (destinationCreature is Player2);
-			}
+            {
+                return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
+            }
 
 			#region Entry Law checks
 

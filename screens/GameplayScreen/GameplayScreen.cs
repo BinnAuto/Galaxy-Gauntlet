@@ -91,7 +91,6 @@ public partial class GameplayScreen : Node
 		}
 
 		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
-		// ProcessGameTick();
 		CheckForInitializationByPlayer();
 		UpdateDebugUI();
 		CheckPlayerStatus();
@@ -208,8 +207,8 @@ public partial class GameplayScreen : Node
 			return;
 		}
 
-		var currentTile = GameData.Map.GetTile(GameData.Level.PlayerCoordinate);
-		if(currentTile is ExitTile)
+        var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
+        if (currentTile is ExitTile2 && GameData.Level.ChipRequirementMet)
 		{
 			GameData.OnLevelComplete();
 			DialogWindow.ClearAllButtonEvents();
@@ -222,7 +221,6 @@ public partial class GameplayScreen : Node
 
 	private void OnPlayerDeath()
 	{
-		return;
 		GameData.OnPlayerDeath();
 		DialogWindow.ClearAllButtonEvents();
 		DialogWindow.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);

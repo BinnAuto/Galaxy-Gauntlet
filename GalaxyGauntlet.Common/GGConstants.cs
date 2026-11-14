@@ -536,6 +536,8 @@ namespace GalaxyGauntlet.Common
             public static string Fire = "Ooops! Don't step in the fire without fire boots!";
 
             public static string Water = "Ooops! You can't swim without flippers!";
+
+            public static string Slime = "Ooops! Watch out for slime!";
         }
     }
 }

@@ -141,7 +141,6 @@ namespace GalaxyGauntlet.prefabs.MapEntities
             }
             
             /* ----- CREATURES ----- */
-            , { GGConstants.ByteCodes.Entities.RedBomb, new() }
             , { GGConstants.ByteCodes.Entities.DirtBlock, new(0)
                 {
                     Player = BuildEntryLaw("NWSE")

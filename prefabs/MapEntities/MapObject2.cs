@@ -64,6 +64,10 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		if(this is MapCreature2 creature)
 		{
 			GameData.Map.RemoveCreatureFromProcessList(creature.CreatureID);
+			if (GameData.Map.Creatures2[Coordinate.X, Coordinate.Y].CreatureID == creature.CreatureID)
+			{
+				GameData.Map.Creatures2[Coordinate.X, Coordinate.Y] = null;
+			}
 		}
 		parent?.RemoveChild(this);
 		QueueFree();
