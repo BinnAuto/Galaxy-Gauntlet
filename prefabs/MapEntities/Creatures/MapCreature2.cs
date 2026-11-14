@@ -423,7 +423,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void EndMovement(Vector2I direction)
     {
-        GD.Print($"Ending movement for {MapObjectName} (ID:{CreatureID}, {Coordinate})");
         var currentCoordinate = Coordinate.Clone();
 		var destinationCoordinate = Coordinate + direction;
 
@@ -696,7 +695,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void StartFloorMovement(MapTile2 tile, Vector2I direction)
 	{
-		GD.Print($"Starting floor movement for {MapObjectName} (ID:{CreatureID}, {Coordinate})");
 		var initialDirection = direction.Clone();
 		CreatureState &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
 
@@ -753,7 +751,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void EndFloorMovement()
     {
-        GD.Print($"Ending floor movement for {MapObjectName} (ID:{CreatureID}, {Coordinate})");
         CreatureState &= ~(CreatureStateFlags.Slipping | CreatureStateFlags.Sliding);
 	}
 
