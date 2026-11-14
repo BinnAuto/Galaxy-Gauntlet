@@ -27,7 +27,6 @@ public partial class MapDisplay2 : Node2D
 			return;
 		}
 
-		GameData.Level.Timer -= delta;
 		int gameTick = GameData.Level.CurrentTick;
 		InitialHousekeeping();
 		GameData.Level.CurrentTick++;
