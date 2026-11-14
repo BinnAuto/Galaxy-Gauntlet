@@ -61,4 +61,74 @@ public partial class ThinWallOrCanopy2 : MapObject2
 		base._Ready();
 		// TODO: Build wall sprites
 	}
+
+
+	public bool CreatureCanExit(Vector2I direction)
+	{
+		if(WallBitmask is null || WallBitmask == 0)
+		{
+			return true;
+		}
+		// North
+		if((WallBitmask & 1) == 1
+			&& direction.Y < 0)
+		{
+			return false;
+		}
+		// East
+		if((WallBitmask & 2) == 2
+			&& direction.X > 0)
+		{
+			return false;
+		}
+		// South
+		if((WallBitmask & 4) == 4
+			&& direction.Y > 0)
+		{
+			return false;
+		}
+		// West
+		if((WallBitmask & 8) == 8
+			&& direction.X < 0)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+
+	public bool CreatureCanEnter(Vector2I direction)
+    {
+        if (WallBitmask is null || WallBitmask == 0)
+        {
+            return true;
+        }
+        // North
+        if ((WallBitmask & 1) == 1
+            && direction.Y > 0)
+        {
+            return false;
+        }
+        // East
+        if ((WallBitmask & 2) == 2
+            && direction.X < 0)
+        {
+            return false;
+        }
+        // South
+        if ((WallBitmask & 4) == 4
+            && direction.Y < 0)
+        {
+            return false;
+        }
+        // West
+        if ((WallBitmask & 8) == 8
+            && direction.X > 0)
+        {
+            return false;
+        }
+
+		return true;
+    }
 }

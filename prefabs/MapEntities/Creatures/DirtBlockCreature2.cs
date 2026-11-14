@@ -14,14 +14,21 @@ public partial class DirtBlockCreature2(Vector2I coordinate) : MapCreature2(coor
 		bool isSlipping = HasState(CreatureStateFlags.Sliding | CreatureStateFlags.Slipping);
 		if(isSlipping)
 		{
-			// TODO: Get slip direction
+			var slipDirection = SlipDirection;
+			if(direction == SlipDirection || direction == -1 * slipDirection)
+			{
+				if((flags & CanMakeMoveFlags.TeleportPush) == 0)
+				{
+					return false;
+				}
+			}
 		}
 
-		var currentCreature = GameData.Map.GetCreature(Coordinate);
+		var currentCreature = GameData.Map.GetCreature(Coordinate); // Is this not just itself?
 		if((flags & CanMakeMoveFlags.TeleportPush) == 0
 			&& currentCreature is DirtBlockCreature2)
 		{
-			// TODO
+
 		}
 		if((flags & CanMakeMoveFlags.NoDeferButtons) == 0) {
 			CreatureState |= CreatureStateFlags.DeferPush;

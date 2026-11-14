@@ -136,7 +136,7 @@ namespace GalaxyGauntlet.scripts
 				}
 				if(sourceCoordinate == new Vector2I(x, y))
 				{
-					FileLogger.QuietLogMessage($"Fiddlesticks! This level has red buttons but no cloning machines!");
+					FileLogger.QuietLogMessage("Fiddlesticks! This level has red buttons but no cloning machines!");
 					return;
 				}
 			}
@@ -145,9 +145,38 @@ namespace GalaxyGauntlet.scripts
 
 		// SpringTrap
 		public static void BrownButtonPressed(Vector2I sourceCoordinate)
-		{
+        {
+            int x = sourceCoordinate.X;
+            int y = sourceCoordinate.Y;
+			while(true)
+			{
+				Vector2I mapCoordinate = new(x, y);
+				var mapTile = Map.GetTile2(mapCoordinate);
+				if(mapTile is TrapTile2 trapTile)
+				{
+					trapTile.OpenTrap();
+					return;
+                }
 
-		}
+                // Move to next coordinate
+                x++;
+                if (x >= Map.Dimensions.X)
+                {
+                    x = 0;
+                    y++;
+                }
+                if (y >= Map.Dimensions.Y)
+                {
+                    x = 0;
+                    y = 0;
+                }
+                if (sourceCoordinate == new Vector2I(x, y))
+                {
+                    FileLogger.QuietLogMessage("Rats! This level has brown buttons but no traps!");
+                    return;
+                }
+            }
+        }
 
 		#endregion
 

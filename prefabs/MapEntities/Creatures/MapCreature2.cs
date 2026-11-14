@@ -153,7 +153,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 			if(HasState(CreatureStateFlags.HasMoved))
 			{
-				// Stalled tank (TODO?)
+				// TODO? Stalled tank
 			}
 
 			if(HasState(CreatureStateFlags.Slipping) || HasState(CreatureStateFlags.Sliding))
@@ -207,17 +207,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 						break;
 					
 					case GGConstants.ByteCodes.Entities.Teeth:
-						// Have Teeth follow the player from inside the trap (spooky!)
-						var chipPosition = GameData.Level.PlayerCoordinate;
-						var delta = chipPosition - Coordinate;
-						Vector2I choiceY = (delta.Y < 0) ? new(0, -1)
-							: (delta.Y > 0) ? new(0, 1) : Vector2I.Zero;
-						Vector2I choiceX = (delta.X < 0) ? new(-1, 0)
-							: (delta.X > 0) ? new(1, 0) : Vector2I.Zero;
-						Vector2I orientationVector = (delta.X > delta.Y)
-							? choiceX
-							: choiceY;
-						SetOrientation(orientationVector);
 						return;
 
 					default:
@@ -788,20 +777,40 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			return false;
 		}
 
+
 		var currentTile = GameData.Map.GetTile2(Coordinate);
-		/*
-		if(currentTile is CloneMachineTile2
-			&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
-		{
-			return false;
-		}
-		 * */
 
 		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
 		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
 		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
 
-		// TODO: Check for thin wall exit
+		if((flags & CanMakeMoveFlags.NoLeaveCheck) == 0)
+		{
+			var currentThinWall = GameData.Map.GetThinWall(Coordinate);
+			if(currentThinWall is not null)
+			{
+				if(false == currentThinWall.CreatureCanExit(direction))
+				{
+					return false;
+				}
+			}
+			if(currentTile is TrapTile2)
+			{
+				if(false == HasState(CreatureStateFlags.Released))
+				{
+					return false;
+				}
+			}
+		}
+
+		var destinationThinWall = GameData.Map.GetThinWall(destinationCoordinate);
+		if(destinationThinWall is not null)
+		{
+			if(false == destinationThinWall.CreatureCanEnter(direction))
+			{
+				return false;
+			}
+		}
 
 		if(this is Player2 player)
 		{
