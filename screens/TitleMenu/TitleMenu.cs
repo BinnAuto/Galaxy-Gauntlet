@@ -223,7 +223,7 @@ public partial class TitleMenu : Node
 
 	private void ToLevelSelect(GameMode gameMode)
 	{
-		GameData.Level.GameMode = gameMode;
+		GameData.GameMode = gameMode;
 		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 	}
 
@@ -237,7 +237,7 @@ public partial class TitleMenu : Node
 	private void OnGoToGameplayScreen(GameMode gameMode)
 	{
 		GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList();
-		GameData.Level.GameMode = gameMode;
+		GameData.GameMode = gameMode;
 		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.GameplayScreen);
 	}
 

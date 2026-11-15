@@ -194,7 +194,7 @@ public partial class GameplayScreen : Node
 	private void OnLevelComplete()
 	{
 		DialogWindow.HideDialog();
-		switch(GameData.Level.GameMode)
+		switch(GameData.GameMode)
 		{
 			case GameMode.Campaign:
 				var gameComplete = GameData.Level.OnNextLevel();
@@ -237,7 +237,7 @@ public partial class GameplayScreen : Node
 
 	private void OnExit()
 	{
-		switch(GameData.Level.GameMode)
+		switch(GameData.GameMode)
 		{
 			case GameMode.Campaign:
 				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
@@ -275,11 +275,11 @@ public partial class GameplayScreen : Node
 		levelBonus = (int)(levelBonus * Mathf.Pow(0.8f, GameData.Level.RestartCount));
 		levelBonus = Mathf.Max(levelBonus, 500);
 
-		switch(GameData.Level.GameMode)
+		switch(GameData.GameMode)
 		{
 			case GameMode.Archipelago:
 			case GameMode.Campaign:
-				string saveSlotName = (GameData.Level.GameMode == GameMode.Archipelago)
+				string saveSlotName = (GameData.GameMode == GameMode.Archipelago)
 					? GGConstants.SaveSlotNames.Archipelago
 					: GGConstants.SaveSlotNames.Autosave;
 				var saveSlot = SaveData.GetSaveSlot(saveSlotName);
@@ -298,7 +298,7 @@ public partial class GameplayScreen : Node
 				result += $"\nLevel Bonus: {levelBonus}";
 				result += $"\nLevel Score: {timeBonus + levelBonus}";
 				result += $"\nTotal Score: {saveSlot.HighScores.Sum(e => e.Value)}";
-				if(GameData.Level.GameMode == GameMode.Archipelago)
+				if(GameData.GameMode == GameMode.Archipelago)
 				{
 					string saveSlotJson = JsonSerializer.Serialize(saveSlot);
 					GameData.Archipelago.SetDataStorageKey(GGConstants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);

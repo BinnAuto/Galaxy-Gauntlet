@@ -2,12 +2,32 @@ using System.Linq;
 
 namespace GalaxyGauntlet.scripts
 {
+    public enum GameMode
+    {
+        /// <summary>
+        /// Standard gameplay mode, sequentially playing through every level in the directory.
+        /// </summary>
+        Campaign,
+
+        /// <summary>
+        /// Playing a selected level.
+        /// </summary>
+        QuickPlay,
+
+        /// <summary>
+        /// Playing in Archipelago mode.
+        /// </summary>
+        Archipelago
+    }
+    
+	
 	/*
 	 * Contains communication methods between different properties of GameData
 	 */
-	public static partial class GameData
+    public static partial class GameData
 	{
-
+        public static GameMode GameMode = GameMode.Campaign;
+        
 		public static void Initialize(Vector2I windowSize)
 		{
 			InitialWindowResolution = windowSize; 
@@ -202,7 +222,7 @@ namespace GalaxyGauntlet.scripts
 			Level.ProcessMobs = false;
 			Level.AcceptingPlayerInput = false;
 			Level.TimerEnabled = false;
-			if (Level.GameMode == GameMode.Archipelago)
+			if (GameMode == GameMode.Archipelago)
 			{
 				string location = $"Complete Map {Level.CurrentLevelIndex + 1} - {Level.Name}";
 				Archipelago.SendLocationCheck(location);
@@ -218,7 +238,7 @@ namespace GalaxyGauntlet.scripts
 		public static void OnChipCollected(ChipItem2 chip)
 		{
 			Level.ChipsCollected++;
-			if (Level.GameMode is GameMode.Archipelago)
+			if (GameMode is GameMode.Archipelago)
 			{
 				string locationName = chip.GetArchipelagoLocationName();
 				Archipelago.SendLocationCheck(locationName);

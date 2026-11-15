@@ -13,23 +13,23 @@ public partial class ThinWallOrCanopy2 : MapObject2
 			}
 
 			result += "(";
-			if((WallBitmask & 1) == 1)
+			if(IsNorth)
 			{
 				result += "N";
 			}
-			if ((WallBitmask & 2) == 2)
+			if (IsEast)
 			{
 				result += "E";
 			}
-			if ((WallBitmask & 4) == 4)
+			if (IsSouth)
 			{
 				result += "S";
 			}
-			if ((WallBitmask & 8) == 8)
+			if (IsWest)
 			{
 				result += "W";
 			}
-			if ((WallBitmask & 16) == 16)
+			if (IsCanopy)
 			{
 				result += "C";
 			}

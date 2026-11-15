@@ -523,6 +523,15 @@ namespace GalaxyGauntlet.Common
         }
 
 
+        public static class ArchipelagoItemSpriteIndexes
+        {
+            public const int Helpful = 0;
+            public const int Progressive = 1;
+            public const int Filler = 2;
+            public const int Trap = 3;
+        }
+
+
         public static class DeathMessages
         {
             public static string MovingBlocks = "Ooops! Watch out for moving blocks!";

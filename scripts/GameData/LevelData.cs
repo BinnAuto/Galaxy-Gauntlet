@@ -3,24 +3,6 @@ using System.Linq;
 
 namespace GalaxyGauntlet.scripts
 {
-	public enum GameMode
-	{
-		/// <summary>
-		/// Standard gameplay mode, sequentially playing through every level in the directory.
-		/// </summary>
-		Campaign,
-
-		/// <summary>
-		/// Playing a selected level.
-		/// </summary>
-		QuickPlay,
-
-		/// <summary>
-		/// Playing in Archipelago mode.
-		/// </summary>
-		Archipelago
-	}
-
 	public static partial class GameData
 	{
 		public static LevelData Level = new();
@@ -31,7 +13,6 @@ namespace GalaxyGauntlet.scripts
 	/// </summary>
 	public class LevelData
 	{
-		public GameMode GameMode = GameMode.Campaign;
 		public int MapViewportSize = 9;
         public int StandardMapViewportSize = 9;
         public int ChipsRequired = 0;

@@ -81,7 +81,6 @@ ButtonText = "Exit"
 FontSize = 30
 
 [node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("6_gtykd")]
-visible = false
 
 [node name="Archipelago" type="Node2D" parent="." unique_id=533125033]
 visible = false

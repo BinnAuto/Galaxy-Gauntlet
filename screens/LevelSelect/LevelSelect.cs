@@ -30,7 +30,7 @@ public partial class LevelSelect : Node2D
 			Node Control = GetNode(nameof(Control));
 			ScrollContainer ScrollContainer = (ScrollContainer)Control.GetNode(nameof(ScrollContainer));
 			GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
-			GridContainer.Columns = (GameData.Level.GameMode == GameMode.QuickPlay)
+			GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
 				? 1 : 3;
 			ButtonRef = (Button)GetNode(nameof(ButtonRef));
 
@@ -52,7 +52,7 @@ public partial class LevelSelect : Node2D
 			BuildButtonList();
 
 			ArchipelagoDisplay.Visible = false;
-			if (GameData.Level.GameMode == GameMode.Archipelago)
+			if (GameData.GameMode == GameMode.Archipelago)
 			{
 				ArchipelagoDisplay.Visible = true;
 				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString();
@@ -85,7 +85,7 @@ public partial class LevelSelect : Node2D
 		}
 
         GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList();
-		if(GameData.Level.GameMode == GameMode.Archipelago)
+		if(GameData.GameMode == GameMode.Archipelago)
 		{
 			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
 			GameData.Level.LevelSet = GameData.Level.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
@@ -103,7 +103,7 @@ public partial class LevelSelect : Node2D
 
 			levelIndex++;
 			Button button = (Button)ButtonRef.Duplicate();
-			if(GameData.Level.GameMode == GameMode.QuickPlay)
+			if(GameData.GameMode == GameMode.QuickPlay)
 			{
 				button.Text = levelName;
 				button.Pressed += () => OnLevelSelect(tempLevel);
@@ -111,7 +111,7 @@ public partial class LevelSelect : Node2D
 				continue;
 			}
 
-			if (GameData.Level.GameMode == GameMode.Archipelago)
+			if (GameData.GameMode == GameMode.Archipelago)
 			{
 				string mapName = $"Map {levelIndex} - {levelName}";
 				string completeLocation = $"Complete {mapName}";
@@ -162,7 +162,7 @@ public partial class LevelSelect : Node2D
 
 	private async Task ToTitleScreen()
 	{
-		if(GameData.Level.GameMode == GameMode.QuickPlay)
+		if(GameData.GameMode == GameMode.QuickPlay)
 		{
 			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 			return;
