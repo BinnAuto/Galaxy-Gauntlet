@@ -266,6 +266,7 @@ namespace GalaxyGauntlet.scripts
 
 		public void AddMapObject(MapObject2 mapObject)
 		{
+			mapObject.SetDisplayPosition();
 			lock(NewMapObjects)
 			{
 				NewMapObjects.Add(mapObject);
@@ -343,7 +344,6 @@ namespace GalaxyGauntlet.scripts
 				Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = dirtBlock;
 				AddMapObject(dirtBlock);
                 dirtBlock.AdvanceCreature(dirtBlock.Forward);
-				dirtBlock.SetDisplayPosition();
 			}
 			else
 			{
@@ -358,7 +358,6 @@ namespace GalaxyGauntlet.scripts
                 Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = clonedCreature;
 				clonedCreature.Coordinate = sourceCoordinate;
                 AddCreatureToProcess(clonedCreature);
-                clonedCreature.SetDisplayPosition();
             }
         }
 

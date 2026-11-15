@@ -39,6 +39,7 @@ namespace GalaxyGauntlet.scripts
 			LoadSettings();
 		}
 
+
 		#region Settings
 
 		// Audio Settings
@@ -91,6 +92,7 @@ namespace GalaxyGauntlet.scripts
 		}
 
 		#endregion
+
 
 		#region Button Press Methods
 
@@ -198,6 +200,7 @@ namespace GalaxyGauntlet.scripts
         }
 
 		#endregion
+
 
 		#region Global Methods
 
