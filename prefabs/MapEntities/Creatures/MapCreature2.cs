@@ -136,7 +136,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if(EntityID == GGConstants.ByteCodes.Entities.Teeth
 				|| EntityID == GGConstants.ByteCodes.Entities.Blob)
 			{
-				if((GameData.Level.CurrentTick & 4) != 0)
+				if(((GameData.Level.CurrentTick + GameData.Level.SteppingOffset) & 4) != 0)
 				{
 					return;
 				}

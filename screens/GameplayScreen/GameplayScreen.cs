@@ -18,6 +18,8 @@ public partial class GameplayScreen : Node
 
 	private Label Timer;
 
+	private Label StepOffset;
+
 	private Label HintLabel;
 
 	private Node2D DebugDisplay;
@@ -43,6 +45,8 @@ public partial class GameplayScreen : Node
 			ChipCount = (Label)GetNode(nameof(ChipCount));
 
 			Timer = (Label)GetNode(nameof(Timer));
+
+			StepOffset = (Label)GetNode(nameof(StepOffset));
 
 			HintLabel = (Label)GetNode(nameof(HintLabel));
 			HintLabel.Visible = false;
@@ -81,7 +85,7 @@ public partial class GameplayScreen : Node
 		}
 
 		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
-		CheckForInitializationByPlayer();
+		CheckForInitialPlayerInput();
 		UpdateDebugUI();
 		CheckPlayerStatus();
 		UpdateTimer(delta);
@@ -116,7 +120,9 @@ public partial class GameplayScreen : Node
 		LevelName.Text = GameData.Level.Name;
 		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0)}";
 		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
-	}
+		StepOffset.Text = (GameData.Level.SteppingOffset % 2 == 1)
+			? "Odd" : string.Empty;
+    }
 
 
 	private void UpdateTimer(double delta)
@@ -143,11 +149,21 @@ public partial class GameplayScreen : Node
 	}
 
 
-	private void CheckForInitializationByPlayer()
+	private void CheckForInitialPlayerInput()
 	{
 		if(GameData.Level.ProcessMobs || !GameData.Level.AcceptingPlayerInput)
 		{
 			return;
+		}
+
+		if(Input.IsActionJustPressed("step_toggle"))
+		{
+			GameData.Level.SteppingOffset = GameData.Level.SteppingOffset switch
+			{
+				1 => 4,
+				4 => 1,
+				_ => 1
+			};
 		}
 
 		Vector2I input = GameData.GetPlayerInput();

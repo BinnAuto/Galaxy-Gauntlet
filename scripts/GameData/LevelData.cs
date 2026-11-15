@@ -29,6 +29,7 @@ namespace GalaxyGauntlet.scripts
 		public bool ProcessMobs = false;
 		public bool PlayerAlive = true;
 		public string DeathMessage = string.Empty;
+		public int SteppingOffset = 1; // Odd or Even Step
 		public Vector2I PlayerCoordinate = Vector2I.Zero;
 		public string[] LevelSet = [];
 
@@ -89,6 +90,7 @@ namespace GalaxyGauntlet.scripts
 			CurrentTick = 0;
 			ChipTick = 0;
 			PlayerItems = [];
+			SteppingOffset = 4;
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;
