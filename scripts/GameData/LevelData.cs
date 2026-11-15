@@ -29,7 +29,7 @@ namespace GalaxyGauntlet.scripts
 		public bool ProcessMobs = false;
 		public bool PlayerAlive = true;
 		public string DeathMessage = string.Empty;
-		public int SteppingOffset = 1; // Odd or Even Step
+		public int SteppingOffset = 4; // Odd or Even Step
 		public Vector2I PlayerCoordinate = -Vector2I.One;
 		public string[] LevelSet = [];
 
