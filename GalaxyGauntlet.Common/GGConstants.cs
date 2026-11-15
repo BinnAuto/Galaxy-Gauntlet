@@ -35,8 +35,6 @@ namespace GalaxyGauntlet.Common
 
             public const string GameDataConfigSection = "GameData";
 
-            public const string TickRate = nameof(TickRate);
-
             public const string MasterVolume = nameof(MasterVolume);
             
             public const string MusicVolume = nameof(MusicVolume);

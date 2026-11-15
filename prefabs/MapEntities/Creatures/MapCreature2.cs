@@ -1018,7 +1018,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				entryLaw = EntryLaws.Laws.GetValueOrDefault(destinationCreature.EntityID);
 				if (entryLaw is null)
 				{
-					GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
+					// GD.Print($"Entry law for creature {destinationCreature.MapObjectName} not found.");
 				}
 				else
 				{
