@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts;
+using System.Linq;
 
 public enum PlayerStatus
 {
@@ -34,6 +35,23 @@ public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
     {
         base._Ready();
 		ZIndex = 9;
+    }
+
+
+    public override void _Process(double delta)
+    {
+		base._Process(delta);
+        if(EntityID != 1)
+		{
+			return;
+		}
+
+		if(GameData.Level.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
+		{
+			Inventory.AddRange(GameData.Archipelago.PendingItems);
+			GameData.Archipelago.PendingItems.Clear();
+			GameData.Level.UpdatePlayerItems(Inventory);
+		}
     }
 
 

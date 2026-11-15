@@ -1,4 +1,3 @@
-using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -51,7 +50,6 @@ namespace GalaxyGauntlet.scripts
 		public string DeathMessage = string.Empty;
 		public Vector2I PlayerCoordinate = Vector2I.Zero;
 		public string[] LevelSet = [];
-		public List<MapItem> PlayerItems = [];
 
 		// Controlled by Archipelago items
 		public double ConfusionTimer = 0;
@@ -93,6 +91,8 @@ namespace GalaxyGauntlet.scripts
 
         public event OnLoadCurrentLevelHandler OnLoadCurrentLevel = () => { };
 
+		private List<MapItem2> PlayerItems = [];
+
 
         public void Reset()
 		{
@@ -107,10 +107,10 @@ namespace GalaxyGauntlet.scripts
 			MapViewportSize = StandardMapViewportSize;
 			CurrentTick = 0;
 			ChipTick = 0;
+			PlayerItems = [];
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;
-			PlayerItems = [];
 			PlayerCoordinate = Vector2I.Zero;
 		}
 
@@ -133,74 +133,21 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void StealEquipment()
+		public void UpdatePlayerItems(List<MapItem2> playerItems)
 		{
-			int[] bootCodes = [
-				GGConstants.ByteCodes.Entities.IceSkates
-				, GGConstants.ByteCodes.Entities.Flippers
-				, GGConstants.ByteCodes.Entities.FireBoots
-				, GGConstants.ByteCodes.Entities.SuctionBoots
-			];
-			PlayerItems = PlayerItems.Where(e =>
-				false == bootCodes.Contains(e.DataCode)
-			).ToList();
+			PlayerItems = playerItems;
 		}
 
 
-		public void StealKeys()
+		public bool PlayerHasGameItem(int entityID)
 		{
-			int[] keyCodes = [
-				GGConstants.ByteCodes.Entities.RedKey
-				, GGConstants.ByteCodes.Entities.BlueKey
-				, GGConstants.ByteCodes.Entities.YellowKey
-				, GGConstants.ByteCodes.Entities.GreenKey
-			];
-			PlayerItems = PlayerItems.Where(e =>
-				false == keyCodes.Contains(e.DataCode)
-			).ToList();
+			return PlayerItems.Any(e => e.EntityID == entityID);
 		}
 
 
-		public void AddItem(MapItem item)
+		public int ItemCount(int entityID)
 		{
-			PlayerItems.Add(item);
-		}
-
-
-		public bool PlayerHasGameItem(int dataCode)
-		{
-			return PlayerItems.Any(e => e.DataCode == dataCode);
-		}
-
-
-		public int ItemCount(int dataCode)
-		{
-			return PlayerItems.Count(e => e.DataCode == dataCode);
-		}
-
-
-		public bool ConsumeItem(int dataCode)
-		{
-			bool result = false;
-			List<MapItem> newPlayerItems = [];
-			foreach(var playerItem in PlayerItems)
-			{
-				if(result || playerItem.DataCode != dataCode)
-				{
-					newPlayerItems.Add(playerItem);
-					continue;
-				}
-
-				if(playerItem.DataCode == dataCode)
-				{
-					result = true;
-					continue;
-				}
-
-				newPlayerItems.Add(playerItem);
-			}
-			PlayerItems = newPlayerItems;
-			return result;
+			return PlayerItems.Count(e => e.EntityID == entityID);
 		}
 	}
 }

@@ -3,8 +3,6 @@ using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Models;
-using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Shared;
 using GalaxyGauntlet.scripts.SaveData;
 using System;
 using System.Collections.Generic;
@@ -93,7 +91,7 @@ namespace GalaxyGauntlet.scripts
 		/// The list of single-use items the player has received. The player receives
 		/// these items when they are in a level.
 		/// </summary>
-		public List<MapItem> PendingItems = [];
+		public List<MapItem2> PendingItems = [];
 
 		private bool InitialProcessingComplete = false;
 		private DeathLinkService DeathLinkService = null;
@@ -523,18 +521,18 @@ namespace GalaxyGauntlet.scripts
 
 		private void ProcessNewItem(string itemName)
 		{
-			MapItem pendingItem = itemName switch
+			MapItem2 pendingItem = itemName switch
 			{
-				GGConstants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem(Vector2I.Zero),
-				GGConstants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem2(Vector2I.Zero),
 				_ => null
 			};
 			if(pendingItem is not null)

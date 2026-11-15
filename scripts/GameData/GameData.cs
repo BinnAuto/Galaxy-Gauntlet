@@ -1,4 +1,3 @@
-using GalaxyGauntlet.scripts.MapEntities;
 using System.Linq;
 
 namespace GalaxyGauntlet.scripts
@@ -192,12 +191,6 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static void RemoveMapItem(Vector2I coordinate)
-		{
-			Map.RemoveItem(coordinate);
-		}
-
-
 		private static void OnSetDeathMessage(string message)
 		{
 			Level.DeathMessage = message;
@@ -244,15 +237,15 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public static bool PlayerHasPendingItem(int dataCode)
+		public static bool PlayerHasPendingItem(int entityID)
 		{
-			return Archipelago.PendingItems.Any(e => e.DataCode == dataCode);
+			return Archipelago.PendingItems.Any(e => e.EntityID == entityID);
 		}
 
 
-		public static int PendingItemCount(int dataCode)
+		public static int PendingItemCount(int entityID)
 		{
-			return Archipelago.PendingItems.Count(e => e.DataCode == dataCode);
+			return Archipelago.PendingItems.Count(e => e.EntityID == entityID);
 		}
 
 

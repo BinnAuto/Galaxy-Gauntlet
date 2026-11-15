@@ -1260,6 +1260,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	{
 		Inventory.Add(item);
 		GameData.Map.RemoveItem2(item.Coordinate);
+		if(this is Player2 && CreatureID == 1)
+		{
+			GameData.Level.UpdatePlayerItems(Inventory);
+		}
 	}
 
 

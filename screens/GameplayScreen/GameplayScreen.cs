@@ -1,8 +1,6 @@
 using GalaxyGauntlet.scripts;
-using GalaxyGauntlet.scripts.MapEntities;
 using GalaxyGauntlet.scripts.SaveData;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 
@@ -29,14 +27,6 @@ public partial class GameplayScreen : Node
 	private Label GameTick;
 
 	private Sprite2D AcceptingInput;
-
-	private DateTime _previousPlayerProcessTime = DateTime.Parse("01/01/2000");
-
-	private DateTime _previousPlayerSlipListProcessTime = DateTime.Parse("01/01/2000");
-
-	private DateTime _previousSlipListProcessTime = DateTime.Parse("01/01/2000");
-
-	private DateTime _previousMobProcessTime = DateTime.Parse("01/01/2000");
 
 	#region Godot Overrides
 
@@ -100,11 +90,6 @@ public partial class GameplayScreen : Node
 		{
 			OnPlayerDeath();
 		}
-		if(GameData.Level.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
-		{
-			GameData.Level.PlayerItems.AddRange(GameData.Archipelago.PendingItems);
-			GameData.Archipelago.PendingItems.Clear();
-		}
 	}
 
 	#endregion
@@ -131,27 +116,6 @@ public partial class GameplayScreen : Node
 		LevelName.Text = GameData.Level.Name;
 		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0)}";
 		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
-
-		var currentItem = GameData.Map.GetItem(GameData.Level.PlayerCoordinate);
-		HintLabel.Visible = (currentItem != null && currentItem is HintPanelItem);
-	}
-
-
-	private static void ProcessButtonPresses()
-	{
-		Dictionary<GalaxyGauntlet.scripts.Color, int> buttonPresses = [];
-		foreach(var button in GameData.Map.ButtonsToProcess)
-		{
-			button.ProcessTick();
-			if(button.NewlyPressed)
-			{
-				if(false == buttonPresses.ContainsKey(button.Color))
-				{
-					buttonPresses[button.Color] = 0;
-				}
-				buttonPresses[button.Color]++;
-			}
-		}
 	}
 
 
@@ -194,8 +158,6 @@ public partial class GameplayScreen : Node
 
 			// The player gets a free starting move
 			DateTime now = DateTime.Now;
-			_previousSlipListProcessTime = now;
-			_previousMobProcessTime = now;
 		}
 	}
 

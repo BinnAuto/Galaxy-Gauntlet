@@ -1,5 +1,3 @@
-using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,28 +21,11 @@ namespace GalaxyGauntlet.scripts
 
 		#region Map Layout Array
 
-		// Legacy
-		public MapMob[,] Mobs = new MapMob[0, 0];
-		public MapMob[,] Players = new MapMob[0, 0];
-		public MapItem[,] Items = new MapItem[0, 0];
-		public MapTile[,] Tiles = new MapTile[0, 0];
-
 		// 2
 		public MapCreature2[,] Creatures2 = new MapCreature2[0, 0];
 		public MapItem2[,] Items2 = new MapItem2[0, 0];
 		public ThinWallOrCanopy2[,] ThinWalls2 = new ThinWallOrCanopy2[0,0];
 		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
-
-		#endregion
-
-
-		#region Entity Process Lists
-
-		public List<MapMob> PlayerProcessList = [];
-		public List<MapMob> PlayerSliplist = [];
-		public List<MapMob> MobProcessList = [];
-		public List<MapMob> MobSlipList = [];
-		public List<MapButtonItem> ButtonsToProcess = [];
 
 		#endregion
 
@@ -80,16 +61,7 @@ namespace GalaxyGauntlet.scripts
 			Rerender = false;
 			Dimensions = -Vector2I.One;
 			NextMobID = 0;
-			PlayerProcessList = [];
-			PlayerSliplist = [];
-			MobProcessList = [];
-			MobSlipList = [];
-			ButtonsToProcess = [];
 			FileBytes = [];
-			Mobs = new MapMob[0, 0];
-			Players = new MapMob[0, 0];
-			Items = new MapItem[0, 0];
-			Tiles = new MapTile[0, 0];
 			Tiles2 = new MapTile2[0, 0];
 			Items2 = new MapItem2[0, 0];
 			ThinWalls2 = new ThinWallOrCanopy2[0, 0];
@@ -267,10 +239,6 @@ namespace GalaxyGauntlet.scripts
 		public void SetDimensions(int x, int y)
 		{
 			Dimensions = new(x, y);
-			Mobs = new MapMob[x, y];
-			Players = new MapMob[x, y];
-			Items = new MapItem[x, y];
-			Tiles = new MapTile[x, y];
 			Tiles2 = new MapTile2[x, y];
 			Items2 = new MapItem2[x, y];
 			ThinWalls2 = new ThinWallOrCanopy2[x, y];
@@ -280,10 +248,6 @@ namespace GalaxyGauntlet.scripts
 			{
 				for (int j = 0; j < Dimensions.Y; j++)
 				{
-					Mobs[i, j] = null;
-					Players[i, j] = null;
-					Items[i, j] = null;
-					Tiles[i, j] = null;
 					Tiles2[i, j] = null;
 					Items2[i, j] = null;
 					ThinWalls2[i, j] = null;
@@ -320,97 +284,9 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		/// <summary>
-		/// Moves a mob from the regular processing queue to the slip list queue
-		/// </summary>
-		public void AddToSlipList(MapMob mob)
-		{
-			if(mob is Player)
-			{
-				PlayerProcessList = [..PlayerProcessList.Where(e => e.MobID != mob.MobID)];
-				if(PlayerSliplist.Any(e => e.MobID == mob.MobID))
-				{
-					return;
-				}
-
-				PlayerSliplist.Add(mob);
-			}
-			else
-			{
-				MobProcessList = [..MobProcessList.Where(e => e.MobID != mob.MobID)];
-				if(MobSlipList.Any(e => e.MobID == mob.MobID))
-				{
-					return;
-				}
-			
-				MobSlipList.Add(mob);
-			}
-		}
-
-
-		/// <summary>
-		/// Moves a mob from the slip list processing queue to the regular queue
-		/// </summary>
-		public void RemoveFromSlipList(MapMob mob)
-		{
-			if(mob is Player)
-			{
-				PlayerSliplist = [..PlayerSliplist.Where(e => e.MobID != mob.MobID)];
-				if(PlayerProcessList.Any(e => e.MobID == mob.MobID))
-				{
-					return;
-				}
-
-				PlayerProcessList.Add(mob);
-			}
-			else
-			{
-				MobSlipList = [..MobSlipList.Where(e => e.MobID != mob.MobID)];
-				if(MobProcessList.Any(e => e.MobID == mob.MobID))
-				{
-					return;
-				}
-
-				MobProcessList.Add(mob);
-			}
-		}
-
-
 		#region Map Tile Management
 
-
-		#region Mobs
-
-		public void AddMob(MapMob mob)
-		{
-			var coordinate = mob.Coordinate;
-			if (Mobs[coordinate.X, coordinate.Y] != null)
-			{
-				return;
-			}
-
-			Mobs[coordinate.X, coordinate.Y] = mob;
-			MobProcessList.Add(mob);
-			Rerender = true;
-		}
-
-		public MapMob GetMob(Vector2I coordinate)
-		{
-			return Mobs[coordinate.X, coordinate.Y];
-		}
-
-
-		public void RemoveMob(Vector2I coordinate)
-		{
-			Mobs[coordinate.X, coordinate.Y] = null;
-			Rerender = true;
-		}
-
-
-		#endregion
-
-
-		#region Creatures (Mobs2)
+		#region Creatures
 
 		public MapCreature2 GetCreature(Vector2I coordinate)
 		{
@@ -439,11 +315,6 @@ namespace GalaxyGauntlet.scripts
 
 		public void RemoveCreatureFromProcessList(int creatureID)
 		{
-			GD.Print($"Removing creature {creatureID}");
-			if(CreaturesToProcess.Any(e => e.CreatureID == creatureID))
-			{
-				GD.Print("Creature found");
-			}
 			CreaturesToProcess = CreaturesToProcess.Where(e => e.CreatureID != creatureID).ToList();
 		}
 
@@ -546,30 +417,7 @@ namespace GalaxyGauntlet.scripts
 		#endregion
 
 
-		#region Player
-
-		public MapMob GetPlayer(Vector2I coordinate)
-		{
-			return Players[coordinate.X, coordinate.Y];
-		}
-
-
-		public void RemovePlayer(Vector2I coordinate)
-		{
-			Players[coordinate.X, coordinate.Y] = null;
-			Rerender = true;
-		}
-
-		#endregion
-
-
 		#region Item
-
-		public MapItem GetItem(Vector2I coordinate)
-		{
-			return Items[coordinate.X, coordinate.Y];
-		}
-
 
 		public MapItem2 GetItem2(Vector2I coordinate)
 		{
@@ -590,13 +438,6 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void RemoveItem(Vector2I coordinate)
-		{
-			Items[coordinate.X, coordinate.Y] = null;
-			Rerender = true;
-		}
-
-
 		public void RemoveItem2(Vector2I coordinate)
 		{
 			if(Items2[coordinate.X, coordinate.Y] is null)
@@ -613,19 +454,6 @@ namespace GalaxyGauntlet.scripts
 
 		#region Tile
 
-		public MapTile GetTile(Vector2I coordinate)
-		{
-			try
-			{
-				return Tiles[coordinate.X, coordinate.Y];
-			}
-			catch(IndexOutOfRangeException)
-			{
-				return new WallTile(coordinate);
-			}
-		}
-
-
 		public MapTile2 GetTile2(Vector2I coordinate)
 		{
 			try
@@ -639,26 +467,12 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void SetTile(Vector2I coordinate, MapTile newTile)
-		{
-			Tiles[coordinate.X, coordinate.Y] = newTile;
-			Rerender = true;
-		}
-
-
 		public void SetTile(MapTile2 newTile)
 		{
 			var coordinate = newTile.Coordinate;
 			Tiles2[coordinate.X, coordinate.Y].Kill();
 			AddMapObject(newTile);
 			Tiles2[coordinate.X, coordinate.Y] = newTile;
-		}
-
-
-		public void RemoveTile(Vector2I coordinate)
-		{
-			Tiles[coordinate.X, coordinate.Y] = null;
-			Rerender = true;
 		}
 
 		#endregion
