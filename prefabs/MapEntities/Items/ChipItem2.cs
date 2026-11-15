@@ -45,7 +45,7 @@ public partial class ChipItem2(Vector2I coordinate) : MapItem2(coordinate)
             {
                 SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/archipelago_tile_sprites.tres"),
                 TextureFilter = TextureFilterEnum.Nearest,
-                ZIndex = ZIndex + 1,
+                ZAsRelative = true,
                 Frame = spriteFrameIndex
             };
             AddChild(ArchipelagoSprite);

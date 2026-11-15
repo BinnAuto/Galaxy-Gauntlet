@@ -33,7 +33,8 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		{
 			SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
 			TextureFilter = TextureFilterEnum.Nearest,
-			Frame = SpriteFrameIndex
+			Frame = SpriteFrameIndex,
+			ZAsRelative = true
 		};
 		AddChild(Sprite);
 
