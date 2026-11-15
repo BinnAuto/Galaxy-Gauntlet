@@ -20,7 +20,7 @@ public partial class Player2(bool isRealPlayer, Vector2I coordinate) : MapCreatu
 
 	public PlayerStatus PlayerStatus = PlayerStatus.Okay;
 
-	private bool IsRealPlayer = isRealPlayer;
+	public readonly bool IsRealPlayer = isRealPlayer;
 
     public override int SpriteFrameIndex => Orientation switch
 	{

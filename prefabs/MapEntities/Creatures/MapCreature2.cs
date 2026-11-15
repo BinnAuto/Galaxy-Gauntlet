@@ -419,14 +419,20 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		var destinationItem = GameData.Map.GetItem2(destinationCoordinate);
 		var destinationCreature = GameData.Map.GetCreature(destinationCoordinate);
 
-		if (this is Player2 player)
+		if (this is Player2)
 		{
+			Player2 thisPlayer = (Player2)this;
+			if(false == thisPlayer.IsRealPlayer)
+			{
+				return;
+			}
+
 			switch (destinationTile.EntityID)
 			{
 				case GGConstants.ByteCodes.Entities.Water:
 					if(false == HasItem(new FlippersItem2(Vector2I.Zero)))
 					{
-						player.PlayerStatus = PlayerStatus.Drowned;
+						thisPlayer.PlayerStatus = PlayerStatus.Drowned;
 						GameData.Level.DeathMessage = GGConstants.DeathMessages.Water;
 					}
 					break;
@@ -434,7 +440,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				case GGConstants.ByteCodes.Entities.Fire:
 					if(false == HasItem(new FireBootsItem2(Vector2I.Zero)))
 					{
-						player.PlayerStatus = PlayerStatus.Burned;
+						thisPlayer.PlayerStatus = PlayerStatus.Burned;
                         GameData.Level.DeathMessage = GGConstants.DeathMessages.Fire;
                     }
 					break;
@@ -500,13 +506,16 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				switch(destinationCreature.EntityID)
 				{
 					case GGConstants.ByteCodes.Entities.RedBomb:
-						player.PlayerStatus = PlayerStatus.Bombed;
+						thisPlayer.PlayerStatus = PlayerStatus.Bombed;
 						GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
 						break;
 
 					default:
-						player.PlayerStatus = PlayerStatus.Collided;
-						GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+						if(false == thisPlayer.HasItem(new HelmetItem2(Vector2I.Zero)))
+						{
+							thisPlayer.PlayerStatus = PlayerStatus.Collided;
+							GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+						}
 						break;
 				}
 			}
@@ -548,7 +557,15 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
             }
 			if(destinationCreature is Player2)
 			{
-				GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+				Player2 player = (Player2)destinationCreature;
+				if(false == player.IsRealPlayer)
+				{
+					player.Kill();
+				}
+				else if (false == player.HasItem(new HelmetItem2(Vector2I.Zero)))
+				{
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+				}
             }
             if (destinationTile is BlueTeleporterTile2)
             {
@@ -821,8 +838,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 		}
 
-		if(this is Player2 player)
+		if(this is Player2)
 		{
+			Player2 thisPlayer = (Player2)this;
+
 			#region Entry Law checks
 
 			// Tile
@@ -906,7 +925,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				{
 					return false;
 				}
-				player.PlayerStatus = PlayerStatus.Collided;
+				thisPlayer.PlayerStatus = PlayerStatus.Collided;
 			}
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
@@ -976,7 +995,21 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if(destinationCreature is not null
 				&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
             {
-                return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
+				if(destinationCreature is Player2)
+				{
+					Player2 player = (Player2)destinationCreature;
+					if(false == player.IsRealPlayer)
+					{
+						return true;
+					}
+					if (player.HasItem(new HelmetItem2(Vector2I.Zero)))
+					{
+						return false;
+					}
+					return true;
+				}
+
+                return (destinationCreature is RedBombCreature2);
             }
 
 			#region Entry Law checks
