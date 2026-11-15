@@ -351,11 +351,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			return true;
 		}
 
-		if (IsPlayer)
-		{
-			GameData.Level.ChipTick = 0;
-		}
-
 		if(false == StartMovement(direction))
 		{
 			if(IsPlayer)
@@ -363,6 +358,12 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				// Can't move sound effect
 			}
 			return false;
+		}
+
+		if (IsPlayer)
+		{
+			GameData.Level.ChipTick = HasState(CreatureStateFlags.Sliding)
+				? 2 : 0;
 		}
 
 		EndMovement(direction);

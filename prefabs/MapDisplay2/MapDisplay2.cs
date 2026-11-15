@@ -104,7 +104,11 @@ public partial class MapDisplay2 : Node2D
 				creature.ChooseMove();
 				if(creature.TDir != Vector2I.Zero)
 				{
-					creature.AdvanceCreature(creature.TDir);
+					bool creatureAdvanced = creature.AdvanceCreature(creature.TDir);
+					if (creatureAdvanced)
+					{
+						GD.Print($"Creature moved {creature.TDir}");
+					}
 					if (CheckForEnding())
 					{
 						return;
@@ -216,10 +220,11 @@ public partial class MapDisplay2 : Node2D
 			{
 				continue;
             }
-            // lastSlipDirection = slipDirection
+			
             bool creatureAdvanced = creature.AdvanceCreature(slipDirection);
 			if(creatureAdvanced)
 			{
+				GD.Print($"Creature slid {slipDirection}");
 				creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
 			}
 			else
@@ -232,10 +237,10 @@ public partial class MapDisplay2 : Node2D
 				else if(tile is IceTile2 iceTile)
 				{
 					slipDirection = iceTile.SetCreatureDirection(slipDirection);
-					// lastSlipDirection = slipDirection
 					creatureAdvanced = creature.AdvanceCreature(slipDirection);
 					if(creatureAdvanced)
                     {
+	                    GD.Print($"Creature slid {slipDirection}");
                         creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
                     }
 				}
@@ -244,6 +249,7 @@ public partial class MapDisplay2 : Node2D
 					slipDirection *= -1;
 					if(creature.AdvanceCreature(slipDirection))
                     {
+	                    GD.Print($"Creature slid {slipDirection}");
                         creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
                     }
 				}
