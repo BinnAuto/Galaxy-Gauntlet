@@ -347,6 +347,10 @@ namespace GalaxyGauntlet.scripts
 			{
 				input = new(1, 0);
 			}
+			if(Level.PlayerIsConfused)
+			{
+				input *= -1;
+			}
 			return input;
 		}
 

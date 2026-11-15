@@ -35,7 +35,7 @@ namespace GalaxyGauntlet.scripts
 
 		// Controlled by Archipelago items
 		public double ConfusionTimer = 0;
-		public bool IsConfused
+		public bool PlayerIsConfused
 		{
 			get
 			{
