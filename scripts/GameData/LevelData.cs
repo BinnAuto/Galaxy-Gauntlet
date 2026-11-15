@@ -90,7 +90,6 @@ namespace GalaxyGauntlet.scripts
 			CurrentTick = 0;
 			ChipTick = 0;
 			PlayerItems = [];
-			SteppingOffset = 4;
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;
