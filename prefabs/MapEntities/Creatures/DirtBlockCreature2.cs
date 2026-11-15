@@ -6,7 +6,9 @@ public partial class DirtBlockCreature2(Vector2I coordinate) : MapCreature2(coor
 
 	public override int EntityID => GGConstants.ByteCodes.Entities.DirtBlock;
 
-	public override int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.DirtBlock;
+	public override int SpriteFrameIndex => GameData.Level.XRayMode
+		? GGConstants.SpriteFrameIndexes.DirtBlock_XRay
+		: GGConstants.SpriteFrameIndexes.DirtBlock;
 
 
 	public bool CanPushBlock(Vector2I direction, int flags)

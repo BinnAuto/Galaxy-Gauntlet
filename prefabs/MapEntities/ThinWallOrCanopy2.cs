@@ -1,3 +1,5 @@
+using GalaxyGauntlet.scripts;
+
 public partial class ThinWallOrCanopy2 : MapObject2
 {
 	public override bool RequiresLowerLayerTile => true;
@@ -125,6 +127,18 @@ public partial class ThinWallOrCanopy2 : MapObject2
 
 		#endregion
 	}
+
+
+    public override void _Process(double delta)
+    {
+        base._Process(delta);
+		if(CanopySprite is not null)
+		{
+			CanopySprite.Frame = GameData.Level.XRayMode
+				? GGConstants.SpriteFrameIndexes.Canopy_XRay
+				: GGConstants.SpriteFrameIndexes.Canopy;
+		}
+    }
 
 
 	public bool CreatureCanExit(Vector2I direction)
