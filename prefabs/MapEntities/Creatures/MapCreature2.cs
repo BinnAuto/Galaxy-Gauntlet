@@ -699,8 +699,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		if(tile is IceTile2 iceFloor)
 		{
 			if(direction == Vector2I.Zero)
-			{
-				initialDirection = iceFloor.SetCreatureDirection(Forward);
+            {
+                initialDirection = iceFloor.SetCreatureDirection(Forward);
 			}
 		}
 		else if(tile is ForceFloorTile2 forceFloor)
@@ -737,12 +737,12 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			{
 				CreatureState |= CreatureStateFlags.Sliding;
 			}
-			SetOrientation(initialDirection);
 		}
 		else
 		{
 			CreatureState |= CreatureStateFlags.Slipping;
 		}
+		SetOrientation(initialDirection);
 		SlipDirection = initialDirection;
 	}
 

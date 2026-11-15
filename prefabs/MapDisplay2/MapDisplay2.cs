@@ -1,5 +1,4 @@
 using GalaxyGauntlet.scripts;
-using System.Reflection.Metadata.Ecma335;
 
 public partial class MapDisplay2 : Node2D
 {
@@ -289,7 +288,7 @@ public partial class MapDisplay2 : Node2D
 				var tile = GameData.Map.GetTile2(creature.Coordinate);
 				if(tile is IceTile2 ice)
 				{
-					slipDirection = ice.SetCreatureDirection(slipDirection);
+					slipDirection = ice.SetCreatureDirection(-1 * slipDirection);
 					creatureAdvanced = creature.AdvanceCreature(slipDirection);
 				}
 				if (creature.IsInSliplist)
