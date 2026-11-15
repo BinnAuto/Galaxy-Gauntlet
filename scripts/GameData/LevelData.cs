@@ -30,7 +30,7 @@ namespace GalaxyGauntlet.scripts
 		public bool PlayerAlive = true;
 		public string DeathMessage = string.Empty;
 		public int SteppingOffset = 1; // Odd or Even Step
-		public Vector2I PlayerCoordinate = Vector2I.Zero;
+		public Vector2I PlayerCoordinate = -Vector2I.One;
 		public string[] LevelSet = [];
 
 		// Controlled by Archipelago items
@@ -93,7 +93,7 @@ namespace GalaxyGauntlet.scripts
 
 			ChipsRequired = 0;
 			ChipsCollected = 0;
-			PlayerCoordinate = Vector2I.Zero;
+			PlayerCoordinate = -Vector2I.One;
 		}
 
 

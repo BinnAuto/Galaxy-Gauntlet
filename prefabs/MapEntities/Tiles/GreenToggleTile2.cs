@@ -20,7 +20,6 @@ public partial class GreenToggleTile2(bool isWall, Vector2I coordinate) : MapTil
 
 	public override void _Ready()
 	{
-		GD.Print("Green floor ready");
 		base._Ready();
 		Wall = new()
 		{

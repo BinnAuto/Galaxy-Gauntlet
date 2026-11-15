@@ -124,6 +124,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 
 	public static MapObject2 GetMapObject(int byteCode, Vector2I coordinate)
 	{
+		bool playerMissing = GameData.Level.PlayerCoordinate.X < 0;
 		return byteCode switch
 		{
 			/* Tiles */
@@ -188,7 +189,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.IceSkates => new IceSkatesItem2(coordinate),
 
 			/* Creatures */
-			GGConstants.ByteCodes.Entities.Player => new Player2(coordinate),
+			GGConstants.ByteCodes.Entities.Player => new Player2(playerMissing, coordinate),
 			GGConstants.ByteCodes.Entities.Bug => new BugCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.DirtBlock => new DirtBlockCreature2(coordinate),
 			GGConstants.ByteCodes.Entities.RedBomb => new RedBombCreature2(coordinate),

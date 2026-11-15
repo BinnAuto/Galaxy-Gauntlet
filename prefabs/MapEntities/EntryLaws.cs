@@ -235,27 +235,23 @@ namespace GalaxyGauntlet.prefabs.MapEntities
             if ((lawRules & North) != North
                 && direction.Y > 0)
             {
-                // GD.Print("Cannot enter from the North");
                 return false;
             }
             if ((lawRules & South) != South
                 && direction.Y < 0)
             {
-                // GD.Print("Cannot enter from the South");
                 return false;
             }
 
             if ((lawRules & East) != East
                 && direction.X < 0)
             {
-                // GD.Print("Cannot enter from the East");
                 return false;
             }
 
             if ((lawRules & West) != West
                 && direction.X > 0)
             {
-                // GD.Print("Cannot enter from the West");
                 return false;
             }
 

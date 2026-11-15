@@ -1,6 +1,4 @@
 using GalaxyGauntlet.scripts;
-using System.Linq;
-
 public enum PlayerStatus
 {
 	Okay,
@@ -14,13 +12,15 @@ public enum PlayerStatus
 	NotOkay
 }
 
-public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
+public partial class Player2(bool isRealPlayer, Vector2I coordinate) : MapCreature2(coordinate)
 {
 	public override string MapObjectName => "Player";
 
 	public override int EntityID => GGConstants.ByteCodes.Entities.Player;
 
 	public PlayerStatus PlayerStatus = PlayerStatus.Okay;
+
+	private bool IsRealPlayer = isRealPlayer;
 
     public override int SpriteFrameIndex => Orientation switch
 	{
@@ -41,11 +41,6 @@ public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
     public override void _Process(double delta)
     {
 		base._Process(delta);
-        if(EntityID != 1)
-		{
-			return;
-		}
-
 		if(GameData.Level.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
 		{
 			Inventory.AddRange(GameData.Archipelago.PendingItems);
@@ -57,6 +52,12 @@ public partial class Player2(Vector2I coordinate) : MapCreature2(coordinate)
 
 	public override void ChooseMove()
 	{
+		if(false == IsRealPlayer)
+		{
+			TDir = Vector2I.Zero;
+			return;
+		}
+
 		ChooseChipMove();
 	}
 
