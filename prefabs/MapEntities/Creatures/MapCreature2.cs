@@ -1292,11 +1292,74 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void PickUpItem(MapItem2 item)
 	{
-		Inventory.Add(item);
-		GameData.Map.RemoveItem2(item.Coordinate);
-		if(this is Player2 && CreatureID == 1)
+		// Only pick up item if it is unlocked
+		switch(item.EntityID)
 		{
-			GameData.Level.UpdatePlayerItems(Inventory);
+			case GGConstants.ByteCodes.Entities.RedKey:
+				if(false == GameData.Archipelago.RedKeyUnlocked)
+				{
+					return;
+				}
+				break;
+
+			case GGConstants.ByteCodes.Entities.BlueKey:
+				if(false == GameData.Archipelago.BlueKeyUnlocked)
+				{
+					return;
+				}
+				break;
+
+            case GGConstants.ByteCodes.Entities.YellowKey:
+                if (false == GameData.Archipelago.YellowKeyUnlocked)
+                {
+                    return;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.GreenKey:
+                if (false == GameData.Archipelago.GreenKeyUnlocked)
+                {
+                    return;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.IceSkates:
+                if (false == GameData.Archipelago.IceSkatesUnlocked)
+                {
+                    return;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Flippers:
+                if (false == GameData.Archipelago.FlippersUnlocked)
+                {
+                    return;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.SuctionBoots:
+                if (false == GameData.Archipelago.SuctionBootsUnlocked)
+                {
+                    return;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.FireBoots:
+                if (false == GameData.Archipelago.FireBootsUnlocked)
+                {
+                    return;
+                }
+                break;
+
+            default:
+				break;
+        }
+
+        Inventory.Add(item);
+        GameData.Map.RemoveItem2(item.Coordinate);
+		if(this is Player2 player && player.IsRealPlayer)
+		{
+            GameData.Level.UpdatePlayerItems(Inventory);
 		}
 	}
 
@@ -1336,7 +1399,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 		}
 		Inventory = newInventory;
-	}
+        GameData.Level.UpdatePlayerItems(Inventory);
+    }
 
 
 	public void StealTools()
@@ -1355,6 +1419,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 		}
 		Inventory = newInventory;
+		GameData.Level.UpdatePlayerItems(Inventory);
 	}
 
 	#endregion
