@@ -18,11 +18,11 @@ public partial class BlueWallTile2(bool isReal, Vector2I coordinate) : MapTile2(
 		{
 			if(IsReal)
 			{
-				return GGConstants.ByteCodes.Entities.BlueWall;
+				return GGConstants.SpriteFrameIndexes.BlueWall;
 			}
 			return GameData.Level.XRayMode
-				? GGConstants.ByteCodes.Entities.Wall
-				: GGConstants.ByteCodes.Entities.BlueWall;
+				? GGConstants.SpriteFrameIndexes.Wall
+				: GGConstants.SpriteFrameIndexes.BlueWall;
 		}
 	}
 }
