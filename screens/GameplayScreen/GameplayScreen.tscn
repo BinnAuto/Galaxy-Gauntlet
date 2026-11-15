@@ -51,14 +51,20 @@ offset_right = 894.0
 offset_bottom = 179.0
 text = "Timer"
 
+[node name="StepOffset" type="Label" parent="." unique_id=1781871773]
+offset_left = 849.0
+offset_top = 365.0
+offset_right = 894.0
+offset_bottom = 388.0
+
 [node name="InventoryDisplay" parent="." unique_id=266836377 instance=ExtResource("4_l2pm1")]
 position = Vector2(858, 218)
 
 [node name="HintLabel" type="Label" parent="." unique_id=1183504913]
 offset_left = 852.0
-offset_top = 351.0
+offset_top = 415.0
 offset_right = 892.0
-offset_bottom = 374.0
+offset_bottom = 438.0
 
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("5_gpxbn")]
 SourceFolder = "./custom/music/game"
