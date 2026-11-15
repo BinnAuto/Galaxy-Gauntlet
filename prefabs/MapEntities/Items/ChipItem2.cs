@@ -7,7 +7,17 @@ public partial class ChipItem2(Vector2I coordinate) : MapItem2(coordinate)
 
 	public override int EntityID => GGConstants.ByteCodes.Entities.Chip;
 
-	public override int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.Chip;
+	public override int SpriteFrameIndex
+    {
+        get
+        {
+            return (ArchipelagoSprite is null)
+                ? GGConstants.SpriteFrameIndexes.Chip
+                : GGConstants.SpriteFrameIndexes.ExtraChip;
+        }
+    }
+
+    private AnimatedSprite2D ArchipelagoSprite = null;
 
     public override void _Ready()
     {
@@ -31,15 +41,15 @@ public partial class ChipItem2(Vector2I coordinate) : MapItem2(coordinate)
                 ItemFlags.NeverExclude => GGConstants.ArchipelagoItemSpriteIndexes.Helpful,
                 _ => GGConstants.ArchipelagoItemSpriteIndexes.Filler
             };
-            AnimatedSprite2D archipelagoSprite = new()
+            ArchipelagoSprite = new()
             {
                 SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/archipelago_tile_sprites.tres"),
                 TextureFilter = TextureFilterEnum.Nearest,
                 ZIndex = ZIndex + 1,
                 Frame = spriteFrameIndex
             };
-            AddChild(archipelagoSprite);
-            archipelagoSprite.Position = Vector2.Zero;
+            AddChild(ArchipelagoSprite);
+            ArchipelagoSprite.Position = Vector2.Zero;
         }
     }
 
