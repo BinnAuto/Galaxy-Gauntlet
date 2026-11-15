@@ -120,7 +120,7 @@ public partial class ThinWallOrCanopy2 : MapObject2
 				SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
 				TextureFilter = TextureFilterEnum.Nearest,
 				Frame = GGConstants.SpriteFrameIndexes.Canopy,
-				ZIndex = 20
+				ZIndex = GGConstants.ZIndexes.Canopy
 			};
 			AddChild(CanopySprite);
         }

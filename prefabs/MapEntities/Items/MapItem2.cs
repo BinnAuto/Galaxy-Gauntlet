@@ -6,6 +6,6 @@ public partial class MapItem2(Vector2I coordinate) : MapObject2(coordinate)
     public override void _Ready()
     {
         base._Ready();
-        ZIndex = 6;
+        ZIndex = GGConstants.ZIndexes.Item;
     }
 }

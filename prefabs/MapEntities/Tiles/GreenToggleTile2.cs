@@ -26,7 +26,7 @@ public partial class GreenToggleTile2(bool isWall, Vector2I coordinate) : MapTil
 			SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
 			TextureFilter = TextureFilterEnum.Nearest,
 			Frame = GGConstants.SpriteFrameIndexes.ToggleWall,
-			ZIndex = 1
+			ZIndex = ZIndex + 1
 		};
 		AddChild(Wall);
 	}

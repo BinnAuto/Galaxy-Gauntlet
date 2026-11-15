@@ -34,7 +34,7 @@ public partial class Player2(bool isRealPlayer, Vector2I coordinate) : MapCreatu
     public override void _Ready()
     {
         base._Ready();
-		ZIndex = 9;
+		ZIndex = GGConstants.ZIndexes.Player;
     }
 
 

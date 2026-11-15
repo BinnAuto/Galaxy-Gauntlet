@@ -101,7 +101,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	public override void _Ready()
 	{
 		base._Ready();
-		ZIndex = 10;
+		ZIndex = GGConstants.ZIndexes.Creature;
 	}
 
 	#region Movement logic methods

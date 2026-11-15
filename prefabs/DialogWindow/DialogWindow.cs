@@ -67,7 +67,8 @@ public partial class DialogWindow : Node2D
 			OKButton = (UIButton)OKButtonContainer.GetNode(nameof(OKButton));
 			OKButton.Pressed += OnOKButtonPressed;
 			OKButtonContainer.Visible = false;
-		}
+			ZIndex = GGConstants.ZIndexes.DialogWindow;
+        }
 		catch(System.Exception e)
 		{
 			FileLogger.LogException("Error readying Dialog window", e);
