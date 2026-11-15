@@ -66,7 +66,7 @@ public partial class TitleMenu : Node
 			ArchipelagoConnectForm.Cancelled += () => { Archipelago.Visible = false; };
 
 			Version = (Label)GetNode(nameof(Version));
-			Version.Text = $"v{GGConstants.GameVersion}";
+			Version.Text = $"v{GGConstants.GameVersion.ToRawString()}";
 
 			SaveData.Load();
 			ContinueButton.Visible = SaveData.SaveSlotExists(GGConstants.SaveSlotNames.Autosave);
