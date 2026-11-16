@@ -50,7 +50,6 @@ public partial class GameplayScreen : Node
 
 			HintLabel = (Label)GetNode(nameof(HintLabel));
 			HintLabel.Visible = false;
-			HintLabel.Resized += OnHintLabelResized;
 
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.Level.Hint;
@@ -122,6 +121,9 @@ public partial class GameplayScreen : Node
 		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
 		StepOffset.Text = (GameData.Level.SteppingOffset % 2 == 1)
 			? "Odd" : string.Empty;
+
+		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
+		HintLabel.Visible = (currentTile is HintTile2);
     }
 
 
@@ -263,15 +265,6 @@ public partial class GameplayScreen : Node
 			case GameMode.Archipelago:
 				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
-		}
-	}
-
-
-	private void OnHintLabelResized()
-	{
-		if(HintLabel.Size.X > 200)
-		{
-			HintLabel.SetSize(new(200, HintLabel.Size.Y));
 		}
 	}
 
