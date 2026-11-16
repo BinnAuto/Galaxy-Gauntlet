@@ -933,14 +933,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 		else if(EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
 		{
-			if(destinationCreature is not null)
-			{
-				if(destinationCreature is not Player2)
-                {
-                    return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
-                }
-			}
-
 			#region Entry Law checks
 
 			// Tile
@@ -991,30 +983,18 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 			}
 
-			#endregion
-		}
+            #endregion
+
+            if (destinationCreature is not null)
+            {
+                if (destinationCreature is not Player2)
+                {
+                    return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
+                }
+            }
+        }
 		else
 		{
-			if(destinationCreature is not null
-				&& (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
-            {
-				if(destinationCreature is Player2)
-				{
-					Player2 player = (Player2)destinationCreature;
-					if(false == player.IsRealPlayer)
-					{
-						return true;
-					}
-					if (player.HasItem(new HelmetItem2(Vector2I.Zero)))
-					{
-						return false;
-					}
-					return true;
-				}
-
-                return (destinationCreature is RedBombCreature2);
-            }
-
 			#region Entry Law checks
 
 			// Tile
@@ -1065,8 +1045,28 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 			}
 
-			#endregion
-		}
+            #endregion
+
+            if (destinationCreature is not null
+                && (flags & CanMakeMoveFlags.CloneCantBlock) == 0)
+            {
+                if (destinationCreature is Player2)
+                {
+                    Player2 player = (Player2)destinationCreature;
+                    if (false == player.IsRealPlayer)
+                    {
+                        return true;
+                    }
+                    if (player.HasItem(new HelmetItem2(Vector2I.Zero)))
+                    {
+                        return false;
+                    }
+                    return true;
+                }
+
+                return (destinationCreature is RedBombCreature2);
+            }
+        }
 
 		return true;
 	}
