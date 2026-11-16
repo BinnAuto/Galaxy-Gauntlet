@@ -183,7 +183,10 @@ public partial class MapDisplay2 : Node2D
 		{
 			return true;
 		}
-		// TODO
+		if(false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+		{
+			return true;
+		}
 		return false;
 	}
 

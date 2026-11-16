@@ -332,7 +332,7 @@ namespace GalaxyGauntlet.scripts
 			var creature = GetCreature(sourceCoordinate);
 			if(creature is null)
 			{
-				FileLogger.QuietLogMessage($"Whoops! There is no creature in the cloning machine at {sourceCoordinate}");
+				FileLogger.QuietLogMessage($"Whoops! There is no creature in the cloning machine at {sourceCoordinate}!");
 				return;
 			}
 
