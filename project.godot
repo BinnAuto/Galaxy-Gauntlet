@@ -14,7 +14,7 @@ config/name="Galaxy Gauntlet"
 run/main_scene="uid://cyw0xso6sddmq"
 config/features=PackedStringArray("4.6", "C#", "Mobile")
 run/max_fps=60
-config/icon="res://icon.svg"
+config/icon="uid://cmkwfxylgypdk"
 
 [display]
 
