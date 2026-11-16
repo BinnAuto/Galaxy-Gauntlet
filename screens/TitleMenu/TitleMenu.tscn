@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://i4kd8yus7bt0" path="res://images/ui/logo.png" id="3_n25p1"]
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="4_g3erx"]
 [ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="5_m4xi5"]
-[ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="6_gtykd"]
+[ext_resource type="PackedScene" uid="uid://ck1puqwe4jrxo" path="res://prefabs/DialogWindow2/DialogWindow2.tscn" id="7_m4xi5"]
 [ext_resource type="PackedScene" uid="uid://dfbrdwt6fdgtn" path="res://prefabs/ArchipelagoConnectForm/ArchipelagoConnectForm.tscn" id="7_n25p1"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="8_g3erx"]
 
@@ -80,7 +80,7 @@ offset_bottom = 590.0
 ButtonText = "Exit"
 FontSize = 30
 
-[node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("6_gtykd")]
+[node name="DialogWindow2" parent="." unique_id=1309426340 instance=ExtResource("7_m4xi5")]
 
 [node name="Archipelago" type="Node2D" parent="." unique_id=533125033]
 visible = false

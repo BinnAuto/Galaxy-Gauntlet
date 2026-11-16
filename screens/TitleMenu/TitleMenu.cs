@@ -19,7 +19,7 @@ public partial class TitleMenu : Node
 
 	private UIButton ExitButton;
 
-	private DialogWindow DialogWindow;
+	private DialogWindow2 DialogWindow2;
 
 	private Node2D Archipelago;
 
@@ -57,7 +57,7 @@ public partial class TitleMenu : Node
 			ExitButton = (UIButton)GetNode(nameof(ExitButton));
 			ExitButton.Pressed += OnExit;
 
-			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
 
 			Archipelago = (Node2D)GetNode(nameof(Archipelago));
 
@@ -116,18 +116,18 @@ public partial class TitleMenu : Node
 			return;
 		}
 
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("Starting a new game will delete the existing save data. Do you want to continue?", "Autosave found", DialogButtonType.YesNo);
-		DialogWindow.NoButtonPressed += DialogWindow.HideDialog;
-		DialogWindow.YesButtonPressed += () =>
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("Starting a new game will delete the existing save data. Do you want to continue?", "Autosave found", DialogButtonType.YesNo);
+		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
+		DialogWindow2.YesButtonPressed += () =>
 		{
 			int levelCount = GalaxyGauntlet.Common.Global.GetLevelList().Length;
 			string levelHash = GetLevelSetHash();
 			if(levelCount == 0 || string.IsNullOrEmpty(levelHash))
 			{
-				DialogWindow.ClearAllButtonEvents();
-				DialogWindow.ShowDialog("No levels found in level folder", DialogButtonType.OK);
-				DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+				DialogWindow2.ClearAllButtonEvents();
+				DialogWindow2.ShowDialog("No levels found in level folder", DialogButtonType.OK);
+				DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 				return;
 			}
 
@@ -150,9 +150,9 @@ public partial class TitleMenu : Node
 		int levelCount = GalaxyGauntlet.Common.Global.GetLevelList().Length;
 		if (levelCount == 0 || string.IsNullOrEmpty(levelHash))
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("No levels found in level folder", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("No levels found in level folder", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 			return;
 		}
 
@@ -163,10 +163,10 @@ public partial class TitleMenu : Node
 			return;
 		}
 
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("It looks like the level set has changed since you last saved. Do you want to continue?", DialogButtonType.YesNo);
-		DialogWindow.NoButtonPressed += DialogWindow.HideDialog;
-		DialogWindow.YesButtonPressed += () =>
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("It looks like the level set has changed since you last saved. Do you want to continue?", DialogButtonType.YesNo);
+		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
+		DialogWindow2.YesButtonPressed += () =>
 		{
 			saveSlot.LevelCount = levelCount;
 			saveSlot.LevelHash = levelHash;
@@ -184,17 +184,17 @@ public partial class TitleMenu : Node
 		FileLogger.QuietLogMessage($"APWorld level hash: {apLevelHash}");
 		if(string.IsNullOrEmpty(apLevelHash))
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("The current level set cannot be determined to match the given AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
-			DialogWindow.YesButtonPressed += () =>
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("The current level set cannot be determined to match the given AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
+			DialogWindow2.YesButtonPressed += () =>
 			{
 				ToLevelSelect(GameMode.Archipelago);
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
-			DialogWindow.NoButtonPressed += async () =>
+			DialogWindow2.NoButtonPressed += async () =>
 			{
 				await GameData.Archipelago.DisconnectFromServer();
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
 			return;
 		}
@@ -202,17 +202,17 @@ public partial class TitleMenu : Node
 		FileLogger.QuietLogMessage($"Local level hash: {localLevelHash}");
 		if (localLevelHash != apLevelHash)
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("The current level set does not seem to match the set used to generate this AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
-			DialogWindow.YesButtonPressed += () =>
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("The current level set does not seem to match the set used to generate this AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
+			DialogWindow2.YesButtonPressed += () =>
 			{
 				ToLevelSelect(GameMode.Archipelago);
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
-			DialogWindow.NoButtonPressed += async () =>
+			DialogWindow2.NoButtonPressed += async () =>
 			{
 				await GameData.Archipelago.DisconnectFromServer();
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
 			return;
 		}
@@ -258,9 +258,9 @@ public partial class TitleMenu : Node
 		string[] files = GalaxyGauntlet.Common.Global.GetLevelList();
 		if(files.Length == 0)
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 			return null;
 		}
 
@@ -271,9 +271,9 @@ public partial class TitleMenu : Node
 		}
 		if (combinedFileData.Count == 0)
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 			return null;
 		}
 

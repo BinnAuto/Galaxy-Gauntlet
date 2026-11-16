@@ -10,7 +10,7 @@ public partial class GameplayScreen : Node
 
 	private MapDisplay2 MapDisplay2;
 
-	private DialogWindow DialogWindow;
+	private DialogWindow2 DialogWindow2;
 
 	private Label LevelName;
 
@@ -38,7 +38,7 @@ public partial class GameplayScreen : Node
 		{
 			MapDisplay2 = (MapDisplay2)GetNode(nameof(MapDisplay2));
 
-			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
 
 			LevelName = (Label)GetNode(nameof(LevelName));
 
@@ -89,7 +89,7 @@ public partial class GameplayScreen : Node
 		CheckPlayerStatus();
 		UpdateTimer(delta);
 		UpdateLabels();
-		if(false == DialogWindow.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+		if(false == DialogWindow2.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
 		{
 			OnPlayerDeath();
 		}
@@ -143,7 +143,7 @@ public partial class GameplayScreen : Node
 		{
 			GameData.Level.Timer = 0;
 		}
-		if(GameData.Map.TimeLimit != 0 && GameData.Level.Timer <= 0 && false == DialogWindow.Visible)
+		if(GameData.Map.TimeLimit != 0 && GameData.Level.Timer <= 0 && false == DialogWindow2.Visible)
 		{
 			GameData.Level.DeathMessage = GGConstants.DeathMessages.OutOfTime;
 			OnPlayerDeath();
@@ -191,10 +191,10 @@ public partial class GameplayScreen : Node
         if (currentTile is ExitTile2 && GameData.Level.ChipRequirementMet)
 		{
 			GameData.OnLevelComplete();
-			DialogWindow.ClearAllButtonEvents();
+			DialogWindow2.ClearAllButtonEvents();
 			string dialogText = GetLevelScoreMessage();
-			DialogWindow.ShowDialog(dialogText, DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += OnLevelComplete;
+			DialogWindow2.ShowDialog(dialogText, DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += OnLevelComplete;
 		}
 	}
 
@@ -202,16 +202,16 @@ public partial class GameplayScreen : Node
 	private void OnPlayerDeath()
 	{
 		GameData.OnPlayerDeath();
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);
-		DialogWindow.OKButtonPressed += RestartLevel;
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);
+		DialogWindow2.OKButtonPressed += RestartLevel;
 		GameData.Archipelago.IsProcessingDeathLink = false;
 	}
 
 
 	private void OnLevelComplete()
 	{
-		DialogWindow.HideDialog();
+		DialogWindow2.HideDialog();
 		switch(GameData.GameMode)
 		{
 			case GameMode.Campaign:
@@ -236,10 +236,10 @@ public partial class GameplayScreen : Node
 
 	private void OnGameComplete()
 	{
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("Complete!", DialogButtonType.OK);
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("Complete!", DialogButtonType.OK);
 		SaveData.DeleteSaveSlot(GGConstants.SaveSlotNames.Autosave);
-		DialogWindow.OKButtonPressed += OnExit;
+		DialogWindow2.OKButtonPressed += OnExit;
 	}
 
 
@@ -249,7 +249,7 @@ public partial class GameplayScreen : Node
 		GameData.Level.RestartCount++;
 		GameData.LoadCurrentLevel();
 		GameData.Level.Timer = GameData.Map.TimeLimit + 0.999999;
-		DialogWindow.Visible = false;
+		DialogWindow2.Visible = false;
 	}
 
 

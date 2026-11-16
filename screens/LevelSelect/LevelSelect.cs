@@ -11,7 +11,7 @@ public partial class LevelSelect : Node2D
 
 	private UIButton BackButton;
 
-	private DialogWindow DialogWindow;
+	private DialogWindow2 DialogWindow2;
 
 	private Button ButtonRef;
 
@@ -40,8 +40,8 @@ public partial class LevelSelect : Node2D
 			BackButton = (UIButton)GetNode(nameof(BackButton));
 			BackButton.Pressed += async () => await ToTitleScreen();
 
-			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
-			DialogWindow.Visible = false;
+			DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
+			DialogWindow2.Visible = false;
 
 			ArchipelagoDisplay = (Node2D)GetNode(nameof(ArchipelagoDisplay));
 
@@ -169,13 +169,13 @@ public partial class LevelSelect : Node2D
 		}
 
 		// Archipelago logic
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("Are you sure you want to disconnect from the Archipelago server?", DialogButtonType.YesNo);
-		DialogWindow.YesButtonPressed += async () =>
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("Are you sure you want to disconnect from the Archipelago server?", DialogButtonType.YesNo);
+		DialogWindow2.YesButtonPressed += async () =>
 		{
 			await GameData.Archipelago.DisconnectFromServer();
 			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 		};
-		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };
+		DialogWindow2.NoButtonPressed += () => { DialogWindow2.Visible = false; };
 	}
 }

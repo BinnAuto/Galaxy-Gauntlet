@@ -14,7 +14,7 @@ public partial class SettingsMenu : Node
 
 	private UIButton SaveButton;
 
-	private DialogWindow DialogWindow;
+	private DialogWindow2 DialogWindow2;
 
 	#endregion
 
@@ -50,7 +50,7 @@ public partial class SettingsMenu : Node
 		SaveButton = (UIButton)GetNode(nameof(SaveButton));
 		SaveButton.Pressed += OnSavePressed;
 
-		DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+		DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
 	}
 
 
@@ -87,11 +87,11 @@ public partial class SettingsMenu : Node
 		if(newWindowResolution.Value.X > size.X
 			|| newWindowResolution.Value.Y > size.Y)
 		{
-			DialogWindow.ShowDialog("Failed to save settings. The new window dimensions would be larger than this screen!", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += () =>
+			DialogWindow2.ShowDialog("Failed to save settings. The new window dimensions would be larger than this screen!", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += () =>
 			{
 				WindowSize.Value = 1;
-				DialogWindow.Hide();
+				DialogWindow2.Hide();
 			};
 			return;
 		}
