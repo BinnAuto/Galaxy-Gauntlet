@@ -235,7 +235,7 @@ public partial class MapDisplay2 : Node2D
                 }
 				else if(tile is IceTile2 iceTile)
 				{
-					slipDirection = iceTile.SetCreatureDirection(slipDirection);
+					slipDirection = iceTile.SetCreatureDirection(-1 * slipDirection);
 					creatureAdvanced = creature.AdvanceCreature(slipDirection);
 					if(creatureAdvanced)
                     {
