@@ -22,11 +22,40 @@ namespace GalaxyGauntlet.Common
         }
 
 
+        public static string[] GetLevelList(GameMode gameMode)
+        {
+            switch (gameMode)
+            {
+                case GameMode.Archipelago:
+                    return GetLevelList("archipelago");
+
+                default:
+                    return GetLevelList();
+            }
+        }
+
+
         public static string[] GetLevelList()
+        {
+            return GetLevelList(string.Empty);
+        }
+
+
+        public static string[] GetLevelList(string subDirectoryOverride)
         {
             string localLevelPath = "./levels";
             Directory.CreateDirectory(localLevelPath);
-            string[] files = Directory.GetFiles(localLevelPath, "*.c2m", SearchOption.AllDirectories);
+            string fileSourcePath = localLevelPath;
+            if(false == string.IsNullOrEmpty(subDirectoryOverride))
+            {
+                string subDirectory = $"{localLevelPath}/{subDirectoryOverride}";
+                if(Directory.Exists(subDirectory))
+                {
+                    fileSourcePath = subDirectory;
+                }
+            }
+            GD.Print(fileSourcePath);
+            string[] files = Directory.GetFiles(fileSourcePath, "*.c2m", SearchOption.AllDirectories);
             return files;
         }
 

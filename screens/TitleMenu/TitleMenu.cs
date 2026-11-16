@@ -121,7 +121,7 @@ public partial class TitleMenu : Node
 		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
 		DialogWindow2.YesButtonPressed += () =>
 		{
-			int levelCount = GalaxyGauntlet.Common.Global.GetLevelList().Length;
+			int levelCount = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode).Length;
 			string levelHash = GetLevelSetHash();
 			if(levelCount == 0 || string.IsNullOrEmpty(levelHash))
 			{
@@ -147,7 +147,7 @@ public partial class TitleMenu : Node
 	{
 		var saveSlot = SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Autosave);
 		string levelHash = GetLevelSetHash();
-		int levelCount = GalaxyGauntlet.Common.Global.GetLevelList().Length;
+		int levelCount = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode).Length;
 		if (levelCount == 0 || string.IsNullOrEmpty(levelHash))
 		{
 			DialogWindow2.ClearAllButtonEvents();
@@ -180,6 +180,7 @@ public partial class TitleMenu : Node
 	private void OnArchipelagoConnected()
 	{
 		Archipelago.Visible = false;
+		GameData.GameMode = GameMode.Archipelago;
 		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.LevelHash);
 		FileLogger.QuietLogMessage($"APWorld level hash: {apLevelHash}");
 		if(string.IsNullOrEmpty(apLevelHash))
@@ -236,7 +237,7 @@ public partial class TitleMenu : Node
 
 	private void OnGoToGameplayScreen(GameMode gameMode)
 	{
-		GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList();
+		GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		GameData.GameMode = gameMode;
 		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.GameplayScreen);
 	}
@@ -252,10 +253,7 @@ public partial class TitleMenu : Node
 
 	private string GetLevelSetHash()
 	{
-		string levelPath = "./levels";
-		Directory.CreateDirectory(levelPath);
-		levelPath = Path.GetFullPath(levelPath);
-		string[] files = GalaxyGauntlet.Common.Global.GetLevelList();
+		string[] files = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		if(files.Length == 0)
 		{
 			DialogWindow2.ClearAllButtonEvents();
@@ -285,7 +283,7 @@ public partial class TitleMenu : Node
 
 	private static bool ValidateLevelsForArchipelago()
 	{
-		string[] files = GalaxyGauntlet.Common.Global.GetLevelList();
+		string[] files = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		int levelNumber = 1;
 		bool isValid = true;
 		List<byte> combinedFileData = [];

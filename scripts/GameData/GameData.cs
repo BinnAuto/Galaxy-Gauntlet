@@ -1,26 +1,7 @@
 using System.Linq;
 
 namespace GalaxyGauntlet.scripts
-{
-    public enum GameMode
-    {
-        /// <summary>
-        /// Standard gameplay mode, sequentially playing through every level in the directory.
-        /// </summary>
-        Campaign,
-
-        /// <summary>
-        /// Playing a selected level.
-        /// </summary>
-        QuickPlay,
-
-        /// <summary>
-        /// Playing in Archipelago mode.
-        /// </summary>
-        Archipelago
-    }
-    
-	
+{	
 	/*
 	 * Contains communication methods between different properties of GameData
 	 */

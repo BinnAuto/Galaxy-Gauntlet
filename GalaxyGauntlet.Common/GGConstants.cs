@@ -1,7 +1,23 @@
-using Godot;
-
 namespace GalaxyGauntlet.Common
 {
+    public enum GameMode
+    {
+        /// <summary>
+        /// Standard gameplay mode, sequentially playing through every level in the directory.
+        /// </summary>
+        Campaign,
+
+        /// <summary>
+        /// Playing a selected level.
+        /// </summary>
+        QuickPlay,
+
+        /// <summary>
+        /// Playing in Archipelago mode.
+        /// </summary>
+        Archipelago
+    }
+
     public static class GGConstants
     {
         public static string GameName = "Galaxy Gauntlet";
