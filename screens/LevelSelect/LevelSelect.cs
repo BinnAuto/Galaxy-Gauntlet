@@ -176,6 +176,6 @@ public partial class LevelSelect : Node2D
 			await GameData.Archipelago.DisconnectFromServer();
 			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 		};
-		DialogWindow2.NoButtonPressed += () => { DialogWindow2.Visible = false; };
+		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
 	}
 }

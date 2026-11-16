@@ -139,7 +139,7 @@ public partial class DialogWindow2 : Node2D
 	{
 		OKDialog.Hide();
 		YesNoDialog.Hide();
-		InputBlocker.Hide();
+		Visible = false;
 	}
 
 	#endregion

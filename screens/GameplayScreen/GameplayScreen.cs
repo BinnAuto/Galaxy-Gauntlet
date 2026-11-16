@@ -244,18 +244,19 @@ public partial class GameplayScreen : Node
 
 
 	private void RestartLevel()
-	{
-		MapDisplay2.ClearChildren();
+    {
+        DialogWindow2.HideDialog();
+        MapDisplay2.ClearChildren();
 		GameData.Level.RestartCount++;
 		GameData.LoadCurrentLevel();
 		GameData.Level.Timer = GameData.Map.TimeLimit + 0.999999;
-		DialogWindow2.Visible = false;
 	}
 
 
 	private void OnExit()
-	{
-		switch(GameData.GameMode)
+    {
+        DialogWindow2.HideDialog();
+        switch (GameData.GameMode)
 		{
 			case GameMode.Campaign:
 				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
