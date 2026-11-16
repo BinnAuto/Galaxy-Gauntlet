@@ -340,11 +340,12 @@ namespace GalaxyGauntlet.scripts
 			clonedCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone.Orientation;
 			if(clonedCreature is DirtBlockCreature2 dirtBlock)
 			{
-				// Immediately produce block
+				// Immediately move block
 				Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = dirtBlock;
 				AddMapObject(dirtBlock);
                 dirtBlock.AdvanceCreature(dirtBlock.Forward);
-			}
+                AddCreatureToProcess(dirtBlock);
+            }
 			else
 			{
                 if (false == clonedCreature.CanMakeMove(clonedCreature.Forward, CanMakeMoveFlags.CloneCantBlock))

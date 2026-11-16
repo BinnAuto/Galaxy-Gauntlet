@@ -355,6 +355,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		{
 			if(IsPlayer)
 			{
+				ResetButtons();
 				// Can't move sound effect
 			}
 			return false;
@@ -624,6 +625,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 					}
 					else
 					{
+						GD.Print($"{MapObjectName} is pressing the green button");
 						GameData.GreenButtonPressed(destinationCoordinate);
 					}
 					break;
@@ -1085,7 +1087,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				{
 					continue;
 				}
-
+				button.FloorState &= ~(FloorStateFlags.ButtonDown);
 				button.PlaySoundEffect("Button_Pressed");
 				switch(button.EntityID)
 				{
@@ -1094,7 +1096,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 						break;
 
 					case GGConstants.ByteCodes.Entities.GreenButton:
-						GameData.GreenButtonPressed(button.Coordinate);
+                        GD.Print($"{MapObjectName} is pressing the green button 2");
+                        GameData.GreenButtonPressed(button.Coordinate);
 						break;
 
 					case GGConstants.ByteCodes.Entities.RedButton:
@@ -1109,6 +1112,24 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 						FileLogger.QuietLogMessage($"Fooey! Tile {button.MapObjectName} (0x{button.EntityID:X2}) is not a button!");
 						break;
 				}
+			}
+		}
+	}
+
+
+	private void ResetButtons()
+	{
+		for(int x = 0; x < GameData.Map.Dimensions.X; x++)
+		{
+			for(int y = 0; y < GameData.Map.Dimensions.Y; y++)
+			{
+				var tile = GameData.Map.GetTile2(new(x, y));
+				if(tile is not ButtonTile2)
+				{
+					continue;
+				}
+
+				tile.FloorState &= ~(FloorStateFlags.ButtonDown);
 			}
 		}
 	}

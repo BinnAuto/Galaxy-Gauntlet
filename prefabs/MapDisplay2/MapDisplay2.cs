@@ -105,10 +105,6 @@ public partial class MapDisplay2 : Node2D
 				if(creature.TDir != Vector2I.Zero)
 				{
 					bool creatureAdvanced = creature.AdvanceCreature(creature.TDir);
-					if (creatureAdvanced)
-					{
-						GD.Print($"Creature moved {creature.TDir}");
-					}
 					if (CheckForEnding())
 					{
 						return;
