@@ -54,7 +54,7 @@ offset_left = 13.000001
 offset_top = 580.0
 offset_right = 440.0
 offset_bottom = 618.0
-placeholder_text = "Search levels..."
+placeholder_text = "🔍 Search levels"
 
 [node name="ButtonRef" type="Button" parent="." unique_id=466550020]
 offset_left = -72.0
