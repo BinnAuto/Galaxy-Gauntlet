@@ -11,7 +11,7 @@ script = ExtResource("1_3hfvw")
 offset_left = 18.0
 offset_top = 60.0
 offset_right = 591.0
-offset_bottom = 507.0
+offset_bottom = 526.0
 theme_override_styles/normal = ExtResource("1_1ot4y")
 
 [node name="GameName" type="Node2D" parent="." unique_id=385356974]
