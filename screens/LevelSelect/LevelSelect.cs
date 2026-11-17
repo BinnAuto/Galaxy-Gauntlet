@@ -13,7 +13,7 @@ public partial class LevelSelect : Node2D
 
 	private DialogWindow2 DialogWindow2;
 
-	private TextEdit LevelSearch;
+	private LineEdit LevelSearch;
 
 	private Button ButtonRef;
 
@@ -34,7 +34,7 @@ public partial class LevelSelect : Node2D
 			GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
 			GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
 				? 1 : 3;
-			LevelSearch = (TextEdit)Control.GetNode(nameof(LevelSearch));
+			LevelSearch = (LineEdit)Control.GetNode(nameof(LevelSearch));
 			LevelSearch.TextChanged += OnSearchLevels;
 
             ButtonRef = (Button)GetNode(nameof(ButtonRef));
@@ -165,9 +165,8 @@ public partial class LevelSelect : Node2D
 	}
 
 
-	private void OnSearchLevels()
+	private void OnSearchLevels(string searchTerm)
 	{
-		string searchTerm = LevelSearch.Text.ToLower();
 		foreach(var child in GridContainer.GetChildren())
 		{
 			if(child is not Button levelButton)
