@@ -291,7 +291,13 @@ namespace GalaxyGauntlet.scripts
 
 		public MapCreature2 GetCreature(Vector2I coordinate)
 		{
-			return Creatures2[coordinate.X, coordinate.Y];
+			var creature = Creatures2[coordinate.X, coordinate.Y];
+			if(creature != null)
+			{
+				string errorMessage = $"Uh oh! The game thinks {creature.MapObjectName} is at {coordinate} but it says its at {creature.Coordinate}";
+				Global.AssertEqual(coordinate, creature.Coordinate, errorMessage);
+			}
+			return creature;
 		}
 
 

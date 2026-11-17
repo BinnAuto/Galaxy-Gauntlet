@@ -16,7 +16,13 @@ public static class Global
         return label.GetLabelSize(true);
     }
 
-
+    public static void AssertEqual(Vector2I expected, Vector2I actual, string message)
+    {
+        if (expected != actual)
+        {
+            GD.Print($"[ASSERTION FAILED] - {message}");
+        }
+    }
 
 
     public static Vector2I ToVector(this EntityOrientation cardinalDirection)
