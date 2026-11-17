@@ -806,7 +806,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			return false;
 		}
 
-
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 
 		var destinationTile = GameData.Map.GetTile2(destinationCoordinate);
@@ -1233,13 +1232,13 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				| CanMakeMoveFlags.NoFireCheck
 				| CanMakeMoveFlags.TeleportPush;
 			bool canMakeMove = CanMakeMove(Forward, flags);
-			Orientation = originalOrientation;
-			Coordinate = originalCoordinate;
 			if(canMakeMove)
 			{
 				GD.Print("Move attempt succeeded");
 				break;
 			}
+
+			Orientation = originalOrientation;
 			GD.Print("Move attempt failed");
 		}
 		return checkPosition;
