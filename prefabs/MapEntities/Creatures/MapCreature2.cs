@@ -536,9 +536,16 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				destinationCreature.Kill();
 				Kill();
 			}
-			if(destinationCreature is Player2 player && player.IsRealPlayer)
+			if(destinationCreature is Player2 player)
 			{
-				GameData.Level.DeathMessage = GGConstants.DeathMessages.MovingBlocks;
+				if(player.IsRealPlayer)
+				{
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.MovingBlocks;
+				}
+				else
+				{ 
+					player.Kill();
+				}
 			}
 			if(destinationTile is BlueTeleporterTile2)
 			{
