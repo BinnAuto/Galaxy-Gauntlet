@@ -17,7 +17,7 @@ namespace GalaxyGauntlet.prefabs.MapEntities
             , { GGConstants.ByteCodes.Entities.Ice_NE, new(BuildEntryLaw("SW")) }
             , { GGConstants.ByteCodes.Entities.Ice_SW, new(BuildEntryLaw("NE")) }
             , { GGConstants.ByteCodes.Entities.Ice_SE, new(BuildEntryLaw("NW")) }
-            , { GGConstants.ByteCodes.Entities.Gravel, new(BuildEntryLaw("NWSE"))
+            , { GGConstants.ByteCodes.Entities.Gravel, new()
                 {
                     Creature = 0
                 }

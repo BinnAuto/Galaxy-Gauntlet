@@ -58,6 +58,8 @@ public static class CanMakeMoveFlags
 
 public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 {
+	public static int CreatureOfFocus = -1;
+
 	public int CreatureState = 0;
 
 	public int CreatureID = GameData.Map.GetNextCreatureID();
@@ -81,6 +83,8 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public List<MapItem2> Inventory = [];
 
+	private Button FocusButton;
+
 	public bool IsInSliplist
 	{
 		get
@@ -102,7 +106,16 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	{
 		base._Ready();
 		ZIndex = GGConstants.ZIndexes.Creature;
-	}
+
+		FocusButton = new()
+		{
+			Position = -16 * Vector2.One,
+			Size = 32 * Vector2.One,
+			Modulate = Godot.Color.Color8(0, 0, 0, 0)
+		};
+		FocusButton.Pressed += () => { CreatureOfFocus = CreatureID; GD.Print(CreatureID); };
+        AddChild(FocusButton);
+    }
 
 	#region Movement logic methods
 
@@ -110,6 +123,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	{
 		if(HasState(CreatureStateFlags.Slipping))
 		{
+			FocusCreatureLog("Currently slipping");
 			TDir = Vector2I.Zero;
 		}
 		else
@@ -811,9 +825,11 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	public virtual bool CanMakeMove(Vector2I direction, int flags)
 	{
 		var destinationCoordinate = Coordinate + direction;
+		FocusCreatureLog($"Can {MapObjectName} move from {Coordinate} to {destinationCoordinate}?");
 		SetOrientation(direction);
 		if(false == GameData.Map.IsWithinDimensions(destinationCoordinate))
 		{
+			FocusCreatureLog("No, destination is not in the map.");
 			return false;
 		}
 
@@ -829,15 +845,17 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if(currentThinWall is not null)
 			{
 				if(false == currentThinWall.CreatureCanExit(direction))
-				{
-					return false;
+                {
+                    FocusCreatureLog("No, they cannot exit the thin wall from that direction.");
+                    return false;
 				}
 			}
 			if(currentTile is TrapTile2)
 			{
 				if(false == HasState(CreatureStateFlags.Released))
-				{
-					return false;
+                {
+                    FocusCreatureLog("No, they are not released from the trap.");
+                    return false;
 				}
 			}
 		}
@@ -846,8 +864,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		if(destinationThinWall is not null)
 		{
 			if(false == destinationThinWall.CreatureCanEnter(direction))
-			{
-				return false;
+            {
+                FocusCreatureLog("No, they cannot enter the thin wall from that direction.");
+                return false;
 			}
 		}
 
@@ -867,6 +886,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			{
 				if (false == entryLaw.CanPlayerEnter(direction))
 				{
+					FocusCreatureLog($"No, you cannot enter a {destinationTile.MapObjectName} from that direction.");
 					return false;
 				}
 			}
@@ -878,8 +898,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if (destinationTile.EntityID == GGConstants.ByteCodes.Entities.Socket)
 			{
 				if (false == GameData.Level.ChipRequirementMet)
-				{
-					return false;
+                {
+                    FocusCreatureLog($"No, you have not collected the required amount of chips.");
+                    return false;
 				}
 			}
 
@@ -888,8 +909,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if(destinationTile is KeyDoorTile2 keyDoor)
 			{
 				if(false == keyDoor.CanOpen(this))
-				{
-					return false;
+                {
+                    FocusCreatureLog($"No, you cannot open the door.");
+                    return false;
 				}
 				keyDoor.PlaySoundEffect("Door_Open");
 			}
@@ -899,26 +921,30 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				if(blueWall.IsReal)
 				{
 					GameData.Map.SetTile(new WallTile2(destinationCoordinate));
-					return false;
+                    FocusCreatureLog($"No, the blue wall is real.");
+                    return false;
 				}
 			}
 
 			if(destinationTile is HiddenWallTile2)
 			{
 				GameData.Map.SetTile(new WallTile2(destinationCoordinate));
-				return false;
+                FocusCreatureLog($"No, the wall is hidden.");
+                return false;
 			}
 
 			if(destinationTile is InvisibleWallTile2)
-			{
-				return false;
+            {
+                FocusCreatureLog($"No, the wall is invisible.");
+                return false;
 			}
 
 			if(destinationCreature is DirtBlockCreature2 dirtBlock)
 			{
 				if(false == dirtBlock.CanPushBlock(direction, flags))
-				{
-					return false;
+                {
+                    FocusCreatureLog($"No, the block cannot be pushed.");
+                    return false;
 				}
 				else if ((flags & CanMakeMoveFlags.NoPushing) != 0)
 				{
@@ -935,8 +961,9 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			if(destinationCreature is not null)
 			{
 				if(HasItem(new HelmetItem2(Vector2I.Zero)))
-				{
-					return false;
+                {
+                    FocusCreatureLog($"No, you have a helmet.");
+                    return false;
 				}
 				thisPlayer.PlayerStatus = PlayerStatus.Collided;
 			}
@@ -953,9 +980,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 			}
 			else
 			{
-				if (false == entryLaw.CanCreatureEnter(direction))
-				{
-					return false;
+				if (false == entryLaw.CanBlockEnter(direction))
+                {
+                    FocusCreatureLog($"No, it cannot enter a {destinationTile.MapObjectName} from that direction.");
+                    return false;
 				}
 			}
 
@@ -969,9 +997,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 				else
 				{
-					if (false == entryLaw.CanCreatureEnter(direction))
-					{
-						return false;
+					if (false == entryLaw.CanBlockEnter(direction))
+                    {
+                        FocusCreatureLog($"No, a {destinationItem.MapObjectName} is there.");
+                        return false;
 					}
 				}
 			}
@@ -986,9 +1015,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				}
 				else
 				{
-					if (false == entryLaw.CanCreatureEnter(direction))
-					{
-						return false;
+					if (false == entryLaw.CanBlockEnter(direction))
+                    {
+                        FocusCreatureLog($"No, a {destinationCreature.MapObjectName} is there.");
+                        return false;
 					}
 				}
 			}
@@ -997,10 +1027,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
             if (destinationCreature is not null)
             {
-                if (destinationCreature is not Player2)
-                {
-                    return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
-                }
+                return (destinationCreature is Player2 || destinationCreature is RedBombCreature2);
             }
         }
 		else
@@ -1454,5 +1481,16 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 	}
 
 	#endregion
+
+
+	private void FocusCreatureLog(string message)
+	{
+		if(CreatureOfFocus != CreatureID)
+		{
+			return;
+		}
+
+		GD.Print($"Creature {CreatureID}: {message}");
+	}
 
 }
