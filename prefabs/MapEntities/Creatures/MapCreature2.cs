@@ -1143,12 +1143,12 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void SetCoordinateAndOrientation(Vector2I newCoordinate)
 	{
+		var oldCoordinate = Coordinate.Clone();
 		if(false == SetCoordinate(newCoordinate))
 		{
 			return;
 		}
-
-		var direction = newCoordinate - Coordinate;
+		var direction = newCoordinate - oldCoordinate;
 		SetOrientation(direction);
 	}
 
