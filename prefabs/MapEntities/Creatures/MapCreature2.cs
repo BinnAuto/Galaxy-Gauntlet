@@ -536,6 +536,13 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				destinationCreature.Kill();
 				Kill();
 			}
+			if(destinationCreature is Player2 player)
+			{
+				if(player.IsRealPlayer)
+				{
+					GameData.Level.DeathMessage = GGConstants.DeathMessages.MovingBlocks;
+				}
+			}
 			if(destinationTile is BlueTeleporterTile2)
 			{
 				if((destinationTile.FloorState & FloorStateFlags.Broken) == 0)
