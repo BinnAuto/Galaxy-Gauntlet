@@ -196,7 +196,8 @@ namespace GalaxyGauntlet.scripts
                         }
 					}
 				}
-				if (LynxCreatures2[x, y] is not null)
+				if (LynxCreatures2[x, y] is not null 
+					&& LynxCreatures2[x, y] is not LynxRedBombCreature2)
 				{
 					LynxCreatures2[x, y].SetTileClaim();
 				}
@@ -402,46 +403,45 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		public void CloneCreature(Vector2I sourceCoordinate)
+		public bool CloneCreature(Vector2I sourceCoordinate)
 		{
+			if(false == IsWithinBoundaries(sourceCoordinate))
+			{
+				return false;
+			}
+
 			var mapTile = GetTile2(sourceCoordinate);
 			if(mapTile is not CloneMachineTile2 cloneMachine)
 			{
 				FileLogger.QuietLogMessage($"Huh? The tile at {sourceCoordinate} is not a cloning machine! ({mapTile.MapObjectName})");
-				return;
+				return false;
 			}
 
-			var creature = GetCreature(sourceCoordinate);
+			var creature = GetLynxCreature(sourceCoordinate);
 			if(creature is null)
 			{
 				FileLogger.QuietLogMessage($"Whoops! There is no creature in the cloning machine at {sourceCoordinate}!");
-				return;
+				return false;
 			}
 
-			var clonedCreature = (MapCreature2)MapObject2.GetMapObject(cloneMachine.CreatureToClone.EntityID, sourceCoordinate);
-			clonedCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone.Orientation;
-			if(clonedCreature is DirtBlockCreature2 dirtBlock)
+			var cloneCreature = (MapLynxCreature2)MapObject2.GetMapObject(creature.EntityID, sourceCoordinate);
+			cloneCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone.Orientation;
+			if(cloneCreature is null)
 			{
-				// Immediately move block
-				Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = dirtBlock;
-				AddMapObject(dirtBlock);
-                dirtBlock.AdvanceCreature(dirtBlock.Forward);
-                AddCreatureToProcess(dirtBlock);
-            }
-			else
-			{
-                if (false == clonedCreature.CanMakeMove(clonedCreature.Forward, CanMakeMoveFlags.CloneCantBlock))
-                {
-					GD.Print("Can't make move");
-                    return;
-                }
+				return creature.AdvanceCreature(true) != 0;
+			}
 
-                clonedCreature.CreatureState |= CreatureStateFlags.Cloning;
-                AddMapObject(clonedCreature);
-                Creatures2[sourceCoordinate.X, sourceCoordinate.Y] = clonedCreature;
-				clonedCreature.Coordinate = sourceCoordinate;
-                AddCreatureToProcess(clonedCreature);
-            }
+			if(cloneCreature.AdvanceCreature(true) <= 0)
+			{
+				cloneCreature.IsHidden = true;
+				return false;
+			}
+
+			AddMapObject(cloneCreature);
+			LynxCreatures2[cloneCreature.Coordinate.X, cloneCreature.Coordinate.Y] = cloneCreature;
+			AddLynxCreatureToProcess(cloneCreature);
+			LynxCreatures2[sourceCoordinate.X, sourceCoordinate.Y] = creature; // Replace display creature
+			return true;
         }
 
 

@@ -644,10 +644,6 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 		var currentItem = GameData.Map.GetItem2(Coordinate);
 		var currentCreature = GameData.Map.GetLynxCreature(Coordinate);
-		if(currentCreature is LynxRedBombCreature2)
-		{
-			int a = 0;
-		}
 
 		if (IsThePlayer && LynxPlayer2.PutWall != -1)
 		{
@@ -753,21 +749,21 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 				}
 			}
 			if(currentCreature is not null && currentCreature.EntityID != EntityID)
-            {
-                switch (currentCreature.EntityID)
-                {
-                    case GGConstants.ByteCodes.Entities.RedBomb:
-                        GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
-                        break;
+			{
+				switch (currentCreature.EntityID)
+				{
+					case GGConstants.ByteCodes.Entities.RedBomb:
+						GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
+						break;
 
-                    default:
-                        if (false == thisPlayer.HasItem(GGConstants.ByteCodes.Entities.Helmet))
-                        {
-                            GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
-                        }
-                        break;
-                }
-            }
+					default:
+						if (false == thisPlayer.HasItem(GGConstants.ByteCodes.Entities.Helmet))
+						{
+							GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+						}
+						break;
+				}
+			}
 		}
 		else if(this is LynxDirtBlockCreature2 dirtBlock)
 		{
@@ -861,7 +857,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 	public bool CanMakeMove(Vector2I direction, int flags)
 	{
-		Global.AssertTrue(direction != Vector2I.Zero, "Wuh oh! Running CanMakeMove with zero direction!");
+		Global.AssertTrue(direction != Vector2I.Zero, $"{MapObjectName} {CreatureID}: Wuh oh! Running CanMakeMove with zero direction!");
 		var destinationCoordinate = Coordinate + direction;
 		FocusCreatureLog($"Can {MapObjectName} move from {Coordinate} to {destinationCoordinate}?");
 		var currentThinWall = GameData.Map.GetThinWall(Coordinate);
@@ -886,7 +882,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 		if(currentTile is TrapTile2 || currentTile is CloneMachineTile2)
 		{
-			if(false == HasCreatureState(CreatureStateFlags.Released))
+			if((flags & CanMakeMoveFlags.Releasing) == 0)
 			{
 				FocusCreatureLog($"No, it has not been released from the {currentTile.MapObjectName}");
 				return false;
