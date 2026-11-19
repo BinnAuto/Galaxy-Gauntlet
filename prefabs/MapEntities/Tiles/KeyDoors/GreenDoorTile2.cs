@@ -14,5 +14,16 @@ public partial class GreenDoorTile2(Vector2I coordinate) : KeyDoorTile2(coordina
 		}
 
 		return creature.HasItem(new GreenKeyItem2(Vector2I.Zero));
-	}
+    }
+
+    public override bool CanCreatureOpenDoor(MapLynxCreature2 creature, bool consumeItem)
+    {
+        if (creature is not LynxPlayer2)
+        {
+            return false;
+        }
+
+		// Green keys are not consumed when opening doors
+        return creature.HasItem(GGConstants.ByteCodes.Entities.GreenKey);
+    }
 }

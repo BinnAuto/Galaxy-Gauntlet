@@ -2,6 +2,10 @@ using GalaxyGauntlet.scripts;
 
 public partial class MapDisplay2 : Node2D
 {
+	private Vector2I PutWall = new(-1, -1);
+
+	#region Godot Overrides
+
 	public override void _Process(double delta)
 	{
 		// Add new children to display
@@ -29,322 +33,197 @@ public partial class MapDisplay2 : Node2D
 		int gameTick = GameData.Level.CurrentTick;
 		InitialHousekeeping();
 		GameData.Level.CurrentTick++;
-		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
+
+		#region Choose moves for creatures
+
+		var creaturesToProcess = GameData.Map.GetLynxCreaturesToProcess();
+		for(int i = creaturesToProcess.Count - 1; i >= 0; i--)
+		{
+			var creature = creaturesToProcess[i];
+			if(creature.IsHidden 
+				&& (creature is not LynxPlayer2 player || false == player.IsRealPlayer))
+			{
+				continue;
+			}
+
+			// TODO: Animation check
+
+			if(creature.IsThePlayer && InEndGame())
+			{
+				continue;
+			}
+			if(creature.Moving <= 0)
+			{
+				creature.ChooseMove();
+			}
+		}
+
+		#endregion
+
+		#region Check Chip movement
+
+		creaturesToProcess = GameData.Map.GetLynxCreaturesToProcess();
+		foreach(var creature in creaturesToProcess)
+		{
+			if(creature is not LynxPlayer2 player || false == player.IsRealPlayer)
+			{
+				continue;
+			}
+
+			if(creature.GetForceDirection() == Vector2I.Zero && creature.TDir == Vector2I.Zero)
+			{
+				player.CouldntMove = false;
+			}
+			else
+			{
+				player.CheckMovingTo();
+			}
+			break;
+		}
+
+		#endregion
+
 
 		#region Advance Creatures
 
-		if (gameTick != 0 && (gameTick & 1) == 0)
+		creaturesToProcess = GameData.Map.GetLynxCreaturesToProcess();
+		for (int i = creaturesToProcess.Count - 1; i >= 0; i--)
 		{
-			foreach (var creature in creaturesToProcess)
+			var creature = creaturesToProcess[i];
+			if(creature.IsThePlayer && Completed())
 			{
-				if(creature is Player2)
-				{
-					continue;
-				}
-				if(creature.HasState(CreatureStateFlags.Cloning))
-				{
-					creature.TDir = creature.Forward;
-				}
-				else
-				{
-					creature.ChooseMove();
-				}
-				if(creature.TDir == Vector2I.Zero)
-				{
-					continue;
-				}
-
-				creature.AdvanceCreature(creature.TDir);
+				continue;
 			}
-			if(CheckForEnding())
+			if(creature is not LynxPlayer2 && creature.IsHidden)
 			{
-				return;
+				continue;
+			}
+			if(0 > creature.AdvanceCreature(false))
+			{
+				continue;
+			}
+			creature.TDir = Vector2I.Zero;
+			creature.SetForceDirection(Vector2I.Zero);
+			var currentTile = GameData.Map.GetTile2(creature.Coordinate);
+			if(GameData.LynxPedantic && currentTile is RecessedWallTile2)
+			{
+				if(false == creature.IsThePlayer)
+				{
+					PutWall = GameData.Level.PlayerCoordinate;
+				}
+			}
+			if(currentTile is BrownButtonTile2 && creature.Moving <= 0)
+			{
+				GameData.SpringTrap(creature.Coordinate);
 			}
 		}
 
 		#endregion
 
-		#region Process "Slip List"
+		#region Teleporter Logic
 
-		if (gameTick != 0 && (gameTick & 1) == 0)
+		creaturesToProcess = GameData.Map.GetLynxCreaturesToProcess();
+		for(int i = creaturesToProcess.Count - 1; i >= 0; i--)
 		{
-			SliplistMovements();
-			if(CheckForEnding())
+			var creature = creaturesToProcess[i];
+			if(creature.IsHidden)
 			{
-				return;
+				continue;
 			}
-		}
-		UpdateSlipList();
-
-		#endregion
-
-		#region Timer Check
-
-		if (GameData.Map.TimeLimit > 0)
-		{
-			if (GameData.Level.Timer < 0)
+			if(creature.Moving != 0)
 			{
-				// TODO: Out of time
+				continue;
+			}
+			var currentTile = GameData.Map.GetTile2(creature.Coordinate);
+			if(currentTile is BlueTeleporterTile2)
+			{
+				creature.BlueTeleport();
 			}
 		}
 
 		#endregion
 
-		#region Advance Player
-
-		if(GameData.Level.ChipTick >= 3)
+		if(PutWall.X != -1)
 		{
-			foreach (var creature in creaturesToProcess)
-			{
-				if(creature is not Player2)
-				{
-					continue;
-				}
-
-				creature.ChooseMove();
-				if(creature.TDir != Vector2I.Zero)
-				{
-					bool creatureAdvanced = creature.AdvanceCreature(creature.TDir);
-					if (CheckForEnding())
-					{
-						return;
-					}
-					creature.CreatureState |= CreatureStateFlags.HasMoved;
-				}
-			}
+			// TODO
+			GD.Print($"Setting wall at {PutWall}");
+			GameData.Map.SetTile(new WallTile2(PutWall));
+			PutWall = new(-1, -1);
 		}
 
-		#endregion
-
-		UpdateSlipList();
-		CreateClones();
 		FinalHousekeeping();
 	}
 
+	#endregion
 
 	public void ClearChildren()
 	{
-		foreach(var child in GetChildren())
+		foreach (var child in GetChildren())
 		{
 			RemoveChild(child);
 			child.QueueFree();
 		}
 	}
 
-	#region Tile World adaptation methods
-
 	private void InitialHousekeeping()
 	{
-		int gameTick = GameData.Level.CurrentTick;
-		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
-		if(gameTick % 3 == 0)
-		{
-			foreach(var creature in creaturesToProcess)
-			{
-				if(creature is Player2)
-				{
-					continue;
-				}
+		// TODO: Stepping logic
 
-				if(creature.HasState(CreatureStateFlags.Turning))
+		// TODO: Chip pushing logic
+
+		// TODO: Timer check?
+
+		var creaturesToProcess = GameData.Map.GetLynxCreaturesToProcess();
+
+		#region Reverse creatures
+
+		foreach (var creature in creaturesToProcess)
+		{
+			if(false == creature.IsThePlayer && creature.IsHidden)
+			{
+				continue;
+			}
+			if(creature.HasCreatureState(CreatureStateFlags.Reverse))
+			{
+				creature.RemoveCreatureState(CreatureStateFlags.Reverse);
+				if(creature.Moving <= 0)
 				{
-					creature.CreatureState &= ~(CreatureStateFlags.Turning | CreatureStateFlags.HasMoved);
-					creature.UpdateCreature();
+					creature.AboutFace();
 				}
 			}
 		}
 
-		// In Tile World, this block is inside the above if.
-		// But it feels more natural if it's put here?
-		GameData.Level.ChipTick++;
-		if(GameData.Level.ChipTick > 3)
-		{
-			GameData.Level.ChipTick = 3;
-			foreach (var creature in creaturesToProcess)
-			{
-				if(creature is not Player2)
-				{
-					continue;
-				}
+		#endregion
 
-				creature.UpdateCreature();
+
+		#region Push creatures
+
+		creaturesToProcess = GameData.Map.GetLynxCreaturesToProcess();
+		foreach(var creature in creaturesToProcess)
+		{
+			if(creature.HasCreatureState(CreatureStateFlags.Pushed))
+			{
+				if(creature.IsHidden || creature.Moving <= 0)
+				{
+					creature.RemoveCreatureState(CreatureStateFlags.Pushed);
+				}
 			}
 		}
+
+		#endregion
+
+		// Green wall toggle is handled at the creature level
+
+		LynxPlayer2.ChipToPosition = new(-1, -1);
+		LynxPlayer2.ChipToCreature = null;
 	}
 
-	private bool CheckForEnding()
+
+	private bool InEndGame()
 	{
-		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
-		if(currentTile is ExitTile2 && GameData.Level.ChipRequirementMet)
-		{
-			return true;
-		}
-		if(false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
-		{
-			return true;
-		}
+		// TODO
 		return false;
 	}
-
-
-	// FloorMovements
-	private void SliplistMovements()
-	{
-		ChipSlipMovements();
-		UpdateSlipList();
-		if(false == CheckForEnding())
-		{
-			CreatureSlipMovements();
-		}
-		// TODO: Chip status
-	}
-
-
-	// FloorMovements_Of_Chip
-	private void ChipSlipMovements()
-	{
-		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
-		foreach(var creature in creaturesToProcess)
-		{
-			if(false == creature.IsInSliplist)
-			{
-				continue;
-			}
-			if(false == creature.IsPlayer)
-			{
-				continue;
-			}
-			Vector2I slipDirection = creature.SlipDirection;
-			if(slipDirection == Vector2I.Zero)
-			{
-				continue;
-            }
-			
-            bool creatureAdvanced = creature.AdvanceCreature(slipDirection);
-			if(creatureAdvanced)
-			{
-				creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
-			}
-			else
-			{
-				var tile = GameData.Map.GetTile2(creature.Coordinate);
-				if(tile is ForceFloorTile2)
-                {
-                    creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
-                }
-				else if(tile is IceTile2 iceTile)
-				{
-					slipDirection = iceTile.SetCreatureDirection(-1 * slipDirection);
-					creatureAdvanced = creature.AdvanceCreature(slipDirection);
-					if(creatureAdvanced)
-                    {
-                        creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
-                    }
-				}
-				else if(tile is BlueTeleporterTile2) // or is block
-				{
-					slipDirection *= -1;
-					if(creature.AdvanceCreature(slipDirection))
-                    {
-                        creature.CreatureState &= ~(CreatureStateFlags.HasMoved);
-                    }
-				}
-				if(creature.IsInSliplist)
-				{
-					tile = GameData.Map.GetTile2(creature.Coordinate);
-					creature.EndFloorMovement();
-					creature.StartFloorMovement(tile, Vector2I.Zero);
-				}
-			}
-			if(CheckForEnding())
-			{
-				return;
-			}
-		}
-	}
-
-
-	// FloorMovements_Of_Blocks_And_Monsters
-	private void CreatureSlipMovements()
-    {
-        var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
-		foreach(var creature in creaturesToProcess)
-		{
-			if(creature.IsPlayer)
-			{
-				continue;
-			}
-			if(false == creature.IsInSliplist)
-			{
-				continue;
-			}
-			var slipDirection = creature.SlipDirection.Clone();
-			var originalDirection = creature.SlipDirection.Clone();
-			if(creature.SlipDirection == Vector2I.Zero)
-			{
-				continue;
-			}
-			bool creatureAdvanced = creature.AdvanceCreature(creature.SlipDirection);
-			if(false == creatureAdvanced)
-			{
-				var tile = GameData.Map.GetTile2(creature.Coordinate);
-				if(tile is IceTile2 ice)
-				{
-					slipDirection = ice.SetCreatureDirection(-1 * slipDirection);
-					creatureAdvanced = creature.AdvanceCreature(slipDirection);
-				}
-				if (creature.IsInSliplist)
-				{
-					creature.EndFloorMovement();
-					Vector2I moveDirection = creatureAdvanced
-						? Vector2I.Zero
-						: originalDirection;
-					creature.StartFloorMovement(tile, moveDirection);
-				}
-			}
-			if(creature.HasState(CreatureStateFlags.Slipping) && creatureAdvanced)
-			{
-				creature.CreatureState |= CreatureStateFlags.Sliding;
-			}
-			if(CheckForEnding())
-			{
-				return;
-			}
-		}
-    }
-
-
-	private void UpdateSlipList()
-	{
-		var creaturesToProcess = GameData.Map.GetCreaturesToProcess();
-		foreach(var creature in creaturesToProcess)
-		{
-			if(false == creature.IsInSliplist)
-			{
-				var tile = GameData.Map.GetTile2(creature.Coordinate);
-				creature.EndFloorMovement();
-			}
-		}
-	}
-
-
-	private static void CreateClones()
-    {
-		for(int x = 0; x < GameData.Map.Dimensions.X; x++)
-		{
-			for(int y = 0; y < GameData.Map.Dimensions.Y; y++)
-			{
-				Vector2I mapCoordinate = new(x, y);
-				var creature = GameData.Map.GetCreature(mapCoordinate);
-				if(creature is null)
-				{
-					continue;
-				}
-
-				creature.CreatureState &= ~(CreatureStateFlags.Cloning);
-			}
-		}
-    }
 
 
 	private void FinalHousekeeping()
@@ -352,5 +231,10 @@ public partial class MapDisplay2 : Node2D
 		// Nothing. It's literally nothing.
 	}
 
-	#endregion
+
+	private bool Completed()
+	{
+		// TODO
+		return false;
+	}
 }

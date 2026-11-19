@@ -5,6 +5,7 @@ namespace GalaxyGauntlet.scripts
 {
 	public static partial class GameData
 	{
+		public const bool LynxPedantic = false;
 		public static LevelData Level = new();
     }
 

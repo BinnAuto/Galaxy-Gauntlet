@@ -176,6 +176,42 @@ namespace GalaxyGauntlet.prefabs.MapEntities
             }
             return result;
         }
+
+
+        public static bool CanPlayerEnter(int entityID, Vector2I direction)
+        {
+            EntryLaw entryLaw = Laws.GetValueOrDefault(entityID);
+            if(entryLaw is null)
+            {
+                return true;
+            }
+
+            return entryLaw.CanPlayerEnter(direction);
+        }
+
+
+        public static bool CanBlockEnter(int entityID, Vector2I direction)
+        {
+            EntryLaw entryLaw = Laws.GetValueOrDefault(entityID);
+            if (entryLaw is null)
+            {
+                return true;
+            }
+
+            return entryLaw.CanBlockEnter(direction);
+        }
+
+
+        public static bool CanCreatureEnter(int entityID, Vector2I direction)
+        {
+            EntryLaw entryLaw = Laws.GetValueOrDefault(entityID);
+            if (entryLaw is null)
+            {
+                return true;
+            }
+
+            return entryLaw.CanCreatureEnter(direction);
+        }
     }
 
 

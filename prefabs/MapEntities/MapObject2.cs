@@ -53,7 +53,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 	#endregion
 
 
-	public void Kill()
+	public virtual void Kill()
 	{
 		Visible = false;
 		IsDead = true;
@@ -68,6 +68,14 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			if (GameData.Map.Creatures2[Coordinate.X, Coordinate.Y].CreatureID == creature.CreatureID)
 			{
 				GameData.Map.Creatures2[Coordinate.X, Coordinate.Y] = null;
+			}
+		}
+		if(this is MapLynxCreature2 lynxCreature)
+		{
+			GameData.Map.RemoveLynxCreatureFromProcessList(lynxCreature.CreatureID);
+			if (GameData.Map.LynxCreatures2[Coordinate.X, Coordinate.Y].CreatureID == lynxCreature.CreatureID)
+			{
+				GameData.Map.LynxCreatures2[Coordinate.X, Coordinate.Y] = null;
 			}
 		}
 		parent?.RemoveChild(this);
@@ -95,7 +103,7 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 	}
 
 
-	public void SetDisplayPosition()
+	public virtual void SetDisplayPosition()
 	{
 		var mapDimensions = GameData.Map.Dimensions;
 		var playerCoordinate = GameData.Level.PlayerCoordinate;
@@ -190,18 +198,18 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.IceSkates => new IceSkatesItem2(coordinate),
 
 			/* Creatures */
-			GGConstants.ByteCodes.Entities.Player => new Player2(playerMissing, coordinate),
-			GGConstants.ByteCodes.Entities.Bug => new BugCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.DirtBlock => new DirtBlockCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.RedBomb => new RedBombCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.BlueTank => new BlueTankCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Ball => new BallCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Glider => new GliderCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Fireball => new FireballCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Teeth => new TeethCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Walker => new WalkerCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Paramecium => new ParameciumCreature2(coordinate),
-			GGConstants.ByteCodes.Entities.Blob => new BlobCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Player => new LynxPlayer2(playerMissing, coordinate),
+			GGConstants.ByteCodes.Entities.Bug => new LynxBugCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.DirtBlock => new LynxDirtBlockCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.RedBomb => new LynxRedBombCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.BlueTank => new LynxBlueTankCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Ball => new LynxBallCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Glider => new LynxGliderCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Fireball => new LynxFireballCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Teeth => new LynxTeethCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Walker => new LynxWalkerCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Paramecium => new LynxParameciumCreature2(coordinate),
+			GGConstants.ByteCodes.Entities.Blob => new LynxBlobCreature2(coordinate),
 
 			/* Other */
 			GGConstants.ByteCodes.Entities.Modifier_8Bit

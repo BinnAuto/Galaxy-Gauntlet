@@ -80,4 +80,76 @@ public partial class IceTile2(int entityId, Vector2I coordinate) : MapTile2(coor
         }
 		return Vector2I.Zero;
 	}
+
+
+    public bool CreatureCanExit(Vector2I direction)
+    {
+        switch(EntityID)
+        {
+            case GGConstants.ByteCodes.Entities.Ice_NW:
+                if(direction.Y < 0 || direction.X < 0)
+                {
+                    return false;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Ice_NE:
+                if(direction.Y < 0 || direction.X > 0)
+                {
+                    return false;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Ice_SW:
+                if (direction.Y > 0 || direction.X < 0)
+                {
+                    return false;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Ice_SE:
+                if (direction.Y > 0 || direction.X > 0)
+                {
+                    return false;
+                }
+                break;
+        }
+        return true;
+    }
+
+
+    public bool CreatureCanEnter(Vector2I direction)
+    {
+        switch(EntityID)
+        {
+            case GGConstants.ByteCodes.Entities.Ice_NW:
+                if(direction.Y > 0 || direction.X > 0)
+                {
+                    return false;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Ice_NE:
+                if (direction.Y > 0 || direction.X < 0)
+                {
+                    return false;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Ice_SW:
+                if (direction.Y < 0 || direction.X > 0)
+                {
+                    return false;
+                }
+                break;
+
+            case GGConstants.ByteCodes.Entities.Ice_SE:
+                if (direction.Y < 0 || direction.X < 0)
+                {
+                    return false;
+                }
+                break;
+        }
+        return true;
+    }
 }

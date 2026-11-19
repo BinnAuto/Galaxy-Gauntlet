@@ -18,11 +18,13 @@ namespace GalaxyGauntlet.scripts
 		public byte[] FileBytes = [];
 		private List<MapObject2> NewMapObjects = [];
 		private List<MapCreature2> CreaturesToProcess = [];
+		private List<MapLynxCreature2> LynxCreaturesToProcess = [];
 
 		#region Map Layout Array
 
 		// 2
 		public MapCreature2[,] Creatures2 = new MapCreature2[0, 0];
+		public MapLynxCreature2[,] LynxCreatures2 = new MapLynxCreature2[0, 0];
 		public MapItem2[,] Items2 = new MapItem2[0, 0];
 		public ThinWallOrCanopy2[,] ThinWalls2 = new ThinWallOrCanopy2[0,0];
 		public MapTile2[,] Tiles2 = new MapTile2[0, 0];
@@ -30,20 +32,9 @@ namespace GalaxyGauntlet.scripts
 		#endregion
 
 		/// <summary>
-		/// Alternates between 0 and 1 each process tick, mimicking the odd- and even-step mechanics in Chip's Challenge.
-		/// </summary>
-		public int PingPongStep = 0;
-
-		/// <summary>
-		/// Rotates from 0 to 3, allowing entities with 1.25 moves per second to be processed accurately.
-		/// </summary>
-		public int SquareStep = 0;
-
-		/// <summary>
 		/// Flags the level map to be rendered on the next frame.
 		/// </summary>
 		public bool Rerender = false;
-
 
 		/*
 		 * Contains event handlers to allow Map events to communicate with
@@ -66,7 +57,9 @@ namespace GalaxyGauntlet.scripts
 			Items2 = new MapItem2[0, 0];
 			ThinWalls2 = new ThinWallOrCanopy2[0, 0];
             Creatures2 = new MapCreature2[0, 0];
+			LynxCreatures2 = new MapLynxCreature2[0, 0];
 			CreaturesToProcess.Clear();
+			LynxCreaturesToProcess.Clear();
         }
 
 
@@ -113,7 +106,7 @@ namespace GalaxyGauntlet.scripts
 						thinWallCanopy.WallBitmask = bitmaskByte;
 					}
 					ThinWalls2[x, y] = thinWallCanopy;
-					if(thinWallCanopy.RequiresLowerLayerTile)
+                    if (thinWallCanopy.RequiresLowerLayerTile)
 					{
 						i++;
 						mapObject = GetMapObject(ref i, mapCoordinate);
@@ -151,16 +144,61 @@ namespace GalaxyGauntlet.scripts
 						mapObject = new FloorTile2(mapCoordinate);
 					}
 					AddMapObject(mapObject);
-				}
-				if(mapObject is MapTile2 mapTile)
+                }
+                if (mapObject is MapLynxCreature2 lynxCreature)
+                {
+                    if (lynxCreature.RequiresDirectionByte)
+                    {
+                        i++;
+                        byte directionByte = FileBytes[i];
+                        lynxCreature.Orientation = (EntityOrientation)directionByte;
+                    }
+                    if (lynxCreature is LynxPlayer2)
+                    {
+                        GameData.Level.PlayerCoordinate = mapCoordinate;
+                        lynxCreature.Orientation = EntityOrientation.South;
+                        LynxCreaturesToProcess = LynxCreaturesToProcess.Prepend(lynxCreature).ToList();
+                    }
+                    else
+                    {
+                        AddLynxCreatureToProcess(lynxCreature);
+                    }
+                    LynxCreatures2[x, y] = lynxCreature;
+
+                    if (lynxCreature.RequiresLowerLayerTile)
+                    {
+                        i++;
+                        mapObject = GetMapObject(ref i, mapCoordinate);
+                    }
+                    else
+                    {
+                        // Shouldn't be reached, but assume creature stands on floor tile.
+                        mapObject = new FloorTile2(mapCoordinate);
+                    }
+                    AddMapObject(mapObject);
+                }
+                if (mapObject is MapTile2 mapTile)
 				{
 					Tiles2[x, y] = mapTile;
-					if(mapObject is CloneMachineTile2 cloneTile
-						&& Creatures2[x, y] is not null)
+                    if (mapObject is CloneMachineTile2 cloneTile)
 					{
-						Creatures2[x, y].Orientation = cloneTile.CreatureOrientation ?? Creatures2[x, y].Orientation;
-						RemoveCreatureFromProcessList(Creatures2[x, y].CreatureID);
+						if (Creatures2[x, y] is not null)
+						{
+                            Creatures2[x, y].Orientation = cloneTile.CreatureOrientation 
+								?? Creatures2[x, y].Orientation;
+							RemoveCreatureFromProcessList(Creatures2[x, y].CreatureID);
+                        }
+                        if (LynxCreatures2[x, y] is not null)
+						{
+							LynxCreatures2[x, y].Orientation = cloneTile.CreatureOrientation 
+								?? LynxCreatures2[x, y].Orientation;
+							RemoveLynxCreatureFromProcessList(LynxCreatures2[x, y].CreatureID);
+                        }
 					}
+				}
+				if (LynxCreatures2[x, y] is not null)
+				{
+					LynxCreatures2[x, y].SetTileClaim();
 				}
 
 				#region Iterate Coordinate
@@ -221,7 +259,7 @@ namespace GalaxyGauntlet.scripts
 
 		#endregion
 
-		public bool IsWithinDimensions(Vector2I coordinate)
+		public bool IsWithinBoundaries(Vector2I coordinate)
 		{
 			if(coordinate.X < 0 || coordinate.Y < 0)
 			{
@@ -243,6 +281,7 @@ namespace GalaxyGauntlet.scripts
 			Items2 = new MapItem2[x, y];
 			ThinWalls2 = new ThinWallOrCanopy2[x, y];
 			Creatures2 = new MapCreature2[x, y];
+			LynxCreatures2 = new MapLynxCreature2[x, y];
 
 			for (int i = 0; i < Dimensions.X; i++)
 			{
@@ -252,6 +291,7 @@ namespace GalaxyGauntlet.scripts
 					Items2[i, j] = null;
 					ThinWalls2[i, j] = null;
 					Creatures2[i, j] = null;
+					LynxCreatures2[i, j] = null;
 				}
 			}
 		}
@@ -285,11 +325,47 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
-		#region Map Tile Management
+        #region Map Tile Management
 
-		#region Creatures
 
-		public MapCreature2 GetCreature(Vector2I coordinate)
+        #region Lynx Creatures
+
+		public MapLynxCreature2 GetLynxCreature(Vector2I coordinate)
+        {
+            var creature = LynxCreatures2[coordinate.X, coordinate.Y];
+            if (creature != null)
+            {
+                string errorMessage = $"Uh oh! The game thinks {creature.MapObjectName} is at {coordinate} but it says its at {creature.Coordinate}";
+				Global.AssertEqual(coordinate, creature.Coordinate, errorMessage);
+            }
+            return creature;
+        }
+
+
+		public void AddLynxCreatureToProcess(MapLynxCreature2 creature)
+		{
+			LynxCreaturesToProcess.Add(creature);
+		}
+
+
+		public List<MapLynxCreature2> GetLynxCreaturesToProcess()
+        {
+            LynxCreaturesToProcess = LynxCreaturesToProcess.Where(e => false == e.IsDead).ToList();
+            return [.. LynxCreaturesToProcess];
+        }
+
+
+		public void RemoveLynxCreatureFromProcessList(int creatureID)
+        {
+            LynxCreaturesToProcess = LynxCreaturesToProcess.Where(e => e.CreatureID != creatureID).ToList();
+        }
+
+        #endregion
+
+
+        #region Creatures
+
+        public MapCreature2 GetCreature(Vector2I coordinate)
 		{
 			var creature = Creatures2[coordinate.X, coordinate.Y];
 			if(creature != null)
@@ -479,6 +555,13 @@ namespace GalaxyGauntlet.scripts
 			Tiles2[coordinate.X, coordinate.Y].Kill();
 			AddMapObject(newTile);
 			Tiles2[coordinate.X, coordinate.Y] = newTile;
+		}
+
+
+		public bool IsTileClaimed(Vector2I coordinate)
+		{
+			var tile = GetTile2(coordinate);
+			return tile.HasFloorState(FloorStateFlags.Claimed);
 		}
 
 		#endregion

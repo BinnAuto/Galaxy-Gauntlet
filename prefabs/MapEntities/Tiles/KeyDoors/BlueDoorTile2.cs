@@ -14,5 +14,18 @@ public partial class BlueDoorTile2(Vector2I coordinate) : KeyDoorTile2(coordinat
 		}
 
 		return creature.UseItem(new BlueKeyItem2(Vector2I.Zero));
-	}
+    }
+
+    public override bool CanCreatureOpenDoor(MapLynxCreature2 creature, bool consumeItem)
+    {
+        if (creature is not LynxPlayer2)
+        {
+            return false;
+        }
+
+        int keyID = GGConstants.ByteCodes.Entities.BlueKey;
+        return consumeItem
+            ? creature.ConsumeItem(keyID)
+            : creature.HasItem(keyID);
+    }
 }

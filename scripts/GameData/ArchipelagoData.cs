@@ -519,6 +519,25 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public bool IsItemUnlocked(int entityID)
+		{
+			return entityID switch
+			{
+				GGConstants.ByteCodes.Entities.RedKey => RedKeyUnlocked,
+				GGConstants.ByteCodes.Entities.BlueKey => BlueKeyUnlocked,
+				GGConstants.ByteCodes.Entities.GreenKey => GreenKeyUnlocked,
+				GGConstants.ByteCodes.Entities.YellowKey => YellowKeyUnlocked,
+				GGConstants.ByteCodes.Entities.IceSkates => IceSkatesUnlocked,
+				GGConstants.ByteCodes.Entities.SuctionBoots => SuctionBootsUnlocked,
+				GGConstants.ByteCodes.Entities.FireBoots => FireBootsUnlocked,
+				GGConstants.ByteCodes.Entities.Flippers => FlippersUnlocked,
+				GGConstants.ByteCodes.Entities.SecretEye => SecretEyeUnlocked,
+				GGConstants.ByteCodes.Entities.Helmet => HelmetUnlocked,
+				_ => true
+			};
+		}
+
+
 		private void ProcessNewItem(string itemName)
 		{
 			MapItem2 pendingItem = itemName switch

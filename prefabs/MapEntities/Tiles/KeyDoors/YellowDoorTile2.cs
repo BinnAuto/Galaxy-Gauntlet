@@ -15,5 +15,18 @@ public partial class YellowDoorTile2(Vector2I coordinate) : KeyDoorTile2(coordin
 		}
 
 		return creature.UseItem(new YellowKeyItem2(Vector2I.Zero));
-	}
+    }
+
+    public override bool CanCreatureOpenDoor(MapLynxCreature2 creature, bool consumeItem)
+    {
+        if (creature is not LynxPlayer2)
+        {
+            return false;
+        }
+
+		int keyID = GGConstants.ByteCodes.Entities.YellowKey;
+		return consumeItem
+			? creature.ConsumeItem(keyID)
+			: creature.HasItem(keyID);
+    }
 }

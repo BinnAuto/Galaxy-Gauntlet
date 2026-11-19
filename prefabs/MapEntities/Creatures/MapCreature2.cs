@@ -6,6 +6,8 @@ using System.Linq;
 
 public class CreatureStateFlags
 {
+	#region MSCC Flags
+
 	public const int Released = 0x01;
 	public const int Cloning = 0x02;
 	public const int HasMoved = 0x04;
@@ -14,15 +16,30 @@ public class CreatureStateFlags
 	public const int Sliding = 0x20;
 	public const int DeferPush = 0x40;
 	public const int Mutant = 0x80;
+
+	#endregion
+
+
+	#region Lynx Flags
+
+	public const int ForceDirection = 0x0F;
+	public const int SlideToken = 0x10;
+	public const int Reverse = 0x20;
+	public const int Pushed = 0x40;
+	public const int Teleported = 0x80;
+
+	#endregion
 }
 
 public static class CanMakeMoveFlags
 {
-	/// <summary>
-	/// Automatically assumes that the creature can leave the 
-	/// tile they are currently on.
-	/// </summary>
-	public const int NoLeaveCheck = 0x01;
+    #region MSCC Flags
+
+    /// <summary>
+    /// Automatically assumes that the creature can leave the 
+    /// tile they are currently on.
+    /// </summary>
+    public const int NoLeaveCheck = 0x01;
 
 	/// <summary>
 	/// Causes blue walls and hidden walls to remain unexposed.
@@ -54,6 +71,19 @@ public static class CanMakeMoveFlags
 	/// Causes buttons pressed by pushed blocks to take effect immediately.
 	/// </summary>
 	public const int NoDeferButtons = 0x40;
+
+	#endregion
+
+
+	#region Lynx Flags
+
+	public const int Releasing = 0x0001;
+	public const int ClearAnimations = 0x0002;
+	public const int StartMovement = 0x0004;
+	public const int PushBlocks = 0x0008;
+	public const int PushBlocksNow = 0x0010;
+
+	#endregion
 }
 
 public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
@@ -750,7 +780,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		}
 		else if(tile is ForceFloorTile2 forceFloor)
 		{
-			initialDirection = forceFloor.SetCreatureDirection();
+			initialDirection = forceFloor.GetInfluenceDirection();
 		}
 		else if(tile is BlueTeleporterTile2)
 		{
@@ -827,7 +857,7 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 		var destinationCoordinate = Coordinate + direction;
 		FocusCreatureLog($"Can {MapObjectName} move from {Coordinate} to {destinationCoordinate}?");
 		SetOrientation(direction);
-		if(false == GameData.Map.IsWithinDimensions(destinationCoordinate))
+		if(false == GameData.Map.IsWithinBoundaries(destinationCoordinate))
 		{
 			FocusCreatureLog("No, destination is not in the map.");
 			return false;
@@ -1350,68 +1380,10 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 	public void PickUpItem(MapItem2 item)
 	{
-		// Only pick up item if it is unlocked
-		switch(item.EntityID)
+		if(false == GameData.Archipelago.IsItemUnlocked(item.EntityID))
 		{
-			case GGConstants.ByteCodes.Entities.RedKey:
-				if(false == GameData.Archipelago.RedKeyUnlocked)
-				{
-					return;
-				}
-				break;
-
-			case GGConstants.ByteCodes.Entities.BlueKey:
-				if(false == GameData.Archipelago.BlueKeyUnlocked)
-				{
-					return;
-				}
-				break;
-
-            case GGConstants.ByteCodes.Entities.YellowKey:
-                if (false == GameData.Archipelago.YellowKeyUnlocked)
-                {
-                    return;
-                }
-                break;
-
-            case GGConstants.ByteCodes.Entities.GreenKey:
-                if (false == GameData.Archipelago.GreenKeyUnlocked)
-                {
-                    return;
-                }
-                break;
-
-            case GGConstants.ByteCodes.Entities.IceSkates:
-                if (false == GameData.Archipelago.IceSkatesUnlocked)
-                {
-                    return;
-                }
-                break;
-
-            case GGConstants.ByteCodes.Entities.Flippers:
-                if (false == GameData.Archipelago.FlippersUnlocked)
-                {
-                    return;
-                }
-                break;
-
-            case GGConstants.ByteCodes.Entities.SuctionBoots:
-                if (false == GameData.Archipelago.SuctionBootsUnlocked)
-                {
-                    return;
-                }
-                break;
-
-            case GGConstants.ByteCodes.Entities.FireBoots:
-                if (false == GameData.Archipelago.FireBootsUnlocked)
-                {
-                    return;
-                }
-                break;
-
-            default:
-				break;
-        }
+			return;
+		}
 
         Inventory.Add(item);
         GameData.Map.RemoveItem2(item.Coordinate);
@@ -1492,5 +1464,4 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 
 		GD.Print($"Creature {CreatureID}: {message}");
 	}
-
 }

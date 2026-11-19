@@ -88,6 +88,10 @@ namespace GalaxyGauntlet.scripts
 					{
 						tank.AboutFace();
 					}
+					if (Map.LynxCreatures2[x, y] is LynxBlueTankCreature2 lynxTank)
+					{
+                        lynxTank.AboutFace();
+					}
 				}
 			}
 		}
@@ -179,6 +183,43 @@ namespace GalaxyGauntlet.scripts
                 }
             }
         }
+
+
+		public static void SpringTrap(Vector2I sourceCoordinate)
+		{
+			int x = sourceCoordinate.X;
+			int y = sourceCoordinate.Y;
+			while(true)
+            {
+                Vector2I mapCoordinate = new(x, y);
+                var mapTile = Map.GetTile2(mapCoordinate);
+                if (mapTile is TrapTile2 trapTile)
+                {
+                    trapTile.OpenTrap();
+					var trappedCreature = Map.GetLynxCreature(mapCoordinate);
+					trappedCreature?.AdvanceCreature(true);
+                    return;
+                }
+
+                // Move to next coordinate
+                x++;
+                if (x >= Map.Dimensions.X)
+                {
+                    x = 0;
+                    y++;
+                }
+                if (y >= Map.Dimensions.Y)
+                {
+                    x = 0;
+                    y = 0;
+                }
+                if (sourceCoordinate == new Vector2I(x, y))
+                {
+                    FileLogger.QuietLogMessage("Rats! This level has brown buttons but no traps!");
+                    return;
+                }
+            }
+		}
 
 		#endregion
 

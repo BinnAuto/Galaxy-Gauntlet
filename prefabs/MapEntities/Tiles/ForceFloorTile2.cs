@@ -27,7 +27,7 @@ public partial class ForceFloorTile2(int entityId, Vector2I coordinate) : MapTil
 	};
 
 
-    public Vector2I SetCreatureDirection()
+    public Vector2I GetInfluenceDirection()
     {
 		switch(EntityID) {
 			case GGConstants.ByteCodes.Entities.ForceFloor_N:
