@@ -42,6 +42,7 @@ public partial class DialogWindow2 : Node2D
 		var windowStyle = (StyleBox)GD.Load("res://styles/dialog_window_content_style.tres");
 
 		OKDialog.Confirmed += OnOKButtonPressed;
+		OKDialog.CloseRequested += OnOKButtonPressed;
 		OKDialog.GetLabel().HorizontalAlignment = HorizontalAlignment.Center;
 		OKDialog.GetLabel().VerticalAlignment = VerticalAlignment.Center;
 		var okLabel = OKDialog.GetLabel();
@@ -55,6 +56,7 @@ public partial class DialogWindow2 : Node2D
 
 		YesNoDialog.Confirmed += OnYesButtonPressed;
 		YesNoDialog.Canceled += OnNoButtonPressed;
+		YesNoDialog.CloseRequested += OnNoButtonPressed;
 		YesNoDialog.GetLabel().HorizontalAlignment = HorizontalAlignment.Center;
 		YesNoDialog.GetLabel().VerticalAlignment = VerticalAlignment.Center;
 		YesNoDialog.AddThemeStyleboxOverride("panel", windowStyle);
