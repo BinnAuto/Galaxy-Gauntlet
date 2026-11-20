@@ -15,6 +15,13 @@ public partial class TrapTile2(Vector2I coordinate) : MapTile2(coordinate)
 		: GGConstants.SpriteFrameIndexes.TrapInactive;
 
 
+    public override void _PhysicsProcess(double delta)
+    {
+		base._PhysicsProcess(delta);
+		IsActive = true;
+    }
+
+
 	public void OpenTrap()
 	{
 		IsActive = false;

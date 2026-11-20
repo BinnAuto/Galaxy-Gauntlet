@@ -14,6 +14,8 @@ public partial class CloneMachineTile2(Vector2I coordinate) : MapTile2(coordinat
 
     public MapCreature2 CreatureToClone = null;
 
+    public MapLynxCreature2 LynxCreatureToClone = null;
+
 
     public override void _Process(double delta)
     {
@@ -25,6 +27,7 @@ public partial class CloneMachineTile2(Vector2I coordinate) : MapTile2(coordinat
         }
 
         CreatureToClone = GameData.Map.GetCreature(Coordinate);
+        LynxCreatureToClone = GameData.Map.GetLynxCreature(Coordinate);
     }
 
 

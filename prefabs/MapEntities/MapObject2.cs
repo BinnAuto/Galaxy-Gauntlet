@@ -198,6 +198,8 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 			GGConstants.ByteCodes.Entities.FireBoots => new FireBootsItem2(coordinate),
 			GGConstants.ByteCodes.Entities.SuctionBoots => new SuctionBootsItem2(coordinate),
 			GGConstants.ByteCodes.Entities.IceSkates => new IceSkatesItem2(coordinate),
+			GGConstants.ByteCodes.Entities.Helmet => new HelmetItem2(coordinate),
+			GGConstants.ByteCodes.Entities.SecretEye => new SecretEyeItem2(coordinate),
 
 			/* Creatures */
 			GGConstants.ByteCodes.Entities.Player => new LynxPlayer2(playerMissing, coordinate),

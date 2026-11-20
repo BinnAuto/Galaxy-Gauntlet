@@ -119,8 +119,17 @@ public partial class GameplayScreen : Node
 		LevelName.Text = GameData.Level.Name;
 		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0)}";
 		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
-		StepOffset.Text = (GameData.Level.SteppingOffset % 2 == 1)
-			? "Odd" : string.Empty;
+		StepOffset.Text = GameData.Level.SteppingOffset switch
+		{
+			0 => "Odd",
+			1 => "O+1",
+			2 => "O+2",
+			3 => "O+3",
+			5 => "E+1",
+			6 => "E+2",
+			7 => "E+3",
+			_ => string.Empty,
+		};
 
 		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
 		HintLabel.Visible = (currentTile is HintTile2);
@@ -158,14 +167,14 @@ public partial class GameplayScreen : Node
 			return;
 		}
 
-		if(Input.IsActionJustPressed("step_toggle"))
+		if(Input.IsActionJustPressed("step_increment"))
 		{
-			GameData.Level.SteppingOffset = GameData.Level.SteppingOffset switch
-			{
-				1 => 4,
-				4 => 1,
-				_ => 1
-			};
+			GameData.Level.SteppingOffset = (GameData.Level.SteppingOffset + 1) % 8;
+		}
+		else if(Input.IsActionJustPressed("step_toggle"))
+		{
+			GameData.Level.SteppingOffset = GameData.Level.SteppingOffset >= 4
+				? 0 : 4;
 		}
 
 		Vector2I input = GameData.GetPlayerInput();

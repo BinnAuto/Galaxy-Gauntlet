@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_xa088"]
 [ext_resource type="StyleBox" uid="uid://b42mxcwhl5h20" path="res://styles/button_pressed_style.tres" id="3_1aba1"]
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_yl72h"]
+[ext_resource type="StyleBox" uid="uid://ds0ksm2lwloc6" path="res://styles/line_edit_style.tres" id="4_pidjh"]
 [ext_resource type="StyleBox" uid="uid://dhoqfgal04ahv" path="res://styles/button_hover_style.tres" id="4_xa088"]
 [ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="7_yl72h"]
 [ext_resource type="PackedScene" uid="uid://ck1puqwe4jrxo" path="res://prefabs/DialogWindow2/DialogWindow2.tscn" id="8_5ubwq"]
@@ -54,6 +55,9 @@ offset_left = 13.000001
 offset_top = 580.0
 offset_right = 440.0
 offset_bottom = 618.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.6)
+theme_override_styles/normal = ExtResource("4_pidjh")
 placeholder_text = "🔍 Search levels"
 
 [node name="ButtonRef" type="Button" parent="." unique_id=466550020]

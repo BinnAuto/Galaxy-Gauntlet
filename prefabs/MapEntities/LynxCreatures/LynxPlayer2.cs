@@ -42,6 +42,7 @@ public partial class LynxPlayer2(bool isRealPlayer, Vector2I coordinate) : MapLy
 
 	public readonly bool IsRealPlayer = isRealPlayer;
 
+
 	#region Godot Overrides
 
 	public override void _Ready()
@@ -54,6 +55,14 @@ public partial class LynxPlayer2(bool isRealPlayer, Vector2I coordinate) : MapLy
 	public override void _Process(double delta)
 	{
 		base._Process(delta);
+		if (IsThePlayer 
+			&& GameData.Level.ProcessMobs 
+			&& GameData.Archipelago.PendingItems.Count > 0)
+		{
+			Inventory.AddRange(GameData.Archipelago.PendingItems);
+			GameData.Archipelago.PendingItems.Clear();
+			GameData.Level.UpdatePlayerItems(Inventory);
+		}
 	}
 
 	#endregion
