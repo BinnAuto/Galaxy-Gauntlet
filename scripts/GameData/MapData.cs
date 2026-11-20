@@ -197,7 +197,8 @@ namespace GalaxyGauntlet.scripts
 					}
 				}
 				if (LynxCreatures2[x, y] is not null 
-					&& LynxCreatures2[x, y] is not LynxRedBombCreature2)
+					&& LynxCreatures2[x, y] is not LynxRedBombCreature2
+					&& LynxCreatures2[x, y] is not LynxPlayer2)
 				{
 					LynxCreatures2[x, y].SetTileClaim();
 				}
@@ -425,7 +426,7 @@ namespace GalaxyGauntlet.scripts
 			}
 
 			var cloneCreature = (MapLynxCreature2)MapObject2.GetMapObject(creature.EntityID, sourceCoordinate);
-			cloneCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone.Orientation;
+			cloneCreature.Orientation = cloneMachine.CreatureOrientation ?? cloneMachine.CreatureToClone?.Orientation ?? cloneMachine.LynxCreatureToClone.Orientation;
 			if(cloneCreature is null)
 			{
 				return creature.AdvanceCreature(true) != 0;

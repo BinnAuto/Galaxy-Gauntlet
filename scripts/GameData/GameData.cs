@@ -99,7 +99,7 @@ namespace GalaxyGauntlet.scripts
                         {
                             continue;
                         }
-                        lynxTank.AboutFace();
+						lynxTank.SetCreatureState(CreatureStateFlags.Reverse);
 					}
 				}
 			}
@@ -194,12 +194,6 @@ namespace GalaxyGauntlet.scripts
         }
 
 
-		public static void FindButtonForTrap(Vector2I trapCoordinate)
-		{
-
-		}
-
-
 		public static void SpringTrap(Vector2I sourceCoordinate)
 		{
 			int x = sourceCoordinate.X;
@@ -210,9 +204,10 @@ namespace GalaxyGauntlet.scripts
                 var mapTile = Map.GetTile2(mapCoordinate);
                 if (mapTile is TrapTile2 trapTile)
                 {
-                    trapTile.OpenTrap();
+					bool trapWasActive = trapTile.IsActive;
+					trapTile.OpenTrap();
 					var trappedCreature = Map.GetLynxCreature(mapCoordinate);
-					trappedCreature?.AdvanceCreature(true);
+					trappedCreature?.AdvanceCreature(trapWasActive);
                     return;
                 }
 

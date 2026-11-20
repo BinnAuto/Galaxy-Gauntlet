@@ -24,8 +24,6 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 	public List<MapItem2> Inventory = [];
 
-	// TODO: Convert to Vector2I
-
 	/// <summary>
 	/// Indicates if this creature is the instance of Chip that is controlled by the player.
 	/// </summary>
@@ -498,7 +496,6 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 		var destinationCreature = GameData.Map.GetLynxCreature(destinationCoordinate);
 
-
 		#region Check sliding state for Player
 
 		if (IsThePlayer)
@@ -558,12 +555,14 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		{
 			LynxPlayer2.ChipToCreature = this;
 		}
+		/*
 		else if(LynxPlayer2.ChipToCreature != null && false == LynxPlayer2.ChipToCreature.IsHidden)
 		{
 			LynxPlayer2.ChipToCreature.Moving = 8;
 			GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
 			return -1;
 		}
+		*/
 
 		SetCoordinate(destinationCoordinate);
 		if(false == IsThePlayer)
@@ -574,7 +573,9 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 		if(false == IsThePlayer && Coordinate == GameData.Level.PlayerCoordinate /* && false == Player.IsHidden */)
 		{
-			GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+			GameData.Level.DeathMessage = (EntityID == GGConstants.ByteCodes.Entities.DirtBlock)
+				? GGConstants.DeathMessages.MovingBlocks
+				: GGConstants.DeathMessages.Monsters;
 			return -1;
 		}
 
@@ -628,7 +629,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 					break;
 
 				default:
-					if (IsThePlayer)
+					if (IsThePlayer && destinationCreature is not LynxDirtBlockCreature2)
 					{
 						GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
 					}
@@ -798,12 +799,16 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 				{
 					case GGConstants.ByteCodes.Entities.RedBomb:
 						GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
+						survived = false;
 						break;
 
 					default:
 						if (false == thisPlayer.HasItem(GGConstants.ByteCodes.Entities.Helmet))
 						{
-							GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+							GameData.Level.DeathMessage = (currentCreature is LynxDirtBlockCreature2)
+								? GGConstants.DeathMessages.MovingBlocks
+								: GGConstants.DeathMessages.Monsters;
+							survived = false;
 						}
 						break;
 				}
@@ -881,7 +886,6 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 				break;
 
 			case GGConstants.ByteCodes.Entities.RedButton:
-				// TODO
 				GameData.RedButtonPressed(Coordinate);
 				break;
 
@@ -927,7 +931,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
             }
 		}
 
-#endregion
+		#endregion
 
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 		if(currentTile is IceTile2 iceTile)
@@ -949,8 +953,8 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		}
 
 		if(currentTile is ForceFloorTile2 forceFloor 
-			&& (false == IsThePlayer || false == HasItem(GGConstants.ByteCodes.Entities.SuctionBoots)
-			&& forceFloor.GetInfluenceDirection() == -direction))
+			&& (false == IsThePlayer || false == HasItem(GGConstants.ByteCodes.Entities.SuctionBoots))
+			&& forceFloor.GetInfluenceDirection() == -1 * direction)
 		{
 			FocusCreatureLog($"No, something something force floor");
 			return false;
@@ -1143,6 +1147,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		}
 		else if(HasCreatureState(CreatureStateFlags.Teleported))
 		{
+			RemoveCreatureState(CreatureStateFlags.Teleported);
 			SetForceDirection(Forward);
 			return true;
 		}
@@ -1170,6 +1175,10 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		{
 			forceDirection |= 0x08;
 		}
+		if(forceDirection != ForceDirection)
+		{
+			FocusCreatureLog($"Forced direction changed to {value} ({forceDirection})");
+		}
 		ForceDirection = forceDirection;
 	}
 
@@ -1196,7 +1205,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		}
 		if(result != Vector2I.Zero)
 		{
-			FocusCreatureLog($"Slip direction is {result}");
+			FocusCreatureLog($"Force direction is {result}");
 		}
 		return result;
 	}
@@ -1300,7 +1309,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 		Global.AssertTrue(currentTile is BlueTeleporterTile2, $"Wuh oh! This tile is a {currentTile.MapObjectName}, not a blue teleporter!");
 
-		Vector2I originalPosition = Coordinate.Clone();
+		Vector2I originalCoordinate = Coordinate.Clone();
 		Vector2I searchCoordinate = Coordinate.Clone();
 
 		int x = searchCoordinate.X;
@@ -1317,6 +1326,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 					y = GameData.Map.Dimensions.Y;
 				}
 			}
+			searchCoordinate = new(x, y);
 			var searchTile = GameData.Map.GetTile2(searchCoordinate);
 			if(searchTile is BlueTeleporterTile2)
 			{
@@ -1325,24 +1335,27 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 					ReleaseTileClaim();
 				}
 				Coordinate = searchCoordinate;
-				if(false == GameData.Map.IsTileClaimed(Coordinate) && CanMakeMove(Forward, 0))
+				if(false == GameData.Map.IsTileClaimed(searchCoordinate)
+					&& CanMakeMove(Forward, 0))
 				{
+					FocusCreatureLog($"Successfully teleporting to {searchCoordinate}");
 					break;
 				}
-				if(searchCoordinate == originalPosition)
+				if(searchCoordinate == originalCoordinate)
 				{
+					FocusCreatureLog("Teleport failed");
 					if(IsThePlayer)
 					{
-						// ChipStuck = true;
+						// ChipStuck = true
 					}
 					else
 					{
 						SetTileClaim();
 					}
-					return;
+                    ForceSetCoordinate(originalCoordinate);
+					return; // false
 				}
 			}
-			// TODO: Marked as teleporter check
 		}
 
 		if(IsThePlayer)
@@ -1352,8 +1365,9 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		else
 		{
 			SetTileClaim();
-			SetCreatureState(CreatureStateFlags.Teleported);
 		}
+		SetCreatureState(CreatureStateFlags.Teleported);
+		ForceSetCoordinate(Coordinate);
 	}
 
 	#endregion
@@ -1367,18 +1381,24 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 			return false;
 		}
 
-		FocusCreatureLog($"Moving from {Coordinate} to {newCoordinate}");
-		GameData.Map.RemoveCreature(Coordinate);
-		GameData.Map.LynxCreatures2[Coordinate.X, Coordinate.Y] = null;
-		Coordinate = newCoordinate;
-		GameData.Map.LynxCreatures2[newCoordinate.X, newCoordinate.Y] = this;
-		ReleaseTileClaim(); // Needed?
-		if(IsThePlayer)
-		{
-			GameData.Level.PlayerCoordinate = newCoordinate;
-		}
+		ForceSetCoordinate(newCoordinate);
 		return true;
 	}
+
+
+	private void ForceSetCoordinate(Vector2I newCoordinate)
+    {
+        FocusCreatureLog($"Moving from {Coordinate} to {newCoordinate}");
+        GameData.Map.RemoveCreature(Coordinate);
+        GameData.Map.LynxCreatures2[Coordinate.X, Coordinate.Y] = null;
+        Coordinate = newCoordinate;
+        GameData.Map.LynxCreatures2[newCoordinate.X, newCoordinate.Y] = this;
+        ReleaseTileClaim(); // Needed?
+        if (IsThePlayer)
+        {
+            GameData.Level.PlayerCoordinate = newCoordinate;
+        }
+    }
 
 
 	public void SetTileClaim()
