@@ -390,6 +390,11 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 		for(int i = 0; i < moveChoices.Length; i++)
 		{
+			if (moveChoices[i] == Vector2I.Zero)
+			{
+				break;
+			}
+
 			TDir = moveChoices[i];
 			FocusCreatureLog($"Testing move choice of {TDir} from {Coordinate}");
 			if (CanMakeMove(moveChoices[i], CanMakeMoveFlags.ClearAnimations))
@@ -409,13 +414,6 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 
 	#region Movement Methods
-
-	public override void Kill()
-	{
-		Moving = 0;
-		ReleaseTileClaim();
-		base.Kill();
-	}
 
 	public int AdvanceCreature(bool isReleasing)
 	{
@@ -495,8 +493,11 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		}
 		Global.AssertTrue(false == direction.IsDiagonal(), $"Oh no! Direction {direction} is diagonal!");
 		SetOrientation(direction);
+		var destinationCoordinate = Coordinate + direction;
 
 		var currentTile = GameData.Map.GetTile2(Coordinate);
+		var destinationCreature = GameData.Map.GetLynxCreature(destinationCoordinate);
+
 
 		#region Check sliding state for Player
 
@@ -564,7 +565,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 			return -1;
 		}
 
-		SetCoordinate(Coordinate + direction);
+		SetCoordinate(destinationCoordinate);
 		if(false == IsThePlayer)
 		{
 			SetTileClaim();
@@ -593,6 +594,49 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 			LynxPlayer2.ChipPushing = true;
 			// Sound effect
 		}
+
+		#region Check Current Monster
+
+		if (destinationCreature is not null)
+		{
+			switch (destinationCreature.EntityID)
+			{
+				case GGConstants.ByteCodes.Entities.RedBomb:
+					if (IsThePlayer)
+					{
+						GameData.Level.DeathMessage = GGConstants.DeathMessages.Bombs;
+					}
+					else
+					{
+						destinationCreature.Kill();
+						Kill();
+					}
+					break;
+
+				case GGConstants.ByteCodes.Entities.Player:
+					if (IsThePlayer)
+					{
+						Global.AssertTrue(false, "...Huh? The player died to themselves?");
+					}
+					else
+					{
+						if (destinationCreature.IsThePlayer && false == destinationCreature.HasItem(GGConstants.ByteCodes.Entities.Helmet))
+						{
+							GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+						}
+					}
+					break;
+
+				default:
+					if (IsThePlayer)
+					{
+						GameData.Level.DeathMessage = GGConstants.DeathMessages.Monsters;
+					}
+					break;
+			}
+		}
+
+		#endregion
 
 		return 1;
 	}
@@ -860,15 +904,30 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		Global.AssertTrue(direction != Vector2I.Zero, $"{MapObjectName} {CreatureID}: Wuh oh! Running CanMakeMove with zero direction!");
 		var destinationCoordinate = Coordinate + direction;
 		FocusCreatureLog($"Can {MapObjectName} move from {Coordinate} to {destinationCoordinate}?");
-		var currentThinWall = GameData.Map.GetThinWall(Coordinate);
+
+        #region Thin Wall Checks
+
+        var currentThinWall = GameData.Map.GetThinWall(Coordinate);
 		if(currentThinWall is not null)
 		{
 			if(false == currentThinWall.CreatureCanExit(direction))
-			{
-				FocusCreatureLog($"No, it cannot leave {currentThinWall.MapObjectName} from that direction");
-				return false;
-			}
+            {
+                FocusCreatureLog($"No, it cannot leave {currentThinWall.MapObjectName} from that direction");
+                return false;
+            }
 		}
+
+		var destinationThinWall = GameData.Map.GetThinWall(destinationCoordinate);
+		if(destinationThinWall is not null)
+		{
+			if(false == destinationThinWall.CreatureCanEnter(direction))
+            {
+                FocusCreatureLog($"No, it cannot enter {destinationThinWall.MapObjectName} from that direction");
+                return false;
+            }
+		}
+
+#endregion
 
 		var currentTile = GameData.Map.GetTile2(Coordinate);
 		if(currentTile is IceTile2 iceTile)
@@ -916,7 +975,7 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 			}
 			if(destinationTile is SocketTile2 && false == GameData.Level.ChipRequirementMet)
 			{
-				FocusCreatureLog($"No, you has not gotten the required amount of Chips");
+				FocusCreatureLog($"No, you have not gotten the required amount of Chips");
 				return false;
 			}
 			if(destinationTile is KeyDoorTile2 keyDoor && false == keyDoor.CanCreatureOpenDoor(this, false))
@@ -1198,7 +1257,9 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 
 	public void AboutFace()
 	{
+		FocusCreatureLog($"About face");
 		Orientation = Back();
+		FocusCreatureLog($"New orientation: {Orientation}");
 	}
 
 

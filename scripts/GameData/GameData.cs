@@ -84,12 +84,21 @@ namespace GalaxyGauntlet.scripts
 			{
 				for (int y = 0; y < Map.Dimensions.Y; y++)
 				{
+					var currentTile = Map.GetTile2(new(x, y));
 					if (Map.Creatures2[x, y] is BlueTankCreature2 tank)
 					{
-						tank.AboutFace();
+                        if (currentTile is CloneMachineTile2 || currentTile is IceTile2)
+                        {
+                            continue;
+                        }
+                        tank.AboutFace();
 					}
 					if (Map.LynxCreatures2[x, y] is LynxBlueTankCreature2 lynxTank)
 					{
+                        if (currentTile is CloneMachineTile2 || currentTile is IceTile2)
+                        {
+                            continue;
+                        }
                         lynxTank.AboutFace();
 					}
 				}
@@ -183,6 +192,12 @@ namespace GalaxyGauntlet.scripts
                 }
             }
         }
+
+
+		public static void FindButtonForTrap(Vector2I trapCoordinate)
+		{
+
+		}
 
 
 		public static void SpringTrap(Vector2I sourceCoordinate)

@@ -72,6 +72,8 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		}
 		if(this is MapLynxCreature2 lynxCreature)
 		{
+			lynxCreature.Moving = 0;
+			lynxCreature.ReleaseTileClaim();
 			GameData.Map.RemoveLynxCreatureFromProcessList(lynxCreature.CreatureID);
 			if (GameData.Map.LynxCreatures2[Coordinate.X, Coordinate.Y].CreatureID == lynxCreature.CreatureID)
 			{

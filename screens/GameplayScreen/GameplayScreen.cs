@@ -188,7 +188,7 @@ public partial class GameplayScreen : Node
 		}
 
         var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
-        if (currentTile is ExitTile2 && GameData.Level.ChipRequirementMet)
+        if (currentTile is ExitTile2) // It is assumed that a socket is blocking the exit, enforcing a chip requirement
 		{
 			GameData.OnLevelComplete();
 			DialogWindow2.ClearAllButtonEvents();
