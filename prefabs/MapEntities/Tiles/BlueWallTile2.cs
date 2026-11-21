@@ -21,7 +21,7 @@ public partial class BlueWallTile2(bool isReal, Vector2I coordinate) : MapTile2(
 				return GGConstants.SpriteFrameIndexes.BlueWall;
 			}
 			return GameData.Level.XRayMode
-				? GGConstants.SpriteFrameIndexes.Wall
+				? GGConstants.SpriteFrameIndexes.Floor
 				: GGConstants.SpriteFrameIndexes.BlueWall;
 		}
 	}
