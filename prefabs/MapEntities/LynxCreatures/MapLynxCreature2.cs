@@ -977,7 +977,8 @@ public partial class MapLynxCreature2(Vector2I coordinate) : MapObject2(coordina
 		if(IsThePlayer)
         {
             if (destinationCreature is not null
-                && HasItem(GGConstants.ByteCodes.Entities.Helmet))
+                && HasItem(GGConstants.ByteCodes.Entities.Helmet)
+				&& destinationCreature is not LynxDirtBlockCreature2)
             {
                 FocusCreatureLog($"No, you have a helmet and are approaching a {destinationCreature.MapObjectName}");
 				return false;
