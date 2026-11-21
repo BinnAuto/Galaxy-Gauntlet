@@ -60,15 +60,15 @@ public partial class LevelSelect : Node2D
 			if (GameData.GameMode == GameMode.Archipelago)
 			{
 				ArchipelagoDisplay.Visible = true;
-				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString();
+				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString("N0");
 				if(GameData.Archipelago.ScoreGoal != 0)
 				{
-					TotalScore.Text += $" ({GameData.Archipelago.ScoreGoal})";
+					TotalScore.Text += $" ({GameData.Archipelago.ScoreGoal:N0})";
 				}
-				LevelsCompleted.Text = GameData.Archipelago.CurrentLevelCompletedCount.ToString();
+				LevelsCompleted.Text = GameData.Archipelago.CurrentLevelCompletedCount.ToString("N0");
 				if(GameData.Archipelago.LevelCompletionGoal!= 0)
 				{
-					LevelsCompleted.Text += $" ({GameData.Archipelago.LevelCompletionGoal})";
+					LevelsCompleted.Text += $" ({GameData.Archipelago.LevelCompletionGoal:N0})";
 				}
 			}
 		}
@@ -167,18 +167,28 @@ public partial class LevelSelect : Node2D
 
 	private void OnSearchLevels(string searchTerm)
 	{
-		foreach(var child in GridContainer.GetChildren())
+		var children = GridContainer.GetChildren();
+		for(int i = 0; i < children.Count; i++)
 		{
+			var child = children[i];
 			if(child is not Button levelButton)
 			{
 				return;
 			}
 
 			string levelName = levelButton.Text;
-			levelButton.Visible = (string.IsNullOrEmpty(searchTerm)
-				|| levelName.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase)
-			);
-		}
+			bool isVisible = string.IsNullOrEmpty(searchTerm)
+				|| levelName.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase);
+			levelButton.Visible = isVisible;
+			if(GameData.GameMode == GameMode.Archipelago)
+			{
+				i++;
+				((Control)children[i]).Visible = isVisible;
+                i++;
+                ((Control)children[i]).Visible = isVisible;
+            }
+
+        }
     }
 
 
