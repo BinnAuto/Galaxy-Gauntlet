@@ -116,6 +116,10 @@ public partial class MapDisplay2 : Node2D
 			{
 				GameData.SpringTrap(creature.Coordinate);
 			}
+			if(false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+			{
+				return;
+			}
 		}
 
 		#endregion
