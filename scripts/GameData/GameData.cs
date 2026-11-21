@@ -12,6 +12,8 @@ namespace GalaxyGauntlet.scripts
 
 		public static SpriteFrames SpriteFrames;
 
+		public static SpriteFrames ArchipelagoSpriteFrames;
+
 		public static Godot.Color? TileTransparentColor;
         
 		public static void Initialize(Vector2I windowSize)
@@ -85,7 +87,7 @@ namespace GalaxyGauntlet.scripts
 
         private static void LoadSpriteFrames()
         {
-            SpriteFrames result = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
+            SpriteFrames spriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
             string customSpritePath = "./custom/images/sprites.png";
             if (File.Exists(customSpritePath))
             {
@@ -97,20 +99,20 @@ namespace GalaxyGauntlet.scripts
 					if(image.GetWidth() < minDimensions.X
 						|| image.GetHeight() < minDimensions.Y)
 					{
-						throw new($"The custom tile sprite sheet is too small. It must be at least {minDimensions.X} pixels wide and {minDimensions.Y} pixels high");
+						throw new($"The custom sprite sheet is too small. It must be at least {minDimensions.X} pixels wide and {minDimensions.Y} pixels high");
 					}
 
                     var spriteSheet = ImageTexture.CreateFromImage(image);					
-                    result = new();
+                    spriteFrames = new();
 
                     #region Build default tile animation frames
 
-                    if (false == result.HasAnimation("default"))
+                    if (false == spriteFrames.HasAnimation("default"))
 					{
-						result.AddAnimation("default");
+						spriteFrames.AddAnimation("default");
 					}
-                    result.SetAnimationSpeed("default", 0);
-                    result.SetAnimationLoop("default", false);
+                    spriteFrames.SetAnimationSpeed("default", 0);
+                    spriteFrames.SetAnimationLoop("default", false);
                     for (int y = 0; y < 32; y++)
                     {
                         for (int x = 0; x < 16; x++)
@@ -120,7 +122,7 @@ namespace GalaxyGauntlet.scripts
                                 Atlas = spriteSheet,
                                 Region = new(32 * x, 32 * y, 32, 32)
                             };
-                            result.AddFrame("default", atlas);
+                            spriteFrames.AddFrame("default", atlas);
                         }
                     }
 
@@ -128,12 +130,12 @@ namespace GalaxyGauntlet.scripts
 
 					#region Build Thin Wall animation frames
 
-					if(false == result.HasAnimation("thin_wall"))
+					if(false == spriteFrames.HasAnimation("thin_wall"))
 					{
-						result.AddAnimation("thin_wall");
+						spriteFrames.AddAnimation("thin_wall");
                     }
-                    result.SetAnimationSpeed("thin_wall", 0);
-                    result.SetAnimationLoop("thin_wall", false);
+                    spriteFrames.SetAnimationSpeed("thin_wall", 0);
+                    spriteFrames.SetAnimationLoop("thin_wall", false);
 					Vector2I[] wallCoordinates = [
 						new(32, 320),
 						new(48, 320),
@@ -151,19 +153,19 @@ namespace GalaxyGauntlet.scripts
                             Atlas = spriteSheet,
                             Region = new(coordinate.X, coordinate.Y, 16, 16)
                         };
-                        result.AddFrame("thin_wall", atlas);
+                        spriteFrames.AddFrame("thin_wall", atlas);
                     }
 
 					#endregion
 
 					#region Build Letter animation frames
 
-					if(false == result.HasAnimation("letters"))
+					if(false == spriteFrames.HasAnimation("letters"))
 					{
-						result.AddAnimation("letters");
+						spriteFrames.AddAnimation("letters");
                     }
-                    result.SetAnimationSpeed("letters", 0);
-                    result.SetAnimationLoop("letters", false);
+                    spriteFrames.SetAnimationSpeed("letters", 0);
+                    spriteFrames.SetAnimationLoop("letters", false);
                     for (int y = 0; y < 32; y++)
                     {
                         for (int x = 0; x < 2; x++)
@@ -173,7 +175,7 @@ namespace GalaxyGauntlet.scripts
                                 Atlas = spriteSheet,
                                 Region = new(16 * x, 16 * y, 16, 16)
                             };
-                            result.AddFrame("letters", atlas);
+                            spriteFrames.AddFrame("letters", atlas);
                         }
                     }
 
@@ -183,10 +185,55 @@ namespace GalaxyGauntlet.scripts
                 {
                     FileLogger.LogException("Failed to load custom sprite sheet", e);
 					TileTransparentColor = null;
-                    result = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
+                    spriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
                 }
             }
-            SpriteFrames = result;
+            SpriteFrames = spriteFrames;
+
+			SpriteFrames archipelagoFrames = (SpriteFrames)GD.Load("res://sprite_frames/archipelago_tile_sprites.tres");
+			string archipelagoSpritePath = "./custom/images/archipelago.png";
+			if(File.Exists(archipelagoSpritePath))
+			{
+				try
+                {
+                    Vector2I minDimensions = new(64, 64);
+                    var image = Image.LoadFromFile(archipelagoSpritePath);
+                    if (image.GetWidth() < minDimensions.X
+                        || image.GetHeight() < minDimensions.Y)
+                    {
+                        throw new($"The custom sprite sheet is too small. It must be at least {minDimensions.X} pixels wide and {minDimensions.Y} pixels high");
+                    }
+
+                    var spriteSheet = ImageTexture.CreateFromImage(image);
+                    archipelagoFrames = new();
+
+					if(false == archipelagoFrames.HasAnimation("default"))
+					{
+						archipelagoFrames.AddAnimation("default");
+					}
+					archipelagoFrames.SetAnimationSpeed("default", 0);
+					archipelagoFrames.SetAnimationLoop("default", false);
+					for(int y = 0; y < 2; y++)
+					{
+						for(int x = 0; x < 2; x++)
+						{
+                            AtlasTexture atlas = new()
+                            {
+                                Atlas = spriteSheet,
+                                Region = new(32 * x, 32 * y, 32, 32)
+                            };
+                            archipelagoFrames.AddFrame("default", atlas);
+                        }
+					}
+                }
+				catch(Exception e)
+                {
+                    FileLogger.LogException("Failed to load custom archipelago sprite sheet", e);
+                    TileTransparentColor = null;
+                    archipelagoFrames = (SpriteFrames)GD.Load("res://sprite_frames/archipelago_tile_sprites.tres");
+                }
+            }
+			ArchipelagoSpriteFrames = archipelagoFrames;
         }
 
 		#endregion

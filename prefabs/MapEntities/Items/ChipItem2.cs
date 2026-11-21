@@ -43,7 +43,7 @@ public partial class ChipItem2(Vector2I coordinate) : MapItem2(coordinate)
             };
             ArchipelagoSprite = new()
             {
-                SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/archipelago_tile_sprites.tres"),
+                SpriteFrames = GameData.ArchipelagoSpriteFrames,
                 TextureFilter = TextureFilterEnum.Nearest,
                 ZAsRelative = true,
                 Frame = spriteFrameIndex
