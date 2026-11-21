@@ -1,17 +1,19 @@
 [gd_scene format=3 uid="uid://djerq5lgmdnbm"]
 
 [ext_resource type="Script" uid="uid://d4ffrpmd3qlvl" path="res://prefabs/ItemDisplay/ItemDisplay.cs" id="1_i4om0"]
-[ext_resource type="Texture2D" uid="uid://cp3h1r0d0anvy" path="res://images/map_tiles/main_master.png" id="2_0p73g"]
+[ext_resource type="SpriteFrames" uid="uid://dj5tkm4mtwdun" path="res://sprite_frames/tile_sprites.tres" id="2_uxser"]
 
 [node name="ItemDisplay" type="Node2D" unique_id=266836377]
 script = ExtResource("1_i4om0")
 
-[node name="RedKey" type="Sprite2D" parent="." unique_id=829806386]
+[node name="Panel" type="Panel" parent="." unique_id=1358949461]
+offset_right = 171.0
+offset_bottom = 126.0
+
+[node name="RedKey" type="AnimatedSprite2D" parent="." unique_id=497953145]
 texture_filter = 1
 position = Vector2(20, 20)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 20
 
 [node name="Count" type="Label" parent="RedKey" unique_id=94378567]
@@ -22,12 +24,10 @@ offset_bottom = -3.0
 theme_override_font_sizes/font_size = 12
 text = "10"
 
-[node name="BlueKey" type="Sprite2D" parent="." unique_id=1558696770]
+[node name="BlueKey" type="AnimatedSprite2D" parent="." unique_id=1647567901]
 texture_filter = 1
 position = Vector2(62, 20)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 21
 
 [node name="Count" type="Label" parent="BlueKey" unique_id=134370951]
@@ -38,12 +38,10 @@ offset_bottom = -3.0
 theme_override_font_sizes/font_size = 12
 text = "10"
 
-[node name="YellowKey" type="Sprite2D" parent="." unique_id=1316551376]
+[node name="YellowKey" type="AnimatedSprite2D" parent="." unique_id=1320099235]
 texture_filter = 1
 position = Vector2(104, 20)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 22
 
 [node name="Count" type="Label" parent="YellowKey" unique_id=1311901891]
@@ -55,12 +53,10 @@ theme_override_font_sizes/font_size = 12
 text = "10"
 metadata/_edit_use_anchors_ = true
 
-[node name="GreenKey" type="Sprite2D" parent="." unique_id=1161818841]
+[node name="GreenKey" type="AnimatedSprite2D" parent="." unique_id=1622126629]
 texture_filter = 1
 position = Vector2(146, 20)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 23
 
 [node name="Count" type="Label" parent="GreenKey" unique_id=1093565390]
@@ -71,50 +67,38 @@ offset_bottom = -3.0
 theme_override_font_sizes/font_size = 12
 text = "10"
 
-[node name="IceSkates" type="Sprite2D" parent="." unique_id=946942183]
+[node name="IceSkates" type="AnimatedSprite2D" parent="." unique_id=1646017717]
 texture_filter = 1
 position = Vector2(20, 62)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 98
 
-[node name="SuctionBoots" type="Sprite2D" parent="." unique_id=2058806859]
+[node name="SuctionBoots" type="AnimatedSprite2D" parent="." unique_id=1360367570]
 texture_filter = 1
 position = Vector2(62, 62)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 99
 
-[node name="FireBoots" type="Sprite2D" parent="." unique_id=1627371973]
+[node name="FireBoots" type="AnimatedSprite2D" parent="." unique_id=2063870986]
 texture_filter = 1
 position = Vector2(104, 62)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 97
 
-[node name="Flippers" type="Sprite2D" parent="." unique_id=1253877429]
+[node name="Flippers" type="AnimatedSprite2D" parent="." unique_id=93691168]
 texture_filter = 1
 position = Vector2(146, 62)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 96
 
-[node name="SecretEye" type="Sprite2D" parent="." unique_id=233397503]
+[node name="SecretEye" type="AnimatedSprite2D" parent="." unique_id=517631390]
 texture_filter = 1
 position = Vector2(20, 104)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 299
 
-[node name="Helmet" type="Sprite2D" parent="." unique_id=1594558014]
+[node name="Helmet" type="AnimatedSprite2D" parent="." unique_id=2071395838]
 texture_filter = 1
 position = Vector2(62, 104)
-texture = ExtResource("2_0p73g")
-hframes = 16
-vframes = 32
+sprite_frames = ExtResource("2_uxser")
 frame = 224

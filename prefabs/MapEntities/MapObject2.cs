@@ -1,4 +1,5 @@
 using GalaxyGauntlet.scripts;
+using System;
 
 public partial class MapObject2(Vector2I coordinate) : Node2D
 {
@@ -29,9 +30,11 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 	{
 		// Construct Sprite object
 		Name = $"GG_{MapObjectName}";
+		var spriteFrames = GameData.SpriteFrames 
+			?? (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
 		Sprite = new()
 		{
-			SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
+			SpriteFrames = spriteFrames,
 			TextureFilter = TextureFilterEnum.Nearest,
 			Frame = SpriteFrameIndex,
 			ZAsRelative = true
@@ -229,4 +232,41 @@ public partial class MapObject2(Vector2I coordinate) : Node2D
 		FileLogger.LogMessage($"Entity with code 0x{byteCode:X2} not recognized");
 		return new(coordinate);
 	}
+
+
+	private static SpriteFrames BuildSpriteFrames()
+	{
+        SpriteFrames result = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
+        string customSpritePath = "./custom/images/sprites.png";
+        if (File.Exists(customSpritePath))
+        {
+            try
+            {
+                var image = Image.LoadFromFile(customSpritePath);
+                var spriteSheet = ImageTexture.CreateFromImage(image);
+                result = new();
+                result.AddAnimation("default");
+                result.SetAnimationSpeed("default", 0);
+                result.SetAnimationLoop("default", false);
+                for (int y = 0; y < 32; y++)
+                {
+                    for (int x = 0; x < 16; x++)
+                    {
+                        AtlasTexture atlas = new()
+                        {
+                            Atlas = spriteSheet,
+                            Region = new(32 * x, 32 * y, 32, 32)
+                        };
+                        result.AddFrame("default", atlas);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                FileLogger.LogException("Failed to load custom sprite sheet", e);
+                result = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
+            }
+        }
+		return result;
+    }
 }

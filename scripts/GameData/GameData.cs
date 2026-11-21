@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 
 namespace GalaxyGauntlet.scripts
@@ -8,6 +9,10 @@ namespace GalaxyGauntlet.scripts
     public static partial class GameData
 	{
         public static GameMode GameMode = GameMode.Campaign;
+
+		public static SpriteFrames SpriteFrames;
+
+		public static Godot.Color? TileTransparentColor;
         
 		public static void Initialize(Vector2I windowSize)
 		{
@@ -18,6 +23,7 @@ namespace GalaxyGauntlet.scripts
 			Map = new();
 			Level = new();
 			LoadSettings();
+			LoadSpriteFrames();
 		}
 
 
@@ -71,6 +77,117 @@ namespace GalaxyGauntlet.scripts
 			Common.Global.SetBusVolume(GGConstants.AudioBuses.Master, MasterVolume);
 			Common.Global.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume);
 		}
+
+        #endregion
+
+
+        #region Sprite Frame Builders
+
+        private static void LoadSpriteFrames()
+        {
+            SpriteFrames result = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
+            string customSpritePath = "./custom/images/sprites.png";
+            if (File.Exists(customSpritePath))
+            {
+                try
+                {
+					Vector2I minDimensions = new(512, 1024);
+                    var image = Image.LoadFromFile(customSpritePath);
+                    TileTransparentColor = image.GetPixel(0, 0); // TODO: Use shader to convert nontransparent color to transparent.
+					if(image.GetWidth() < minDimensions.X
+						|| image.GetHeight() < minDimensions.Y)
+					{
+						throw new($"The custom tile sprite sheet is too small. It must be at least {minDimensions.X} pixels wide and {minDimensions.Y} pixels high");
+					}
+
+                    var spriteSheet = ImageTexture.CreateFromImage(image);					
+                    result = new();
+
+                    #region Build default tile animation frames
+
+                    if (false == result.HasAnimation("default"))
+					{
+						result.AddAnimation("default");
+					}
+                    result.SetAnimationSpeed("default", 0);
+                    result.SetAnimationLoop("default", false);
+                    for (int y = 0; y < 32; y++)
+                    {
+                        for (int x = 0; x < 16; x++)
+                        {
+                            AtlasTexture atlas = new()
+                            {
+                                Atlas = spriteSheet,
+                                Region = new(32 * x, 32 * y, 32, 32)
+                            };
+                            result.AddFrame("default", atlas);
+                        }
+                    }
+
+					#endregion
+
+					#region Build Thin Wall animation frames
+
+					if(false == result.HasAnimation("thin_wall"))
+					{
+						result.AddAnimation("thin_wall");
+                    }
+                    result.SetAnimationSpeed("thin_wall", 0);
+                    result.SetAnimationLoop("thin_wall", false);
+					Vector2I[] wallCoordinates = [
+						new(32, 320),
+						new(48, 320),
+						new(80, 320),
+						new(80, 336),
+						new(32, 336),
+						new(48, 336),
+						new(64, 320),
+						new(64, 336)
+					];
+					foreach(var coordinate in wallCoordinates)
+                    {
+                        AtlasTexture atlas = new()
+                        {
+                            Atlas = spriteSheet,
+                            Region = new(coordinate.X, coordinate.Y, 16, 16)
+                        };
+                        result.AddFrame("thin_wall", atlas);
+                    }
+
+					#endregion
+
+					#region Build Letter animation frames
+
+					if(false == result.HasAnimation("letters"))
+					{
+						result.AddAnimation("letters");
+                    }
+                    result.SetAnimationSpeed("letters", 0);
+                    result.SetAnimationLoop("letters", false);
+                    for (int y = 0; y < 32; y++)
+                    {
+                        for (int x = 0; x < 2; x++)
+                        {
+                            AtlasTexture atlas = new()
+                            {
+                                Atlas = spriteSheet,
+                                Region = new(16 * x, 16 * y, 16, 16)
+                            };
+                            result.AddFrame("letters", atlas);
+                        }
+                    }
+
+                    #endregion
+                }
+                catch (Exception e)
+                {
+                    FileLogger.LogException("Failed to load custom sprite sheet", e);
+					TileTransparentColor = null;
+                    result = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres");
+                }
+            }
+            SpriteFrames = result;
+        }
 
 		#endregion
 

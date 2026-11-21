@@ -325,8 +325,8 @@ namespace GalaxyGauntlet.Common
             public const int IceBlock = 42;
             public const int IceBlock_XRay = 43;
             public const int GreenChip = 57;
-            public const int Chip = 58;
-            public const int ExtraChip = 59;
+            public const int ExtraChip = 58;
+            public const int Chip = 59;
             public const int Bribe = 60;
             public const int Canopy = 62;
             public const int Canopy_XRay = 63;

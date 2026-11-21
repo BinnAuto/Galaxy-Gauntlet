@@ -117,7 +117,7 @@ public partial class ThinWallOrCanopy2 : MapObject2
 		{
 			CanopySprite = new()
 			{
-				SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/tile_sprites.tres"),
+				SpriteFrames = GameData.SpriteFrames,
 				TextureFilter = TextureFilterEnum.Nearest,
 				Frame = GGConstants.SpriteFrameIndexes.Canopy,
 				ZIndex = GGConstants.ZIndexes.Canopy
@@ -199,7 +199,8 @@ public partial class ThinWallOrCanopy2 : MapObject2
     {
         AnimatedSprite2D sprite = new()
         {
-            SpriteFrames = (SpriteFrames)GD.Load("res://sprite_frames/thin_wall_sprites.tres"),
+            SpriteFrames = GameData.SpriteFrames,
+			Animation = "thin_wall",
             TextureFilter = TextureFilterEnum.Nearest,
 			ZIndex = ZIndex + 1,
 			Centered = false,
