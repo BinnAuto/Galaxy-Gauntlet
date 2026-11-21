@@ -6,7 +6,7 @@ using System.Text.Json;
 
 public partial class GameplayScreen : Node
 {
-	private bool DebugMode = true;
+	private bool DebugMode = false;
 
 	private MapDisplay2 MapDisplay2;
 

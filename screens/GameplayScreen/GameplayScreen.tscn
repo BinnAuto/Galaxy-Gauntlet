@@ -70,6 +70,7 @@ autowrap_mode = 2
 SourceFolder = "./custom/music/game"
 
 [node name="DebugDisplay" type="Node2D" parent="." unique_id=1087344666]
+visible = false
 position = Vector2(150, 452)
 
 [node name="ChipTick" type="Label" parent="DebugDisplay" unique_id=143426148]
