@@ -81,6 +81,7 @@ namespace GalaxyGauntlet.Common
                 public const string GameVersion = "game_version";
                 public const string IgnoreLevelFiles = "ignore_level_files";
                 public const string SaveData = "save_data";
+                public const string CruelTimeItems = "cruel_time_items";
             }
 
 

@@ -181,7 +181,7 @@ public partial class TitleMenu : Node
 	{
 		Archipelago.Visible = false;
 		GameData.GameMode = GameMode.Archipelago;
-		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.LevelHash);
+		string apLevelHash = GameData.Archipelago.GetSlotDataKeyOrDefault(GGConstants.Archipelago.SlotDataKeys.LevelHash, string.Empty);
 		FileLogger.QuietLogMessage($"APWorld level hash: {apLevelHash}");
 		if(string.IsNullOrEmpty(apLevelHash))
 		{
@@ -306,7 +306,7 @@ public partial class TitleMenu : Node
 		SHA256 sha256 = SHA256.Create();
 		var hash = SHA256.HashData([.. combinedFileData]);
 		string localLevelHash =  hash.Select(e => $"{e:x2}").ToArray().Join("");
-		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.LevelHash);
+		string apLevelHash = GameData.Archipelago.GetSlotDataKeyOrDefault(GGConstants.Archipelago.SlotDataKeys.LevelHash, string.Empty);
 		return isValid && (apLevelHash == localLevelHash);
 	}
 }

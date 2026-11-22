@@ -54,7 +54,6 @@ namespace GalaxyGauntlet.Common
                     fileSourcePath = subDirectory;
                 }
             }
-            GD.Print(fileSourcePath);
             string[] files = Directory.GetFiles(fileSourcePath, "*.c2m", SearchOption.AllDirectories);
             return files;
         }

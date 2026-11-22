@@ -478,20 +478,30 @@ namespace GalaxyGauntlet.scripts
 					break;
 
 				case GGConstants.Archipelago.ItemNames.TimeBonus:
-					if (Map.TimeLimit == 0)
+					if(Map.TimeLimit == 0)
 					{
-						// Turn untimed levels into timed levels (hurry up!!!)
-						Map.TimeLimit = 10;
+						if(false == Archipelago.EnableCruelTimeItems)
+						{
+							break;
+						}
+						// Turns untimed levels into timed levels (hurry up!!!)
 					}
+
+					Map.TimeLimit = 10;
 					Level.Timer += 10;
 					break;
 
 				case GGConstants.Archipelago.TrapNames.TimePenalty:
-					if (Map.TimeLimit == 0)
+					if(Map.TimeLimit == 0)
 					{
+						if(false == Archipelago.EnableCruelTimeItems)
+						{
+							break;
+						}
+
 						// Instant death on untimed levels
 						Level.DeathMessage = GGConstants.DeathMessages.OutOfTime;
-						return;
+						break;
 					}
 
 					Level.Timer -= 10;

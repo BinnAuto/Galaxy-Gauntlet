@@ -80,6 +80,13 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    Add additional checks for higher score milestones.",
                 "    \"\"\"",
                 "    display_name = \"Include Extended Score Checks\"",
+                "",
+                "class CruelTimeItems(Toggle):",
+                "    \"\"\"",
+                "    If active, Time Bonus and Time Penalty items will take effect",
+                "    in untimed levels.",
+                "    \"\"\"",
+                "    display_name = \"Cruel Time Items\"",
                 ""
             ];
             fileLines.AddRange([
@@ -91,7 +98,8 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 $"    proportion_of_filler_as_traps: ProportionOfFillerAsTraps",
                 $"    {GGConstants.Archipelago.SlotDataKeys.ScoreGoal}: ScoreGoal",
                 $"    {GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal}: LevelCompletionGoal",
-                $"    {GGConstants.Archipelago.SlotDataKeys.DeathLink}: DeathLink"
+                $"    {GGConstants.Archipelago.SlotDataKeys.DeathLink}: DeathLink",
+                $"    {GGConstants.Archipelago.SlotDataKeys.CruelTimeItems}: CruelTimeItems"
             ]);
             if(IncludeExtendedScoreChecks)
             {

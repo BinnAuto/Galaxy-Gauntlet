@@ -71,6 +71,13 @@ class AddExtendedScoreChecks(Toggle):
     """
     display_name = "Include Extended Score Checks"
 
+class CruelTimeItems(Toggle):
+    """
+    If active, Time Bonus and Time Penalty items will take effect
+    in untimed levels.
+    """
+    display_name = "Cruel Time Items"
+
 @dataclass
 class ChipsChallengeTestOptions(PerGameCommonOptions):
     player_sprite: PlayerSpriteOption
@@ -80,4 +87,5 @@ class ChipsChallengeTestOptions(PerGameCommonOptions):
     score_goal: ScoreGoal
     level_completion_goal: LevelCompletionGoal
     death_link: DeathLink
+    cruel_time_items: CruelTimeItems
     include_extended_score_checks: AddExtendedScoreChecks

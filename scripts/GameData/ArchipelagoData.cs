@@ -79,6 +79,11 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public bool IsProcessingDeathLink = false;
 
+		/// <summary>
+		/// Should Time Penalty and Time Bonus items take effect on untimed levels?
+		/// </summary>
+		public bool EnableCruelTimeItems = false;
+
 		public long PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
 		/// <summary>
@@ -108,7 +113,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return GetSlotDataKey<long>(GGConstants.Archipelago.SlotDataKeys.ScoreGoal);
+				return GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.ScoreGoal, 0);
 			}
 		}
 
@@ -121,7 +126,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return GetSlotDataKey<long>(GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal);
+				return GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal, 0);
 			}
 		}
 
@@ -181,7 +186,7 @@ namespace GalaxyGauntlet.scripts
         /// <summary>
         /// Resets the object's data state.
         /// </summary>
-        public void Reset()
+        private void Reset()
 		{
 			Session = null;
 			GameName = string.Empty;
@@ -192,6 +197,7 @@ namespace GalaxyGauntlet.scripts
 
 			DeathLinkService = null;
 			LocationsChecked = [];
+			EnableCruelTimeItems = false;
 			LevelFilesToIgnore = [];
 			PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
@@ -221,13 +227,14 @@ namespace GalaxyGauntlet.scripts
 				Port = port;
 				SlotName = slotName;
 				Password = password;
-				// TODO: Save successful Archipelago connection settings to Game Settings
 
 				// Load from Slot Data
 				await LoadGameSaveFromSlotData();
 				BuildFileIgnoreList();
 				GetPlayerSprite();
 				ConfigureDeathLink();
+				long cruelTimeItems = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.CruelTimeItems, 0);
+				EnableCruelTimeItems = (cruelTimeItems == 1);
 				await ScoutAPLocations();
 				FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
 				InitialProcessingComplete = true;
@@ -357,7 +364,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			DeathLinkService = Session.CreateDeathLinkService();
 			DeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
-			long deathLinkSetting = GetSlotDataKey<long>(GGConstants.Archipelago.SlotDataKeys.DeathLink);
+			long deathLinkSetting = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.DeathLink, 0);
 			DeathLinkEnabled = (deathLinkSetting == 1);
 			if (DeathLinkEnabled)
 			{
@@ -393,9 +400,15 @@ namespace GalaxyGauntlet.scripts
 		/// <summary>
 		/// Returns a slot data value by its corresponding key name.
 		/// </summary>
-		public T GetSlotDataKey<T>(string key)
+		public T GetSlotDataKeyOrDefault<T>(string key, T defaultValue)
 		{
-			return (T)SlotData.GetValueOrDefault(key);
+			object value = SlotData.GetValueOrDefault(key);
+			if(value is null)
+			{
+				FileLogger.QuietLogMessage($"Key \"{key}\" not found in Archipelago slot data.");
+				return defaultValue;
+			}
+			return (T)value;
 		}
 
 

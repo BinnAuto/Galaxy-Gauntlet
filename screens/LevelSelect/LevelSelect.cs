@@ -92,7 +92,7 @@ public partial class LevelSelect : Node2D
         GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		if(GameData.GameMode == GameMode.Archipelago)
 		{
-			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
+			string[] levelIgnores = GameData.Archipelago.GetSlotDataKeyOrDefault(GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles, string.Empty).Split('|');
 			GameData.Level.LevelSet = GameData.Level.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 		}
 		GD.Print($"{GameData.Level.LevelSet.Length} level files found");
