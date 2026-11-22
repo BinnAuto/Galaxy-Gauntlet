@@ -23,6 +23,8 @@ public partial class LevelSelect : Node2D
 
 	private Label LevelsCompleted;
 
+	private CheckButton HideCompletedLevels;
+
     #region Godot Overrides
 
     public override void _Ready()
@@ -53,6 +55,9 @@ public partial class LevelSelect : Node2D
 			TotalScore = (Label)ArchipelagoDisplay.GetNode(nameof(TotalScore));
 
 			LevelsCompleted = (Label)ArchipelagoDisplay.GetNode(nameof(LevelsCompleted));
+
+			HideCompletedLevels = (CheckButton)ArchipelagoDisplay.GetNode(nameof(HideCompletedLevels));
+			HideCompletedLevels.Toggled += OnHideCompletedLevels;
 
             BuildButtonList();
 
@@ -133,7 +138,7 @@ public partial class LevelSelect : Node2D
 				// Complete label
 				Label levelComplete = new()
 				{
-					Text = "        "
+					Text = string.Empty
 				};
 				if (GameData.Archipelago.HasLocationBeenChecked(completeLocation))
 				{
@@ -144,7 +149,7 @@ public partial class LevelSelect : Node2D
 				// No Resets label
 				Label levelFirstTryComplete = new()
 				{
-					Text = "        "
+					Text = string.Empty
 				};
 				if (GameData.Archipelago.HasLocationBeenChecked(noResetsLocation))
 				{
@@ -165,30 +170,55 @@ public partial class LevelSelect : Node2D
 	}
 
 
-	private void OnSearchLevels(string searchTerm)
+	private void OnSearchLevels(string _)
 	{
+		FilterLevels();
+    }
+
+
+	private void OnHideCompletedLevels(bool _)
+	{
+		FilterLevels();
+	}
+
+
+	private void FilterLevels()
+	{
+		string searchTerm = LevelSearch.Text;
+		bool hideCompletedLevels = false;
+		if(GameData.GameMode == GameMode.Archipelago)
+		{
+            hideCompletedLevels = HideCompletedLevels.ButtonPressed;
+		}
+
 		var children = GridContainer.GetChildren();
 		for(int i = 0; i < children.Count; i++)
 		{
 			var child = children[i];
 			if(child is not Button levelButton)
 			{
-				return;
+				continue;
 			}
 
 			string levelName = levelButton.Text.Replace(" ", string.Empty);
-			bool isVisible = string.IsNullOrEmpty(searchTerm)
+			bool isVisible = (string.IsNullOrEmpty(searchTerm))
 				|| levelName.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase);
-			levelButton.Visible = isVisible;
-			if(GameData.GameMode == GameMode.Archipelago)
+			if(GameData.GameMode == GameMode.Archipelago && hideCompletedLevels)
 			{
-				i++;
-				((Control)children[i]).Visible = isVisible;
+				var completedLabel = (Label)children[i + 1];
+				isVisible &= string.IsNullOrWhiteSpace(completedLabel.Text);
+            }
+
+            levelButton.Visible = isVisible;
+            if (GameData.GameMode == GameMode.Archipelago)
+            {
+                i++;
+                ((Control)children[i]).Visible = isVisible;
                 i++;
                 ((Control)children[i]).Visible = isVisible;
             }
         }
-    }
+	}
 
 
 	private async Task ToTitleScreen()

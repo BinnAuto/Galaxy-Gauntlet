@@ -121,6 +121,15 @@ offset_right = 161.0
 offset_bottom = 195.0
 theme_override_font_sizes/font_size = 25
 
+[node name="HideCompletedLevels" type="CheckButton" parent="ArchipelagoDisplay" unique_id=528855044]
+offset_left = 14.0
+offset_top = 216.0
+offset_right = 337.0
+offset_bottom = 259.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 25
+text = "Hide Completed Levels"
+
 [node name="UnlockedItems" type="Node2D" parent="ArchipelagoDisplay" unique_id=1450400228]
 position = Vector2(960, 0)
 
