@@ -23,9 +23,9 @@ public partial class LevelSelect : Node2D
 
 	private Label LevelsCompleted;
 
-	#region Godot Overrides
+    #region Godot Overrides
 
-	public override void _Ready()
+    public override void _Ready()
 	{
 		try
 		{
@@ -54,7 +54,7 @@ public partial class LevelSelect : Node2D
 
 			LevelsCompleted = (Label)ArchipelagoDisplay.GetNode(nameof(LevelsCompleted));
 
-			BuildButtonList();
+            BuildButtonList();
 
 			ArchipelagoDisplay.Visible = false;
 			if (GameData.GameMode == GameMode.Archipelago)
@@ -176,7 +176,7 @@ public partial class LevelSelect : Node2D
 				return;
 			}
 
-			string levelName = levelButton.Text;
+			string levelName = levelButton.Text.Replace(" ", string.Empty);
 			bool isVisible = string.IsNullOrEmpty(searchTerm)
 				|| levelName.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase);
 			levelButton.Visible = isVisible;
@@ -187,7 +187,6 @@ public partial class LevelSelect : Node2D
                 i++;
                 ((Control)children[i]).Visible = isVisible;
             }
-
         }
     }
 
