@@ -30,6 +30,10 @@ public partial class GameplayScreen : Node
 
 	private Sprite2D AcceptingInput;
 
+	private DigitDisplay ChipCountDisplay;
+
+	private DigitDisplay TimerDisplay;
+
 	#region Godot Overrides
 
 	public override void _Ready()
@@ -51,9 +55,14 @@ public partial class GameplayScreen : Node
 			HintLabel = (Label)GetNode(nameof(HintLabel));
 			HintLabel.Visible = false;
 
+			ChipCountDisplay = (DigitDisplay)GetNode(nameof(ChipCountDisplay));
+
+			TimerDisplay = (DigitDisplay)GetNode(nameof(TimerDisplay));
+
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.Level.Hint;
 			GameData.Level.Timer = GameData.Map.TimeLimit + 0.99999;
+			UpdateLabels();
 
 			DebugDisplay = (Node2D)GetNode(nameof(DebugDisplay));
 			ChipTick = (Label)DebugDisplay.GetNode(nameof(ChipTick));
@@ -85,13 +94,16 @@ public partial class GameplayScreen : Node
 
 		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
 		CheckForInitialPlayerInput();
-		UpdateDebugUI();
-		CheckPlayerStatus();
-		UpdateTimer(delta);
-		UpdateLabels();
-		if(false == DialogWindow2.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+		if(GameData.Level.ProcessMobs)
 		{
-			OnPlayerDeath();
+			UpdateDebugUI();
+			CheckPlayerStatus();
+			UpdateTimer(delta);
+			UpdateLabels();
+			if(false == DialogWindow2.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+			{
+				OnPlayerDeath();
+			}
 		}
 	}
 
@@ -117,8 +129,15 @@ public partial class GameplayScreen : Node
 	private void UpdateLabels()
 	{
 		LevelName.Text = GameData.Level.Name;
-		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0)}";
-		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
+
+		int chipsRemaining = Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0);
+		ChipCountDisplay.SetValue(chipsRemaining);
+
+		int? timer = (GameData.Map.TimeLimit == 0)
+			? null
+			: (int)GameData.Level.Timer;
+		TimerDisplay.SetValue(timer);
+
 		StepOffset.Text = GameData.Level.SteppingOffset switch
 		{
 			0 => "Odd",
@@ -133,7 +152,7 @@ public partial class GameplayScreen : Node
 
 		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
 		HintLabel.Visible = (currentTile is HintTile2);
-    }
+	}
 
 
 	private void UpdateTimer(double delta)
@@ -196,8 +215,8 @@ public partial class GameplayScreen : Node
 			return;
 		}
 
-        var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
-        if (currentTile is ExitTile2) // It is assumed that a socket is blocking the exit, enforcing a chip requirement
+		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
+		if (currentTile is ExitTile2) // It is assumed that a socket is blocking the exit, enforcing a chip requirement
 		{
 			GameData.OnLevelComplete();
 			DialogWindow2.ClearAllButtonEvents();
@@ -253,9 +272,9 @@ public partial class GameplayScreen : Node
 
 
 	private void RestartLevel()
-    {
-        DialogWindow2.HideDialog();
-        MapDisplay2.ClearChildren();
+	{
+		DialogWindow2.HideDialog();
+		MapDisplay2.ClearChildren();
 		GameData.Level.RestartCount++;
 		GameData.LoadCurrentLevel();
 		GameData.Level.Timer = GameData.Map.TimeLimit + 0.999999;
@@ -263,9 +282,9 @@ public partial class GameplayScreen : Node
 
 
 	private void OnExit()
-    {
-        DialogWindow2.HideDialog();
-        switch (GameData.GameMode)
+	{
+		DialogWindow2.HideDialog();
+		switch (GameData.GameMode)
 		{
 			case GameMode.Campaign:
 				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);

@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="4_l2pm1"]
 [ext_resource type="PackedScene" uid="uid://djaen87nr7uck" path="res://prefabs/MapDisplay2/MapDisplay2.tscn" id="5_cms3p"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="5_gpxbn"]
+[ext_resource type="PackedScene" uid="uid://b6pydbmm1hn8c" path="res://prefabs/DigitDisplay/DigitDisplay.tscn" id="6_c82dq"]
 [ext_resource type="PackedScene" uid="uid://ck1puqwe4jrxo" path="res://prefabs/DialogWindow2/DialogWindow2.tscn" id="6_cms3p"]
 
 [node name="GameplayScreen" type="Node2D" unique_id=43287349]
@@ -43,27 +44,33 @@ offset_right = 979.0
 offset_bottom = 132.0
 text = "Chips Remaining"
 
+[node name="ChipCountDisplay" parent="." unique_id=1030589051 instance=ExtResource("6_c82dq")]
+position = Vector2(884, 155)
+
 [node name="Timer" type="Label" parent="." unique_id=1650194281]
 offset_left = 850.0
-offset_top = 156.0
+offset_top = 200.0
 offset_right = 895.0
-offset_bottom = 179.0
+offset_bottom = 223.0
 text = "Timer"
 
+[node name="TimerDisplay" parent="." unique_id=1494717662 instance=ExtResource("6_c82dq")]
+position = Vector2(884, 243.425)
+
 [node name="StepOffset" type="Label" parent="." unique_id=1781871773]
-offset_left = 850.0
-offset_top = 365.0
-offset_right = 895.0
-offset_bottom = 388.0
+offset_left = 854.0
+offset_top = 442.0
+offset_right = 899.0
+offset_bottom = 465.0
 
 [node name="InventoryDisplay" parent="." unique_id=266836377 instance=ExtResource("4_l2pm1")]
-position = Vector2(850, 218)
+position = Vector2(854, 295)
 
 [node name="HintLabel" type="Label" parent="." unique_id=1183504913]
-offset_left = 850.0
-offset_top = 415.0
-offset_right = 1055.0
-offset_bottom = 438.0
+offset_left = 854.0
+offset_top = 492.0
+offset_right = 1059.0
+offset_bottom = 515.0
 autowrap_mode = 2
 
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("5_gpxbn")]
