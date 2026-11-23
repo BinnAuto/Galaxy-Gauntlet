@@ -83,8 +83,8 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "",
                 "class CruelTimeItems(Toggle):",
                 "    \"\"\"",
-                "    If active, Time Bonus and Time Penalty items will take effect",
-                "    in untimed levels.",
+                "    If active, untimed levels will be affected by Time Bonus and Time Penalty items",
+                "    received through Archipelago, effectively an auto-death.",
                 "    \"\"\"",
                 "    display_name = \"Cruel Time Items\"",
                 ""
