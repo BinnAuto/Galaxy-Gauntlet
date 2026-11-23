@@ -67,14 +67,14 @@ class ScoreGoal(Range):
 
 class AddExtendedScoreChecks(Toggle):
     """
-    [NOT IMPLEMENTED] Add additional checks for higher score milestones.
+    Add additional checks for higher score milestones.
     """
     display_name = "Include Extended Score Checks"
 
 class CruelTimeItems(Toggle):
     """
-    If active, Time Bonus and Time Penalty items will take effect
-    in untimed levels.
+    If active, untimed levels will be affected by Time Bonus and Time Penalty items
+    received through Archipelago, effectively an auto-death.
     """
     display_name = "Cruel Time Items"
 
