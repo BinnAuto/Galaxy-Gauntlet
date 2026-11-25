@@ -22,7 +22,11 @@ An example settings YAML and AP World for the game can be found in the [releases
 
 There is no separate client. Galaxy Gauntlet allows you to connect to the Archipelago server directly from the title screen.
 
+<<<<<<< HEAD
 **WARNING!** If a level is marked completed by releasing the check through the admin console, this does affect the player's high score running total since no winning score was recorded for that level. The player will have to complete the level again if they want a score recorded.
+=======
+**WARNING!** If a level is marked completed by releasing the check through the admin console, this does affect the player's high score running total, as no winning score was recorded for that level. The player will have to complete the level again if they want a score recorded.
+>>>>>>> 8f2a9f6fbecbb0e8277490f1100d336a6ecd8ef9
 
 #### Generating custom AP Worlds
 This repo contains a tool that can generate the Python code needed to make an AP World file. It is recommended that you understand how AP Worlds are created in order to use this tool correctly.
