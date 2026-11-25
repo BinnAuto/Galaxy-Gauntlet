@@ -70,7 +70,7 @@ public partial class LevelSelect : Node2D
 				{
 					TotalScore.Text += $" ({GameData.Archipelago.ScoreGoal:N0})";
 				}
-				LevelsCompleted.Text = GameData.Archipelago.CurrentLevelCompletedCount.ToString("N0");
+				LevelsCompleted.Text = GameData.Archipelago.NumLevelsCompleted.ToString("N0");
 				if(GameData.Archipelago.LevelCompletionGoal!= 0)
 				{
 					LevelsCompleted.Text += $" ({GameData.Archipelago.LevelCompletionGoal:N0})";
@@ -143,7 +143,8 @@ public partial class LevelSelect : Node2D
 				if (GameData.Archipelago.HasLocationBeenChecked(completeLocation))
 				{
 					levelComplete.Text = "Complete";
-				}
+					GameData.Archipelago.NumLevelsCompleted++;
+                }
 				GridContainer.AddChild(levelComplete);
 
 				// No Resets label

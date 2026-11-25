@@ -84,6 +84,7 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public bool EnableCruelTimeItems = false;
 
+		public int NumLevelsCompleted = 0;
 		public long PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
 		/// <summary>
@@ -132,26 +133,13 @@ namespace GalaxyGauntlet.scripts
 
 
 		/// <summary>
-		/// Returns the number of levels currently completed by the player.
-		/// </summary>
-		public int CurrentLevelCompletedCount
-		{
-			get
-			{
-				var archipelagoData = SaveData.SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Archipelago);
-				return archipelagoData?.HighScores?.Count ?? 0;
-			}
-		}
-
-
-		/// <summary>
 		/// Returns the player's current total score.
 		/// </summary>
 		public long CurrentTotalScore
 		{
 			get
 			{
-				if (CurrentLevelCompletedCount == 0)
+				if (NumLevelsCompleted == 0)
 				{
 					return 0;
 				}
@@ -161,7 +149,6 @@ namespace GalaxyGauntlet.scripts
 				return archipelagoData.HighScores.Sum(e => e.Value);
 			}
 		}
-
 
         #endregion
 
@@ -201,6 +188,7 @@ namespace GalaxyGauntlet.scripts
 			LevelFilesToIgnore = [];
 			PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
+			NumLevelsCompleted = 0;
 			SlotId = null;
 			SlotData = [];
 			PendingItems = [];
@@ -430,7 +418,7 @@ namespace GalaxyGauntlet.scripts
 				return;
 			}
 
-			if(LevelCompletionGoal > 0 && CurrentLevelCompletedCount < LevelCompletionGoal)
+			if(LevelCompletionGoal > 0 && NumLevelsCompleted < LevelCompletionGoal)
 			{
 				return;
 			}
