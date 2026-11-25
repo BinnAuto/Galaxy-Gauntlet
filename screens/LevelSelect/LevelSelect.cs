@@ -93,7 +93,7 @@ public partial class LevelSelect : Node2D
 			GridContainer.RemoveChild(child);
 			child.QueueFree();
 		}
-
+		GameData.Archipelago.NumLevelsCompleted = 0;
         GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		if(GameData.GameMode == GameMode.Archipelago)
 		{
