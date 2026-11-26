@@ -47,16 +47,17 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "        level_region.add_locations(get_location_names_with_ids([no_resets_level_name]))",
                 "",
                 "        ## Add chip checks from each level",
-                "        if world.options.chip_as_check_probability.value > 0:",
+                "        if world.options.maximum_chip_locations_per_level > 0:",
+                "            random.shuffle(level[\"chip_locations\"])",
+                "            i:int = 0",
                 "            for chip_location in level[\"chip_locations\"]:",
-                "                include_chip: bool = True",
-                "                if world.options.chip_as_check_probability < 100:",
-                "                    rand: int = random.randint(1, 100)",
-                "                    include_chip = (rand < world.options.chip_as_check_probability)",
-                "                if include_chip:",
-                "                    chip_location_name = f\"{level_name} Chip {chip_location}\"",
-                "                    all_locations[chip_location_name] = location_name_to_id[chip_location_name]",
-                "                    level_region.add_locations(get_location_names_with_ids([chip_location_name]))"
+                "                if i == world.options.maximum_chip_locations_per_level:",
+                "                    break",
+                "                chip_location_name = f\"{level_name} Chip {chip_location}\"",
+                "                all_locations[chip_location_name] = location_name_to_id[chip_location_name]",
+                "                level_region.add_locations(get_location_names_with_ids([chip_location_name]))",
+                "                i += 1",
+                ""
             ];
 
             WriteFileContents("locations.py", fileLines);

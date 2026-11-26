@@ -11,7 +11,9 @@ public partial class LevelSelect : Node2D
 
 	private UIButton BackButton;
 
-	private DialogWindow DialogWindow;
+	private DialogWindow2 DialogWindow2;
+
+	private LineEdit LevelSearch;
 
 	private Button ButtonRef;
 
@@ -21,18 +23,24 @@ public partial class LevelSelect : Node2D
 
 	private Label LevelsCompleted;
 
-	#region Godot Overrides
+	private CheckButton HideCompletedLevels;
 
-	public override void _Ready()
+
+    #region Godot Overrides
+
+    public override void _Ready()
 	{
 		try
 		{
 			Node Control = GetNode(nameof(Control));
 			ScrollContainer ScrollContainer = (ScrollContainer)Control.GetNode(nameof(ScrollContainer));
 			GridContainer = (GridContainer)ScrollContainer.GetNode(nameof(GridContainer));
-			GridContainer.Columns = (GameData.Level.GameMode == GameMode.QuickPlay)
+			GridContainer.Columns = (GameData.GameMode == GameMode.QuickPlay)
 				? 1 : 3;
-			ButtonRef = (Button)GetNode(nameof(ButtonRef));
+			LevelSearch = (LineEdit)Control.GetNode(nameof(LevelSearch));
+			LevelSearch.TextChanged += OnSearchLevels;
+
+            ButtonRef = (Button)GetNode(nameof(ButtonRef));
 
 			ReloadButton = (UIButton)GetNode(nameof(ReloadButton));
 			ReloadButton.Pressed += BuildButtonList;
@@ -40,8 +48,8 @@ public partial class LevelSelect : Node2D
 			BackButton = (UIButton)GetNode(nameof(BackButton));
 			BackButton.Pressed += async () => await ToTitleScreen();
 
-			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
-			DialogWindow.Visible = false;
+			DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
+			DialogWindow2.Visible = false;
 
 			ArchipelagoDisplay = (Node2D)GetNode(nameof(ArchipelagoDisplay));
 
@@ -49,21 +57,25 @@ public partial class LevelSelect : Node2D
 
 			LevelsCompleted = (Label)ArchipelagoDisplay.GetNode(nameof(LevelsCompleted));
 
-			BuildButtonList();
+			HideCompletedLevels = (CheckButton)ArchipelagoDisplay.GetNode(nameof(HideCompletedLevels));
+			HideCompletedLevels.Toggled += OnHideCompletedLevels;
+			HideCompletedLevels.ButtonPressed = true;
+
+            BuildButtonList();
 
 			ArchipelagoDisplay.Visible = false;
-			if (GameData.Level.GameMode == GameMode.Archipelago)
+			if (GameData.GameMode == GameMode.Archipelago)
 			{
 				ArchipelagoDisplay.Visible = true;
-				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString();
+				TotalScore.Text = GameData.Archipelago.CurrentTotalScore.ToString("N0");
 				if(GameData.Archipelago.ScoreGoal != 0)
 				{
-					TotalScore.Text += $" ({GameData.Archipelago.ScoreGoal})";
+					TotalScore.Text += $" ({GameData.Archipelago.ScoreGoal:N0})";
 				}
-				LevelsCompleted.Text = GameData.Archipelago.CurrentLevelCompletedCount.ToString();
+				LevelsCompleted.Text = GameData.Archipelago.NumLevelsCompleted.ToString("N0");
 				if(GameData.Archipelago.LevelCompletionGoal!= 0)
 				{
-					LevelsCompleted.Text += $" ({GameData.Archipelago.LevelCompletionGoal})";
+					LevelsCompleted.Text += $" ({GameData.Archipelago.LevelCompletionGoal:N0})";
 				}
 			}
 		}
@@ -83,22 +95,27 @@ public partial class LevelSelect : Node2D
 			GridContainer.RemoveChild(child);
 			child.QueueFree();
 		}
-
-		GameData.Level.LevelSet = GGG.GetLevelList();
-		if(GameData.Level.GameMode == GameMode.Archipelago)
+		GameData.Archipelago.NumLevelsCompleted = 0;
+        GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
+		if(GameData.GameMode == GameMode.Archipelago)
 		{
-			string[] levelIgnores = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles).Split('|');
+			string[] levelIgnores = GameData.Archipelago.GetSlotDataKeyOrDefault(GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles, string.Empty).Split('|');
 			GameData.Level.LevelSet = GameData.Level.LevelSet.Where(e => false == levelIgnores.Any(f => e.EndsWith(f, StringComparison.InvariantCultureIgnoreCase))).ToArray();
 		}
-		GD.Print($"{GameData.Level.LevelSet.Length} levels found");
+		GD.Print($"{GameData.Level.LevelSet.Length} level files found");
 		int levelIndex = 0;
 		foreach(string file in GameData.Level.LevelSet)
 		{
 			int tempLevel = levelIndex;
-			levelIndex++;
 			string levelName = LevelLoader.GetLevelName(file);
+			if(string.IsNullOrEmpty(levelName))
+			{
+				continue;
+			}
+
+			levelIndex++;
 			Button button = (Button)ButtonRef.Duplicate();
-			if(GameData.Level.GameMode == GameMode.QuickPlay)
+			if(GameData.GameMode == GameMode.QuickPlay)
 			{
 				button.Text = levelName;
 				button.Pressed += () => OnLevelSelect(tempLevel);
@@ -106,7 +123,7 @@ public partial class LevelSelect : Node2D
 				continue;
 			}
 
-			if (GameData.Level.GameMode == GameMode.Archipelago)
+			if (GameData.GameMode == GameMode.Archipelago)
 			{
 				string mapName = $"Map {levelIndex} - {levelName}";
 				string completeLocation = $"Complete {mapName}";
@@ -123,18 +140,19 @@ public partial class LevelSelect : Node2D
 				// Complete label
 				Label levelComplete = new()
 				{
-					Text = "        "
+					Text = string.Empty
 				};
 				if (GameData.Archipelago.HasLocationBeenChecked(completeLocation))
 				{
 					levelComplete.Text = "Complete";
-				}
+					GameData.Archipelago.NumLevelsCompleted++;
+                }
 				GridContainer.AddChild(levelComplete);
 
 				// No Resets label
 				Label levelFirstTryComplete = new()
 				{
-					Text = "        "
+					Text = string.Empty
 				};
 				if (GameData.Archipelago.HasLocationBeenChecked(noResetsLocation))
 				{
@@ -143,6 +161,7 @@ public partial class LevelSelect : Node2D
 				GridContainer.AddChild(levelFirstTryComplete);
 			}
 		}
+		FilterLevels();
 	}
 
 
@@ -151,26 +170,77 @@ public partial class LevelSelect : Node2D
 		GameData.Level.CurrentLevelIndex = levelIndex;
 		GameData.Level.RestartCount = 0;
 		GameData.Level.Reset();
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.GameplayScreen);
+	}
+
+
+	private void OnSearchLevels(string _)
+	{
+		FilterLevels();
+    }
+
+
+	private void OnHideCompletedLevels(bool _)
+	{
+		FilterLevels();
+	}
+
+
+	private void FilterLevels()
+	{
+		string searchTerm = LevelSearch.Text.Replace(" ", string.Empty);
+		bool hideCompletedLevels = false;
+		if(GameData.GameMode == GameMode.Archipelago)
+		{
+            hideCompletedLevels = HideCompletedLevels.ButtonPressed;
+		}
+
+		var children = GridContainer.GetChildren();
+		for(int i = 0; i < children.Count; i++)
+		{
+			var child = children[i];
+			if(child is not Button levelButton)
+			{
+				continue;
+			}
+
+			string levelName = levelButton.Text.Replace(" ", string.Empty);
+			bool isVisible = (string.IsNullOrEmpty(searchTerm))
+				|| levelName.Contains(searchTerm, StringComparison.InvariantCultureIgnoreCase);
+			if(GameData.GameMode == GameMode.Archipelago && hideCompletedLevels)
+			{
+				var completedLabel = (Label)children[i + 1];
+				isVisible &= string.IsNullOrWhiteSpace(completedLabel.Text);
+            }
+
+            levelButton.Visible = isVisible;
+            if (GameData.GameMode == GameMode.Archipelago)
+            {
+                i++;
+                ((Control)children[i]).Visible = isVisible;
+                i++;
+                ((Control)children[i]).Visible = isVisible;
+            }
+        }
 	}
 
 
 	private async Task ToTitleScreen()
 	{
-		if(GameData.Level.GameMode == GameMode.QuickPlay)
+		if(GameData.GameMode == GameMode.QuickPlay)
 		{
-			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 			return;
 		}
 
 		// Archipelago logic
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("Are you sure you want to disconnect from the Archipelago server?", DialogButtonType.YesNo);
-		DialogWindow.YesButtonPressed += async () =>
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("Are you sure you want to disconnect from the Archipelago server?", DialogButtonType.YesNo);
+		DialogWindow2.YesButtonPressed += async () =>
 		{
 			await GameData.Archipelago.DisconnectFromServer();
-			GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+			GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 		};
-		DialogWindow.NoButtonPressed += () => { DialogWindow.Visible = false; };
+		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
 	}
 }

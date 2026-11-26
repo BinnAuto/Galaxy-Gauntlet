@@ -1,0 +1,10 @@
+public partial class LynxRedBombCreature2(Vector2I coordinate) : MapLynxCreature2(coordinate)
+{
+	public override bool RequiresDirectionByte => false;
+
+	public override string MapObjectName => "Red Bomb";
+
+	public override int EntityID => GGConstants.ByteCodes.Entities.RedBomb;
+
+	public override int SpriteFrameIndex => GGConstants.SpriteFrameIndexes.RedBomb;
+}

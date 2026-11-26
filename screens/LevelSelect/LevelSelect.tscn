@@ -5,9 +5,10 @@
 [ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_xa088"]
 [ext_resource type="StyleBox" uid="uid://b42mxcwhl5h20" path="res://styles/button_pressed_style.tres" id="3_1aba1"]
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_yl72h"]
+[ext_resource type="StyleBox" uid="uid://ds0ksm2lwloc6" path="res://styles/line_edit_style.tres" id="4_pidjh"]
 [ext_resource type="StyleBox" uid="uid://dhoqfgal04ahv" path="res://styles/button_hover_style.tres" id="4_xa088"]
 [ext_resource type="PackedScene" uid="uid://ctl3cqls4r1iw" path="res://prefabs/UIButton/UIButton.tscn" id="7_yl72h"]
-[ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="8_c3t5n"]
+[ext_resource type="PackedScene" uid="uid://ck1puqwe4jrxo" path="res://prefabs/DialogWindow2/DialogWindow2.tscn" id="8_5ubwq"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="9_4lbje"]
 [ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="10_5ubwq"]
 
@@ -48,6 +49,17 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/v_separation = -3
 
+[node name="LevelSearch" type="LineEdit" parent="Control" unique_id=1102208737]
+layout_mode = 0
+offset_left = 13.000001
+offset_top = 580.0
+offset_right = 440.0
+offset_bottom = 618.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_placeholder_color = Color(0, 0, 0, 0.6)
+theme_override_styles/normal = ExtResource("4_pidjh")
+placeholder_text = "🔍 Search levels"
+
 [node name="ButtonRef" type="Button" parent="." unique_id=466550020]
 offset_left = -72.0
 offset_top = -48.0
@@ -75,40 +87,48 @@ offset_bottom = 588.0
 ButtonText = "Back to Title"
 FontSize = 30
 
-[node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("8_c3t5n")]
-visible = false
+[node name="DialogWindow2" parent="." unique_id=1309426340 instance=ExtResource("8_5ubwq")]
 
 [node name="ArchipelagoDisplay" type="Node2D" parent="." unique_id=2117108302]
 
 [node name="TotalScoreLabel" type="Label" parent="ArchipelagoDisplay" unique_id=1384599568]
-offset_left = 19.0
-offset_top = 21.0
-offset_right = 160.0
-offset_bottom = 56.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 161.0
+offset_bottom = 55.0
 theme_override_font_sizes/font_size = 25
 text = "Total Score"
 
 [node name="TotalScore" type="Label" parent="ArchipelagoDisplay" unique_id=1116906299]
-offset_left = 19.0
-offset_top = 58.0
-offset_right = 160.0
-offset_bottom = 93.0
+offset_left = 20.0
+offset_top = 60.0
+offset_right = 161.0
+offset_bottom = 95.0
 theme_override_font_sizes/font_size = 25
 
 [node name="LevelsCompletedLabel" type="Label" parent="ArchipelagoDisplay" unique_id=121957005]
-offset_left = 21.0
+offset_left = 20.0
 offset_top = 120.0
-offset_right = 234.0
+offset_right = 233.0
 offset_bottom = 155.0
 theme_override_font_sizes/font_size = 25
 text = "Levels Completed"
 
 [node name="LevelsCompleted" type="Label" parent="ArchipelagoDisplay" unique_id=520527996]
-offset_left = 21.0
-offset_top = 157.0
-offset_right = 162.0
-offset_bottom = 192.0
+offset_left = 20.0
+offset_top = 160.0
+offset_right = 161.0
+offset_bottom = 195.0
 theme_override_font_sizes/font_size = 25
+
+[node name="HideCompletedLevels" type="CheckButton" parent="ArchipelagoDisplay" unique_id=528855044]
+offset_left = 14.0
+offset_top = 216.0
+offset_right = 337.0
+offset_bottom = 259.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 25
+text = "Hide Completed Levels"
 
 [node name="UnlockedItems" type="Node2D" parent="ArchipelagoDisplay" unique_id=1450400228]
 position = Vector2(960, 0)

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://b6pydbmm1hn8c"]
+
+[ext_resource type="SpriteFrames" uid="uid://dj5tkm4mtwdun" path="res://sprite_frames/tile_sprites.tres" id="1_e15js"]
+[ext_resource type="Script" uid="uid://bk0qd6xu6kkxr" path="res://prefabs/DigitDisplay/DigitDisplay.cs" id="1_ymu52"]
+
+[node name="DigitDisplay" type="Node2D" unique_id=1030589051]
+script = ExtResource("1_ymu52")
+
+[node name="Hundreds" type="AnimatedSprite2D" parent="." unique_id=1272429532]
+texture_filter = 1
+position = Vector2(-24, 0)
+sprite_frames = ExtResource("1_e15js")
+animation = &"digits"
+
+[node name="Tens" type="AnimatedSprite2D" parent="." unique_id=830607206]
+texture_filter = 1
+sprite_frames = ExtResource("1_e15js")
+animation = &"digits"
+
+[node name="Ones" type="AnimatedSprite2D" parent="." unique_id=1574761750]
+texture_filter = 1
+position = Vector2(24, 0)
+sprite_frames = ExtResource("1_e15js")
+animation = &"digits"

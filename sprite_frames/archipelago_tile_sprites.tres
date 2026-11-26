@@ -1,0 +1,39 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://cg4mhcb4o54yq"]
+
+[ext_resource type="Texture2D" uid="uid://bbupeicd15pf0" path="res://images/map_tiles/archipelago.png" id="1_o5wcd"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hafi3"]
+atlas = ExtResource("1_o5wcd")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a7wee"]
+atlas = ExtResource("1_o5wcd")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hwc1d"]
+atlas = ExtResource("1_o5wcd")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_alki8"]
+atlas = ExtResource("1_o5wcd")
+region = Rect2(32, 32, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hafi3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a7wee")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hwc1d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_alki8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]

@@ -19,7 +19,7 @@ public partial class TitleMenu : Node
 
 	private UIButton ExitButton;
 
-	private DialogWindow DialogWindow;
+	private DialogWindow2 DialogWindow2;
 
 	private Node2D Archipelago;
 
@@ -35,7 +35,8 @@ public partial class TitleMenu : Node
 		try
 		{
 			BuildLocalDirectories();
-			GameData.Initialize();
+			GameData.Initialize(new(1152, 648));
+			SetWindowSize();
 
 			NewGameButton = (UIButton)GetNode(nameof(NewGameButton));
 			NewGameButton.Pressed += OnNewGame;
@@ -56,7 +57,7 @@ public partial class TitleMenu : Node
 			ExitButton = (UIButton)GetNode(nameof(ExitButton));
 			ExitButton.Pressed += OnExit;
 
-			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
 
 			Archipelago = (Node2D)GetNode(nameof(Archipelago));
 
@@ -65,10 +66,10 @@ public partial class TitleMenu : Node
 			ArchipelagoConnectForm.Cancelled += () => { Archipelago.Visible = false; };
 
 			Version = (Label)GetNode(nameof(Version));
-			Version.Text = $"v{Constants.GameVersion}";
+			Version.Text = $"v{GGConstants.GameVersion.ToRawString()}";
 
 			SaveData.Load();
-			ContinueButton.Visible = SaveData.SaveSlotExists(Constants.SaveSlotNames.Autosave);
+			ContinueButton.Visible = SaveData.SaveSlotExists(GGConstants.SaveSlotNames.Autosave);
 			FileLogger.QuietLogMessage("Title screen _Ready complete");
 		}
 		catch (Exception e)
@@ -93,13 +94,21 @@ public partial class TitleMenu : Node
 	}
 
 
+	private static void SetWindowSize()
+	{
+		var initialWindowResolution = GameData.InitialWindowResolution;
+		var newWindowResolution = (int)GameData.WindowMagnifier * initialWindowResolution.Value;
+		DisplayServer.WindowSetSize(newWindowResolution);
+	}
+
+
 	#region Event Handlers
 
 	private void OnNewGame()
 	{
-		if(false == SaveData.SaveSlotExists(Constants.SaveSlotNames.Autosave))
+		if(false == SaveData.SaveSlotExists(GGConstants.SaveSlotNames.Autosave))
 		{
-			SaveSlot autosave = new(Constants.SaveSlotNames.Autosave);
+			SaveSlot autosave = new(GGConstants.SaveSlotNames.Autosave);
 			string levelHash = GetLevelSetHash();
 			autosave.LevelHash = levelHash;
 			SaveData.WriteSaveSlot(autosave);
@@ -107,22 +116,22 @@ public partial class TitleMenu : Node
 			return;
 		}
 
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("Starting a new game will delete the existing save data. Do you want to continue?", "Autosave found", DialogButtonType.YesNo);
-		DialogWindow.NoButtonPressed += DialogWindow.HideDialog;
-		DialogWindow.YesButtonPressed += () =>
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("Starting a new game will delete the existing save data. Do you want to continue?", "Autosave found", DialogButtonType.YesNo);
+		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
+		DialogWindow2.YesButtonPressed += () =>
 		{
-			int levelCount = GGG.GetLevelList().Length;
+			int levelCount = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode).Length;
 			string levelHash = GetLevelSetHash();
 			if(levelCount == 0 || string.IsNullOrEmpty(levelHash))
 			{
-				DialogWindow.ClearAllButtonEvents();
-				DialogWindow.ShowDialog("No levels found in level folder", DialogButtonType.OK);
-				DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+				DialogWindow2.ClearAllButtonEvents();
+				DialogWindow2.ShowDialog("No levels found in level folder", DialogButtonType.OK);
+				DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 				return;
 			}
 
-			SaveSlot autosave = new(Constants.SaveSlotNames.Autosave)
+			SaveSlot autosave = new(GGConstants.SaveSlotNames.Autosave)
 			{
 				LevelCount = levelCount,
 				LevelHash = levelHash
@@ -136,14 +145,14 @@ public partial class TitleMenu : Node
 
 	private void OnContinue()
 	{
-		var saveSlot = SaveData.GetSaveSlot(Constants.SaveSlotNames.Autosave);
+		var saveSlot = SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Autosave);
 		string levelHash = GetLevelSetHash();
-		int levelCount = GGG.GetLevelList().Length;
+		int levelCount = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode).Length;
 		if (levelCount == 0 || string.IsNullOrEmpty(levelHash))
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("No levels found in level folder", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("No levels found in level folder", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 			return;
 		}
 
@@ -154,10 +163,10 @@ public partial class TitleMenu : Node
 			return;
 		}
 
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("It looks like the level set has changed since you last saved. Do you want to continue?", DialogButtonType.YesNo);
-		DialogWindow.NoButtonPressed += DialogWindow.HideDialog;
-		DialogWindow.YesButtonPressed += () =>
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("It looks like the level set has changed since you last saved. Do you want to continue?", DialogButtonType.YesNo);
+		DialogWindow2.NoButtonPressed += DialogWindow2.HideDialog;
+		DialogWindow2.YesButtonPressed += () =>
 		{
 			saveSlot.LevelCount = levelCount;
 			saveSlot.LevelHash = levelHash;
@@ -171,21 +180,22 @@ public partial class TitleMenu : Node
 	private void OnArchipelagoConnected()
 	{
 		Archipelago.Visible = false;
-		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.LevelHash);
+		GameData.GameMode = GameMode.Archipelago;
+		string apLevelHash = GameData.Archipelago.GetSlotDataKeyOrDefault(GGConstants.Archipelago.SlotDataKeys.LevelHash, string.Empty);
 		FileLogger.QuietLogMessage($"APWorld level hash: {apLevelHash}");
 		if(string.IsNullOrEmpty(apLevelHash))
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("The current level set cannot be determined to match the given AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
-			DialogWindow.YesButtonPressed += () =>
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("The current level set cannot be determined to match the given AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
+			DialogWindow2.YesButtonPressed += () =>
 			{
 				ToLevelSelect(GameMode.Archipelago);
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
-			DialogWindow.NoButtonPressed += async () =>
+			DialogWindow2.NoButtonPressed += async () =>
 			{
 				await GameData.Archipelago.DisconnectFromServer();
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
 			return;
 		}
@@ -193,17 +203,17 @@ public partial class TitleMenu : Node
 		FileLogger.QuietLogMessage($"Local level hash: {localLevelHash}");
 		if (localLevelHash != apLevelHash)
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("The current level set does not seem to match the set used to generate this AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
-			DialogWindow.YesButtonPressed += () =>
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("The current level set does not seem to match the set used to generate this AP world.\nWARNING: This could cause incorrect items to be sent to the server.\nDo you want to continue?", DialogButtonType.YesNo);
+			DialogWindow2.YesButtonPressed += () =>
 			{
 				ToLevelSelect(GameMode.Archipelago);
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
-			DialogWindow.NoButtonPressed += async () =>
+			DialogWindow2.NoButtonPressed += async () =>
 			{
 				await GameData.Archipelago.DisconnectFromServer();
-				DialogWindow.HideDialog();
+				DialogWindow2.HideDialog();
 			};
 			return;
 		}
@@ -214,8 +224,8 @@ public partial class TitleMenu : Node
 
 	private void ToLevelSelect(GameMode gameMode)
 	{
-		GameData.Level.GameMode = gameMode;
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+		GameData.GameMode = gameMode;
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 	}
 
 
@@ -227,15 +237,15 @@ public partial class TitleMenu : Node
 
 	private void OnGoToGameplayScreen(GameMode gameMode)
 	{
-		GameData.Level.LevelSet = GGG.GetLevelList();
-		GameData.Level.GameMode = gameMode;
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.GameplayScreen);
+		GameData.Level.LevelSet = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
+		GameData.GameMode = gameMode;
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.GameplayScreen);
 	}
 
 
 	private void OnSettingsButtonPressed()
 	{
-		GetTree().ChangeSceneToFile(Constants.ScenePaths.SettingsMenu);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.SettingsMenu);
 	}
 
 	#endregion
@@ -243,15 +253,12 @@ public partial class TitleMenu : Node
 
 	private string GetLevelSetHash()
 	{
-		string levelPath = "./levels";
-		Directory.CreateDirectory(levelPath);
-		levelPath = Path.GetFullPath(levelPath);
-		string[] files = GGG.GetLevelList();
+		string[] files = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		if(files.Length == 0)
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 			return null;
 		}
 
@@ -262,9 +269,9 @@ public partial class TitleMenu : Node
 		}
 		if (combinedFileData.Count == 0)
 		{
-			DialogWindow.ClearAllButtonEvents();
-			DialogWindow.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += DialogWindow.HideDialog;
+			DialogWindow2.ClearAllButtonEvents();
+			DialogWindow2.ShowDialog("ERROR: No level files found in levels folder.", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += DialogWindow2.HideDialog;
 			return null;
 		}
 
@@ -276,7 +283,7 @@ public partial class TitleMenu : Node
 
 	private static bool ValidateLevelsForArchipelago()
 	{
-		string[] files = GGG.GetLevelList();
+		string[] files = GalaxyGauntlet.Common.Global.GetLevelList(GameData.GameMode);
 		int levelNumber = 1;
 		bool isValid = true;
 		List<byte> combinedFileData = [];
@@ -299,7 +306,7 @@ public partial class TitleMenu : Node
 		SHA256 sha256 = SHA256.Create();
 		var hash = SHA256.HashData([.. combinedFileData]);
 		string localLevelHash =  hash.Select(e => $"{e:x2}").ToArray().Join("");
-		string apLevelHash = GameData.Archipelago.GetSlotDataKey<string>(Constants.Archipelago.SlotDataKeys.LevelHash);
+		string apLevelHash = GameData.Archipelago.GetSlotDataKeyOrDefault(GGConstants.Archipelago.SlotDataKeys.LevelHash, string.Empty);
 		return isValid && (apLevelHash == localLevelHash);
 	}
 }

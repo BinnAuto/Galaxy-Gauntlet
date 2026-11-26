@@ -1,12 +1,13 @@
 [gd_scene format=3 uid="uid://chjvby67edg5j"]
 
-[ext_resource type="PackedScene" uid="uid://b3pk27uc7a2ci" path="res://prefabs/MapDisplay/MapDisplay.tscn" id="1_75xg4"]
 [ext_resource type="Script" uid="uid://c3mkr4y2306kn" path="res://screens/GameplayScreen/GameplayScreen.cs" id="1_ed854"]
 [ext_resource type="Texture2D" uid="uid://bsxrhutvmotpj" path="res://images/ui/pixel.png" id="2_lwhh6"]
-[ext_resource type="PackedScene" uid="uid://cqa0x8q27fvpj" path="res://prefabs/DialogWindow/DialogWindow.tscn" id="3_bfflv"]
 [ext_resource type="Texture2D" uid="uid://csb738ivl2a0a" path="res://images/ui/gradient.png" id="3_cms3p"]
 [ext_resource type="PackedScene" uid="uid://djerq5lgmdnbm" path="res://prefabs/ItemDisplay/ItemDisplay.tscn" id="4_l2pm1"]
+[ext_resource type="PackedScene" uid="uid://djaen87nr7uck" path="res://prefabs/MapDisplay2/MapDisplay2.tscn" id="5_cms3p"]
 [ext_resource type="PackedScene" uid="uid://cpgjpqlraxdut" path="res://prefabs/MusicPlayer/MusicPlayer.tscn" id="5_gpxbn"]
+[ext_resource type="PackedScene" uid="uid://b6pydbmm1hn8c" path="res://prefabs/DigitDisplay/DigitDisplay.tscn" id="6_c82dq"]
+[ext_resource type="PackedScene" uid="uid://ck1puqwe4jrxo" path="res://prefabs/DialogWindow2/DialogWindow2.tscn" id="6_cms3p"]
 
 [node name="GameplayScreen" type="Node2D" unique_id=43287349]
 script = ExtResource("1_ed854")
@@ -24,41 +25,73 @@ position = Vector2(579, 514)
 scale = Vector2(1168, 515.75)
 texture = ExtResource("3_cms3p")
 
-[node name="MapDisplay" parent="." unique_id=2092090514 instance=ExtResource("1_75xg4")]
+[node name="MapDisplay2" parent="." unique_id=1864321287 instance=ExtResource("5_cms3p")]
 position = Vector2(192, 192)
 
-[node name="DialogWindow" parent="." unique_id=110603288 instance=ExtResource("3_bfflv")]
-visible = false
+[node name="DialogWindow2" parent="." unique_id=1309426340 instance=ExtResource("6_cms3p")]
 
 [node name="LevelName" type="Label" parent="." unique_id=1859698104]
-offset_left = 847.0
+offset_left = 850.0
 offset_top = 61.0
-offset_right = 888.0
+offset_right = 891.0
 offset_bottom = 84.0
 text = "Level"
 
 [node name="ChipCount" type="Label" parent="." unique_id=6881082]
-offset_left = 849.0
+offset_left = 850.0
 offset_top = 109.0
-offset_right = 978.0
+offset_right = 979.0
 offset_bottom = 132.0
 text = "Chips Remaining"
 
+[node name="ChipCountDisplay" parent="." unique_id=1030589051 instance=ExtResource("6_c82dq")]
+position = Vector2(884, 155)
+
 [node name="Timer" type="Label" parent="." unique_id=1650194281]
-offset_left = 849.0
-offset_top = 156.0
-offset_right = 894.0
-offset_bottom = 179.0
+offset_left = 850.0
+offset_top = 200.0
+offset_right = 895.0
+offset_bottom = 223.0
 text = "Timer"
 
+[node name="TimerDisplay" parent="." unique_id=1494717662 instance=ExtResource("6_c82dq")]
+position = Vector2(884, 243.425)
+
+[node name="StepOffset" type="Label" parent="." unique_id=1781871773]
+offset_left = 854.0
+offset_top = 442.0
+offset_right = 899.0
+offset_bottom = 465.0
+
 [node name="InventoryDisplay" parent="." unique_id=266836377 instance=ExtResource("4_l2pm1")]
-position = Vector2(858, 218)
+position = Vector2(854, 295)
 
 [node name="HintLabel" type="Label" parent="." unique_id=1183504913]
-offset_left = 851.0
-offset_top = 329.0
-offset_right = 891.0
-offset_bottom = 352.0
+offset_left = 854.0
+offset_top = 492.0
+offset_right = 1059.0
+offset_bottom = 515.0
+autowrap_mode = 2
 
 [node name="Music" parent="." unique_id=1124690937 instance=ExtResource("5_gpxbn")]
 SourceFolder = "./custom/music/game"
+
+[node name="DebugDisplay" type="Node2D" parent="." unique_id=1087344666]
+visible = false
+position = Vector2(150, 452)
+
+[node name="ChipTick" type="Label" parent="DebugDisplay" unique_id=143426148]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Chip Tick:"
+
+[node name="GameTick" type="Label" parent="DebugDisplay" unique_id=376519886]
+offset_left = 160.0
+offset_right = 245.0
+offset_bottom = 23.0
+text = "Game Tick:"
+
+[node name="AcceptingInput" type="Sprite2D" parent="DebugDisplay" unique_id=1659125672]
+position = Vector2(123, 14.00001)
+scale = Vector2(24.249977, 24.75002)
+texture = ExtResource("2_lwhh6")

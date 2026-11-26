@@ -12,33 +12,33 @@ public partial class ItemDisplay : Node
 	[Export]
 	private DisplayMode DisplayMode;
 
-	private Sprite2D RedKey;
+	private AnimatedSprite2D RedKey;
 
 	private Label RedKeyCount;
 
-	private Sprite2D BlueKey;
+	private AnimatedSprite2D BlueKey;
 
 	private Label BlueKeyCount;
 
-	private Sprite2D YellowKey;
+	private AnimatedSprite2D YellowKey;
 
 	private Label YellowKeyCount;
 
-	private Sprite2D GreenKey;
+	private AnimatedSprite2D GreenKey;
 
 	private Label GreenKeyCount;
 
-	private Sprite2D IceSkates;
+	private AnimatedSprite2D IceSkates;
 
-	private Sprite2D SuctionBoots;
+	private AnimatedSprite2D SuctionBoots;
 
-	private Sprite2D FireBoots;
+	private AnimatedSprite2D FireBoots;
 
-	private Sprite2D Flippers;
+	private AnimatedSprite2D Flippers;
 
-	private Sprite2D SecretEye;
+	private AnimatedSprite2D SecretEye;
 
-	private Sprite2D Helmet;
+	private AnimatedSprite2D Helmet;
 
 	private Godot.Color UnlockedModulateColor = Godot.Color.Color8(255, 255, 255, 255);
 
@@ -48,31 +48,71 @@ public partial class ItemDisplay : Node
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
 	{
-		RedKey = (Sprite2D)GetNode(nameof(RedKey));
+		RedKey = (AnimatedSprite2D)GetNode(nameof(RedKey));
+		RedKey.SpriteFrames = GameData.SpriteFrames;
+		RedKey.Animation = "default";
+		RedKey.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+		RedKey.Frame = GGConstants.SpriteFrameIndexes.RedKey;
 		RedKeyCount = (Label)RedKey.GetNode("Count");
 
-		BlueKey = (Sprite2D)GetNode(nameof(BlueKey));
-		BlueKeyCount = (Label)BlueKey.GetNode("Count");
+		BlueKey = (AnimatedSprite2D)GetNode(nameof(BlueKey));
+        BlueKey.SpriteFrames = GameData.SpriteFrames;
+        BlueKey.Animation = "default";
+        BlueKey.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        BlueKey.Frame = GGConstants.SpriteFrameIndexes.BlueKey;
+        BlueKeyCount = (Label)BlueKey.GetNode("Count");
 
-		YellowKey = (Sprite2D)GetNode(nameof(YellowKey));
-		YellowKeyCount = (Label)YellowKey.GetNode("Count");
+		YellowKey = (AnimatedSprite2D)GetNode(nameof(YellowKey));
+        YellowKey.SpriteFrames = GameData.SpriteFrames;
+        YellowKey.Animation = "default";
+        YellowKey.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        YellowKey.Frame = GGConstants.SpriteFrameIndexes.YellowKey;
+        YellowKeyCount = (Label)YellowKey.GetNode("Count");
 
-		GreenKey = (Sprite2D)GetNode(nameof(GreenKey));
-		GreenKeyCount = (Label)GreenKey.GetNode("Count");
+		GreenKey = (AnimatedSprite2D)GetNode(nameof(GreenKey));
+        GreenKey.SpriteFrames = GameData.SpriteFrames;
+        GreenKey.Animation = "default";
+        GreenKey.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        GreenKey.Frame = GGConstants.SpriteFrameIndexes.GreenKey;
+        GreenKeyCount = (Label)GreenKey.GetNode("Count");
 
-		IceSkates = (Sprite2D)GetNode(nameof(IceSkates));
+		IceSkates = (AnimatedSprite2D)GetNode(nameof(IceSkates));
+        IceSkates.SpriteFrames = GameData.SpriteFrames;
+        IceSkates.Animation = "default";
+        IceSkates.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        IceSkates.Frame = GGConstants.SpriteFrameIndexes.IceSkates;
 
-		SuctionBoots = (Sprite2D)GetNode(nameof(SuctionBoots));
+        SuctionBoots = (AnimatedSprite2D)GetNode(nameof(SuctionBoots));
+        SuctionBoots.SpriteFrames = GameData.SpriteFrames;
+        SuctionBoots.Animation = "default";
+        SuctionBoots.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        SuctionBoots.Frame = GGConstants.SpriteFrameIndexes.SuctionBoots;
 
-		FireBoots = (Sprite2D)GetNode(nameof(FireBoots));
+        FireBoots = (AnimatedSprite2D)GetNode(nameof(FireBoots));
+        FireBoots.SpriteFrames = GameData.SpriteFrames;
+        FireBoots.Animation = "default";
+        FireBoots.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        FireBoots.Frame = GGConstants.SpriteFrameIndexes.FireBoots;
 
-		Flippers = (Sprite2D)GetNode(nameof(Flippers));
+        Flippers = (AnimatedSprite2D)GetNode(nameof(Flippers));
+        Flippers.SpriteFrames = GameData.SpriteFrames;
+        Flippers.Animation = "default";
+        Flippers.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        Flippers.Frame = GGConstants.SpriteFrameIndexes.Flippers;
 
-		SecretEye = (Sprite2D)GetNode(nameof(SecretEye));
+        SecretEye = (AnimatedSprite2D)GetNode(nameof(SecretEye));
+        SecretEye.SpriteFrames = GameData.SpriteFrames;
+        SecretEye.Animation = "default";
+        SecretEye.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        SecretEye.Frame = GGConstants.SpriteFrameIndexes.SecretEye;
 
-		Helmet = (Sprite2D)GetNode(nameof(Helmet));
-		
-		RenderItemList();
+        Helmet = (AnimatedSprite2D)GetNode(nameof(Helmet));
+        Helmet.SpriteFrames = GameData.SpriteFrames;
+        Helmet.Animation = "default";
+        Helmet.TextureFilter = CanvasItem.TextureFilterEnum.Nearest;
+        Helmet.Frame = GGConstants.SpriteFrameIndexes.Helmet;
+
+        RenderItemList();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -87,39 +127,39 @@ public partial class ItemDisplay : Node
 		switch(DisplayMode)
 		{
 			case DisplayMode.Gameplay:
-				RedKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.RedKey);
-				BlueKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.BlueKey);
-				YellowKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.YellowKey);
-				GreenKey.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.GreenKey);
-				IceSkates.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.IceSkates);
-				SuctionBoots.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SuctionBoots);
-				FireBoots.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.FireBoots);
-				Flippers.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Flippers);
-				SecretEye.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.SecretEye);
-				Helmet.Visible = GameData.Level.PlayerHasGameItem(Constants.ByteCodes.Entities.Helmet);
+				RedKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.RedKey);
+				BlueKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.BlueKey);
+				YellowKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.YellowKey);
+				GreenKey.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.GreenKey);
+				IceSkates.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.IceSkates);
+				SuctionBoots.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SuctionBoots);
+				FireBoots.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.FireBoots);
+				Flippers.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Flippers);
+				SecretEye.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.SecretEye);
+				Helmet.Visible = GameData.Level.PlayerHasGameItem(GGConstants.ByteCodes.Entities.Helmet);
 				
-				RedKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
-				BlueKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
-				YellowKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
-				GreenKeyCount.Text = GameData.Level.ItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				RedKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.RedKey).ToString();
+				BlueKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.BlueKey).ToString();
+				YellowKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.YellowKey).ToString();
+				GreenKeyCount.Text = GameData.Level.ItemCount(GGConstants.ByteCodes.Entities.GreenKey).ToString();
 				break;
 
 			case DisplayMode.ArchipelagoSingleUseItems:
-                RedKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.RedKey);
-                BlueKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.BlueKey);
-                YellowKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.YellowKey);
-                GreenKey.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.GreenKey);
-                IceSkates.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.IceSkates);
-                SuctionBoots.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.SuctionBoots);
-                FireBoots.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.FireBoots);
-                Flippers.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.Flippers);
-                SecretEye.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.SecretEye);
-                Helmet.Visible = GameData.PlayerHasPendingItem(Constants.ByteCodes.Entities.Helmet);
+                RedKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.RedKey);
+                BlueKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.BlueKey);
+                YellowKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.YellowKey);
+                GreenKey.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.GreenKey);
+                IceSkates.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.IceSkates);
+                SuctionBoots.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.SuctionBoots);
+                FireBoots.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.FireBoots);
+                Flippers.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.Flippers);
+                SecretEye.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.SecretEye);
+                Helmet.Visible = GameData.PlayerHasPendingItem(GGConstants.ByteCodes.Entities.Helmet);
                 
-				RedKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.RedKey).ToString();
-                BlueKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.BlueKey).ToString();
-                YellowKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.YellowKey).ToString();
-                GreenKeyCount.Text = GameData.PendingItemCount(Constants.ByteCodes.Entities.GreenKey).ToString();
+				RedKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.RedKey).ToString();
+                BlueKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.BlueKey).ToString();
+                YellowKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.YellowKey).ToString();
+                GreenKeyCount.Text = GameData.PendingItemCount(GGConstants.ByteCodes.Entities.GreenKey).ToString();
 				break;
 
 			case DisplayMode.ArchipelagoTracker:

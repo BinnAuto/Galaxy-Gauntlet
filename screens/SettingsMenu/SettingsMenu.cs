@@ -8,13 +8,17 @@ public partial class SettingsMenu : Node
 
 	private UISlider MusicVolume;
 
+	private UISlider WindowSize;
+
 	private UIButton CancelButton;
 
 	private UIButton SaveButton;
 
-    #endregion
+	private DialogWindow2 DialogWindow2;
 
-    private bool _processMasterVolume = false;
+	#endregion
+
+	private bool _processMasterVolume = false;
 
 	private bool _processMusicVolume = false;
 
@@ -28,54 +32,76 @@ public partial class SettingsMenu : Node
 		MasterVolume = (UISlider)GetNode(nameof(MasterVolume));
 		MasterVolume.Value = GameData.MasterVolume;
 		MasterVolume.DragStarted += () => { _processMasterVolume = true; };
-        MasterVolume.DragEnded += () => { _processMasterVolume = false; };
-		MasterVolume.ValueChanged += () => { GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume.Value); };
+		MasterVolume.DragEnded += () => { _processMasterVolume = false; };
+		MasterVolume.ValueChanged += () => { GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Master, MasterVolume.Value); };
 
-        MusicVolume = (UISlider)GetNode(nameof(MusicVolume));
+		MusicVolume = (UISlider)GetNode(nameof(MusicVolume));
 		MusicVolume.Value = GameData.MusicVolume;
-        MusicVolume.DragStarted += () => { _processMusicVolume = true; };
-        MusicVolume.DragEnded += () => { _processMusicVolume = false; };
-        MasterVolume.ValueChanged += () => { GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume.Value); };
+		MusicVolume.DragStarted += () => { _processMusicVolume = true; };
+		MusicVolume.DragEnded += () => { _processMusicVolume = false; };
+		MasterVolume.ValueChanged += () => { GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume.Value); };
 
-        CancelButton = (UIButton)GetNode(nameof(CancelButton));
+		WindowSize = (UISlider)GetNode(nameof(WindowSize));
+		WindowSize.Value = GameData.WindowMagnifier;
+
+		CancelButton = (UIButton)GetNode(nameof(CancelButton));
 		CancelButton.Pressed += OnCancelPressed;
 
 		SaveButton = (UIButton)GetNode(nameof(SaveButton));
 		SaveButton.Pressed += OnSavePressed;
-    }
+
+		DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
+	}
 
 
-    public override void _Process(double delta)
-    {
-        if(_processMasterVolume)
-		{
-			GGG.SetBusVolume(Constants.AudioBuses.Master, MasterVolume.Value);
-        }
-        if (_processMusicVolume)
-        {
-            GGG.SetBusVolume(Constants.AudioBuses.Music, MusicVolume.Value);
-        }
-    }
-
-    #endregion
-
-    #region Event Handlers
-
-    private void OnCancelPressed()
+	public override void _Process(double delta)
 	{
-		GGG.SetBusVolume(Constants.AudioBuses.Master, GameData.MasterVolume);
-        GGG.SetBusVolume(Constants.AudioBuses.Music, GameData.MusicVolume);
-        GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
-    }
+		if(_processMasterVolume)
+		{
+			GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Master, MasterVolume.Value);
+		}
+		if (_processMusicVolume)
+		{
+			GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Music, MusicVolume.Value);
+		}
+	}
+
+	#endregion
+
+
+	#region Event Handlers
+
+	private void OnCancelPressed()
+	{
+		GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Master, GameData.MasterVolume);
+		GalaxyGauntlet.Common.Global.SetBusVolume(GGConstants.AudioBuses.Music, GameData.MusicVolume);
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
+	}
 
 
 	private void OnSavePressed()
 	{
+		// Verify new screen size does not exceed monitor size
+		var newWindowResolution = (int)WindowSize.Value * GameData.InitialWindowResolution;
+		var size = DisplayServer.ScreenGetSize((int)DisplayServer.ScreenOfMainWindow);
+		if(newWindowResolution.Value.X > size.X
+			|| newWindowResolution.Value.Y > size.Y)
+		{
+			DialogWindow2.ShowDialog("Failed to save settings. The new window dimensions would be larger than this screen!", DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += () =>
+			{
+				WindowSize.Value = 1;
+				DialogWindow2.Hide();
+			};
+			return;
+		}
+
 		GameData.MasterVolume = MasterVolume.Value;
 		GameData.MusicVolume = MusicVolume.Value;
+		GameData.WindowMagnifier = WindowSize.Value;
 		GameData.SaveSettings();
-        GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
-    }
+		GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
+	}
 
 	#endregion
 

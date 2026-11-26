@@ -3,8 +3,6 @@ using Archipelago.MultiClient.Net.BounceFeatures.DeathLink;
 using Archipelago.MultiClient.Net.Enums;
 using Archipelago.MultiClient.Net.Helpers;
 using Archipelago.MultiClient.Net.Models;
-using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Shared;
 using GalaxyGauntlet.scripts.SaveData;
 using System;
 using System.Collections.Generic;
@@ -81,7 +79,19 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public bool IsProcessingDeathLink = false;
 
-		public long PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+		/// <summary>
+		/// Should Time Penalty and Time Bonus items take effect on untimed levels?
+		/// </summary>
+		public bool EnableCruelTimeItems = false;
+
+		/// <summary>
+		/// Determines how a chip should display ingame if it is an Archipelago location.
+		/// </summary>
+		public long ChipLocationDisplay = 0;
+
+		public int NumLevelsCompleted = 0;
+
+		public long PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
 		/// <summary>
 		/// A list of level file names to ignore when displaying the level select list.
@@ -93,7 +103,7 @@ namespace GalaxyGauntlet.scripts
 		/// The list of single-use items the player has received. The player receives
 		/// these items when they are in a level.
 		/// </summary>
-		public List<MapItem> PendingItems = [];
+		public List<MapItem2> PendingItems = [];
 
 		private bool InitialProcessingComplete = false;
 		private DeathLinkService DeathLinkService = null;
@@ -110,7 +120,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.ScoreGoal);
+				return GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.ScoreGoal, 0);
 			}
 		}
 
@@ -123,20 +133,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				return GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.LevelCompletionGoal);
-			}
-		}
-
-
-		/// <summary>
-		/// Returns the number of levels currently completed by the player.
-		/// </summary>
-		public int CurrentLevelCompletedCount
-		{
-			get
-			{
-				var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
-				return archipelagoData?.HighScores?.Count ?? 0;
+				return GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal, 0);
 			}
 		}
 
@@ -148,17 +145,16 @@ namespace GalaxyGauntlet.scripts
 		{
 			get
 			{
-				if (CurrentLevelCompletedCount == 0)
+				if (NumLevelsCompleted == 0)
 				{
 					return 0;
 				}
 
 
-				var archipelagoData = SaveData.SaveData.GetSaveSlot(Constants.SaveSlotNames.Archipelago);
+				var archipelagoData = SaveData.SaveData.GetSaveSlot(GGConstants.SaveSlotNames.Archipelago);
 				return archipelagoData.HighScores.Sum(e => e.Value);
 			}
 		}
-
 
         #endregion
 
@@ -183,7 +179,7 @@ namespace GalaxyGauntlet.scripts
         /// <summary>
         /// Resets the object's data state.
         /// </summary>
-        public void Reset()
+        private void Reset()
 		{
 			Session = null;
 			GameName = string.Empty;
@@ -194,14 +190,16 @@ namespace GalaxyGauntlet.scripts
 
 			DeathLinkService = null;
 			LocationsChecked = [];
+			EnableCruelTimeItems = false;
 			LevelFilesToIgnore = [];
-			PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+			PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
+			NumLevelsCompleted = 0;
 			SlotId = null;
 			SlotData = [];
 			PendingItems = [];
-			SaveData.SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Archipelago);
-			SaveData.SaveData.WriteSaveSlot(new(Constants.SaveSlotNames.Archipelago));
+			SaveData.SaveData.DeleteSaveSlot(GGConstants.SaveSlotNames.Archipelago);
+			SaveData.SaveData.WriteSaveSlot(new(GGConstants.SaveSlotNames.Archipelago));
 		}
 
 
@@ -223,14 +221,17 @@ namespace GalaxyGauntlet.scripts
 				Port = port;
 				SlotName = slotName;
 				Password = password;
-				// TODO: Save successful Archipelago connection settings to Game Settings
+				GameData.SaveSettings();
 
 				// Load from Slot Data
 				await LoadGameSaveFromSlotData();
 				BuildFileIgnoreList();
 				GetPlayerSprite();
 				ConfigureDeathLink();
-				await ScoutAPLocations();
+				long cruelTimeItems = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.CruelTimeItems, 0);
+				EnableCruelTimeItems = (cruelTimeItems == 1);
+				ChipLocationDisplay = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.ChipLocationDisplay, GGConstants.Archipelago.ChipLocationDisplayIndexes.True);
+                await ScoutAPLocations();
 				FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
 				InitialProcessingComplete = true;
 			}
@@ -319,8 +320,8 @@ namespace GalaxyGauntlet.scripts
 
 		private async Task LoadGameSaveFromSlotData()
 		{
-			SaveSlot apSaveSlot = new(Constants.SaveSlotNames.Archipelago);
-			var saveData = Session.DataStorage[Constants.Archipelago.SlotDataKeys.SaveData];
+			SaveSlot apSaveSlot = new(GGConstants.SaveSlotNames.Archipelago);
+			var saveData = Session.DataStorage[GGConstants.Archipelago.SlotDataKeys.SaveData];
 			string saveDataJson = $"{await saveData.GetAsync()}";
 			if (false == string.IsNullOrEmpty(saveDataJson))
 			{
@@ -333,7 +334,7 @@ namespace GalaxyGauntlet.scripts
 		private void BuildFileIgnoreList()
 		{
 			LevelFilesToIgnore = [];
-			string ignoreFiles = SlotData[Constants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
+			string ignoreFiles = SlotData[GGConstants.Archipelago.SlotDataKeys.IgnoreLevelFiles].ToString();
 			if (false == string.IsNullOrEmpty(ignoreFiles))
 			{
 				LevelFilesToIgnore = ignoreFiles.Split('|');
@@ -345,12 +346,12 @@ namespace GalaxyGauntlet.scripts
 		{
 			try
 			{
-				PlayerSpriteIndex = (long)SlotData[Constants.Archipelago.SlotDataKeys.PlayerSprite];
+				PlayerSpriteIndex = (long)SlotData[GGConstants.Archipelago.SlotDataKeys.PlayerSprite];
 			}
 			catch (Exception e)
 			{
 				GD.Print(e.Message);
-				PlayerSpriteIndex = Constants.Archipelago.PlayerSpriteIndexes.Player;
+				PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 			}
 		}
 
@@ -359,7 +360,7 @@ namespace GalaxyGauntlet.scripts
 		{
 			DeathLinkService = Session.CreateDeathLinkService();
 			DeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
-			long deathLinkSetting = GetSlotDataKey<long>(Constants.Archipelago.SlotDataKeys.DeathLink);
+			long deathLinkSetting = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.DeathLink, 0);
 			DeathLinkEnabled = (deathLinkSetting == 1);
 			if (DeathLinkEnabled)
 			{
@@ -395,9 +396,15 @@ namespace GalaxyGauntlet.scripts
 		/// <summary>
 		/// Returns a slot data value by its corresponding key name.
 		/// </summary>
-		public T GetSlotDataKey<T>(string key)
+		public T GetSlotDataKeyOrDefault<T>(string key, T defaultValue)
 		{
-			return (T)SlotData.GetValueOrDefault(key);
+			object value = SlotData.GetValueOrDefault(key);
+			if(value is null)
+			{
+				FileLogger.QuietLogMessage($"Key \"{key}\" not found in Archipelago slot data.");
+				return defaultValue;
+			}
+			return (T)value;
 		}
 
 
@@ -419,7 +426,7 @@ namespace GalaxyGauntlet.scripts
 				return;
 			}
 
-			if(LevelCompletionGoal > 0 && CurrentLevelCompletedCount < LevelCompletionGoal)
+			if(LevelCompletionGoal > 0 && NumLevelsCompleted < LevelCompletionGoal)
 			{
 				return;
 			}
@@ -521,20 +528,39 @@ namespace GalaxyGauntlet.scripts
 		}
 
 
+		public bool IsItemUnlocked(int entityID)
+		{
+			return entityID switch
+			{
+				GGConstants.ByteCodes.Entities.RedKey => RedKeyUnlocked,
+				GGConstants.ByteCodes.Entities.BlueKey => BlueKeyUnlocked,
+				GGConstants.ByteCodes.Entities.GreenKey => GreenKeyUnlocked,
+				GGConstants.ByteCodes.Entities.YellowKey => YellowKeyUnlocked,
+				GGConstants.ByteCodes.Entities.IceSkates => IceSkatesUnlocked,
+				GGConstants.ByteCodes.Entities.SuctionBoots => SuctionBootsUnlocked,
+				GGConstants.ByteCodes.Entities.FireBoots => FireBootsUnlocked,
+				GGConstants.ByteCodes.Entities.Flippers => FlippersUnlocked,
+				GGConstants.ByteCodes.Entities.SecretEye => SecretEyeUnlocked,
+				GGConstants.ByteCodes.Entities.Helmet => HelmetUnlocked,
+				_ => true
+			};
+		}
+
+
 		private void ProcessNewItem(string itemName)
 		{
-			MapItem pendingItem = itemName switch
+			MapItem2 pendingItem = itemName switch
 			{
-				Constants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem(Vector2I.Zero),
-				Constants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseRedKey => new RedKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseBlueKey => new BlueKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseYellowKey => new YellowKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseGreenKey => new GreenKeyItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseIceSkates => new IceSkatesItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseFireBoots => new FireBootsItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseSuctionBoots => new SuctionBootsItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseFlippers => new FlippersItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseHelmet => new HelmetItem2(Vector2I.Zero),
+				GGConstants.Archipelago.ItemNames.SingleUseSecretEye => new SecretEyeItem2(Vector2I.Zero),
 				_ => null
 			};
 			if(pendingItem is not null)

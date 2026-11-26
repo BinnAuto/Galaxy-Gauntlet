@@ -1,0 +1,91 @@
+from dataclasses import dataclass
+from Options import Choice, DeathLink, PerGameCommonOptions, Range, Toggle
+
+class PlayerSpriteOption(Choice):
+    """
+    Determines the sprite to use for Chip when displaying the player character
+    """
+    display_name = "Player Sprite"
+    option_Chip = 0
+    option_Teeth = 1
+    option_Tank = 2
+    option_Glider = 3
+    option_Bug = 4
+    option_Paramecium = 5
+    option_Fireball = 6
+    option_Walker = 7
+
+class ChipsAsCheckProbability(Range):
+    """
+    Specifies the odds (out of 100) that a given chip item will be included as a location.
+    Set this value to 0 to disable chips as checks.
+    """
+    display_name = "Chip as Check Probability"
+    range_start = 0
+    range_end = 100
+    default = 0
+
+class ProportionOfFillerAsUsefulItems(Range):
+    """
+    Specifies the proportion of remaining filler items that should be used for useful items.
+    Set this value to 0 to disable useful items.
+    """
+    display_name = "Proportion of Filler as Useful Items"
+    range_start = 0
+    range_end = 100
+    default = 0
+
+class ProportionOfFillerAsTraps(Range):
+    """
+    Specifies the proportion of remaining filler items (after adding useful items) that should be used for trap items.
+    Set this value to 0 to disable trap items.
+    """
+    display_name = "Proportion of Filler as Trap Items"
+    range_start = 0
+    range_end = 100
+    default = 0
+
+class LevelCompletionGoal(Range):
+    """
+    Specifies the minimum amount of levels to complete to reach the goal condition.
+    Set this value to 0 to disable this as a goal.
+    """
+    display_name = "Level Completion Requirement"
+    range_start = 0
+    range_end = 149
+    default = 0
+
+class ScoreGoal(Range):
+    """
+    Specifies the minimum score requirement to reach the goal condition.
+    Set this value to 0 to disable this as a goal.
+    """
+    display_name = "Goal Score Requirement"
+    range_start = 0
+    range_end = 5364000
+    default = 0
+
+class AddExtendedScoreChecks(Toggle):
+    """
+    Add additional checks for higher score milestones.
+    """
+    display_name = "Include Extended Score Checks"
+
+class CruelTimeItems(Toggle):
+    """
+    If active, untimed levels will be affected by Time Bonus and Time Penalty items
+    received through Archipelago, effectively an auto-death.
+    """
+    display_name = "Cruel Time Items"
+
+@dataclass
+class ChipsChallengeTestOptions(PerGameCommonOptions):
+    player_sprite: PlayerSpriteOption
+    chip_as_check_probability: ChipsAsCheckProbability
+    proportion_of_filler_as_useful_items: ProportionOfFillerAsUsefulItems
+    proportion_of_filler_as_traps: ProportionOfFillerAsTraps
+    score_goal: ScoreGoal
+    level_completion_goal: LevelCompletionGoal
+    death_link: DeathLink
+    cruel_time_items: CruelTimeItems
+    include_extended_score_checks: AddExtendedScoreChecks

@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://ck1puqwe4jrxo"]
+
+[ext_resource type="Script" uid="uid://bhyr1w6p0afqo" path="res://prefabs/DialogWindow2/DialogWindow2.cs" id="1_t0hj0"]
+[ext_resource type="StyleBox" uid="uid://c2aqfpbc0gmio" path="res://styles/dialog_window_content_style.tres" id="2_r0wbn"]
+
+[node name="DialogWindow2" type="Node2D" unique_id=1309426340]
+visible = false
+script = ExtResource("1_t0hj0")
+
+[node name="InputBlocker" type="Button" parent="." unique_id=318729437]
+modulate = Color(1, 1, 1, 0)
+offset_right = 1159.0
+offset_bottom = 655.0
+
+[node name="OKDialog" type="AcceptDialog" parent="." unique_id=884680889]
+oversampling_override = 1.0
+title = "Galaxy Gauntlet"
+initial_position = 2
+size = Vector2i(400, 150)
+theme_override_styles/panel = ExtResource("2_r0wbn")
+dialog_autowrap = true
+
+[node name="YesNoDialog" type="ConfirmationDialog" parent="." unique_id=829984192]
+oversampling_override = 1.0
+title = "Galaxy Gauntlet"
+initial_position = 2
+size = Vector2i(400, 150)
+max_size = Vector2i(500, 500)
+ok_button_text = "Yes"
+dialog_autowrap = true
+cancel_button_text = "No"

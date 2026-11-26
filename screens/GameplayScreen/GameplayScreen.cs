@@ -1,16 +1,16 @@
 using GalaxyGauntlet.scripts;
-using GalaxyGauntlet.scripts.MapEntities;
-using GalaxyGauntlet.scripts.MapEntities.Shared;
 using GalaxyGauntlet.scripts.SaveData;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+
 public partial class GameplayScreen : Node
 {
-	private MapDisplay MapDisplay;
+	private bool DebugMode = false;
 
-	private DialogWindow DialogWindow;
+	private MapDisplay2 MapDisplay2;
+
+	private DialogWindow2 DialogWindow2;
 
 	private Label LevelName;
 
@@ -18,15 +18,21 @@ public partial class GameplayScreen : Node
 
 	private Label Timer;
 
+	private Label StepOffset;
+
 	private Label HintLabel;
 
-	private DateTime _previousPlayerProcessTime = DateTime.Parse("01/01/2000");
+	private Node2D DebugDisplay;
 
-	private DateTime _previousPlayerSlipListProcessTime = DateTime.Parse("01/01/2000");
+	private Label ChipTick;
 
-	private DateTime _previousSlipListProcessTime = DateTime.Parse("01/01/2000");
+	private Label GameTick;
 
-	private DateTime _previousMobProcessTime = DateTime.Parse("01/01/2000");
+	private Sprite2D AcceptingInput;
+
+	private DigitDisplay ChipCountDisplay;
+
+	private DigitDisplay TimerDisplay;
 
 	#region Godot Overrides
 
@@ -34,9 +40,9 @@ public partial class GameplayScreen : Node
 	{
 		try
 		{
-			MapDisplay = (MapDisplay)GetNode(nameof(MapDisplay));
+			MapDisplay2 = (MapDisplay2)GetNode(nameof(MapDisplay2));
 
-			DialogWindow = (DialogWindow)GetNode(nameof(DialogWindow));
+			DialogWindow2 = (DialogWindow2)GetNode(nameof(DialogWindow2));
 
 			LevelName = (Label)GetNode(nameof(LevelName));
 
@@ -44,13 +50,24 @@ public partial class GameplayScreen : Node
 
 			Timer = (Label)GetNode(nameof(Timer));
 
+			StepOffset = (Label)GetNode(nameof(StepOffset));
+
 			HintLabel = (Label)GetNode(nameof(HintLabel));
 			HintLabel.Visible = false;
-			HintLabel.Resized += OnHintLabelResized;
+
+			ChipCountDisplay = (DigitDisplay)GetNode(nameof(ChipCountDisplay));
+
+			TimerDisplay = (DigitDisplay)GetNode(nameof(TimerDisplay));
 
 			GameData.LoadCurrentLevel();
 			HintLabel.Text = GameData.Level.Hint;
 			GameData.Level.Timer = GameData.Map.TimeLimit + 0.99999;
+			UpdateLabels();
+
+			DebugDisplay = (Node2D)GetNode(nameof(DebugDisplay));
+			ChipTick = (Label)DebugDisplay.GetNode(nameof(ChipTick));
+			GameTick = (Label)DebugDisplay.GetNode(nameof(GameTick));
+			AcceptingInput = (Sprite2D)DebugDisplay.GetNode(nameof(AcceptingInput));
 		}
 		catch (Exception e)
 		{
@@ -61,18 +78,12 @@ public partial class GameplayScreen : Node
 
 	public override void _Process(double delta)
 	{
-		// Render map if necessary
-		if(GameData.Map.Rerender)
-		{
-			MapDisplay.RenderMapData();
-		}
-
-		if(Input.IsActionJustPressed("level_reset"))
+		if (Input.IsActionJustPressed("level_reset"))
 		{
 			RestartLevel();
 			return;
 		}
-		if(Input.IsActionJustPressed("player_pause"))
+		if (Input.IsActionJustPressed("player_pause"))
 		{
 			GameData.Level.ProcessMobs = false;
 			GameData.Level.TimerEnabled = false;
@@ -82,114 +93,65 @@ public partial class GameplayScreen : Node
 		}
 
 		GameData.Level.ConfusionTimer = Mathf.Max(GameData.Level.ConfusionTimer - delta, 0);
-		ProcessGameTick();
-		CheckPlayerStatus();
-		UpdateTimer(delta);
-		UpdateLabels();
-		if(false == DialogWindow.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+		CheckForInitialPlayerInput();
+		if(GameData.Level.ProcessMobs)
 		{
-			MapDisplay.RenderMapData();
-			OnPlayerDeath();
-		}
-		if(GameData.Level.ProcessMobs && GameData.Archipelago.PendingItems.Count > 0)
-		{
-			GameData.Level.PlayerItems.AddRange(GameData.Archipelago.PendingItems);
-			GameData.Archipelago.PendingItems.Clear();
+			UpdateDebugUI();
+			CheckPlayerStatus();
+			UpdateTimer(delta);
+			UpdateLabels();
+			if(false == DialogWindow2.Visible && false == string.IsNullOrEmpty(GameData.Level.DeathMessage))
+			{
+				OnPlayerDeath();
+			}
 		}
 	}
 
 	#endregion
 
+	private void UpdateDebugUI()
+	{
+		if(false == DebugMode)
+		{
+			DebugDisplay.Visible = false;
+			return;
+		}
+
+		DebugDisplay.Visible = true;
+		ChipTick.Text = $"Chip Tick: {GameData.Level.ChipTick}";
+		GameTick.Text = $"Game Tick: {GameData.Level.CurrentTick}";
+		AcceptingInput.Modulate = (GameData.Level.ChipTick >= 3)
+			? Godot.Color.Color8(0, 200, 0)
+			: Godot.Color.Color8(200, 0, 0);
+	}
+
+
 	private void UpdateLabels()
 	{
 		LevelName.Text = GameData.Level.Name;
-		ChipCount.Text = $"Chips Remaining: {Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0)}";
-		Timer.Text = $"Time: {(int)GameData.Level.Timer}";
 
-		var currentItem = GameData.Map.GetItem(GameData.Level.PlayerCoordinate);
-		HintLabel.Visible = (currentItem != null && currentItem is HintPanelItem);
-	}
+		int chipsRemaining = Mathf.Max(GameData.Level.ChipsRequired - GameData.Level.ChipsCollected, 0);
+		ChipCountDisplay.SetValue(chipsRemaining);
 
+		int? timer = (GameData.Map.TimeLimit == 0)
+			? null
+			: (int)GameData.Level.Timer;
+		TimerDisplay.SetValue(timer);
 
-	private void ProcessGameTick()
-	{
-		// Freeze mob lists before the process swaps mobs between lists,
-		// which can cause double processing.
-		var playerList = GameData.Map.PlayerProcessList;
-		var playerSlipList = GameData.Map.PlayerSliplist;
-		var slipList = GameData.Map.MobSlipList;
-		List<MapMob> mobList = [..GameData.Map.MobProcessList];
-
-		DateTime now = DateTime.Now;
-		double regularTick = 0.2;
-		double slipListTick = regularTick / 2.0;
-
-		var timeSincePlayerProcess = (now - _previousPlayerProcessTime).TotalSeconds;
-		var playerInput = GetPlayerInput();
-		if(playerInput != Vector2I.Zero && timeSincePlayerProcess >= regularTick)
+		StepOffset.Text = GameData.Level.SteppingOffset switch
 		{
-			if(playerList.Count != 0)
-			{
-				GameData.ProcessMobList(playerList);
-				_previousPlayerProcessTime = now;
-				_previousPlayerSlipListProcessTime = now;
-			}
-		}
+			0 => "Odd",
+			1 => "O+1",
+			2 => "O+2",
+			3 => "O+3",
+			5 => "E+1",
+			6 => "E+2",
+			7 => "E+3",
+			_ => string.Empty,
+		};
 
-		var timeSincePlayerSlipListProcess = (now - _previousPlayerSlipListProcessTime).TotalSeconds;
-		if(timeSincePlayerSlipListProcess >= slipListTick)
-		{
-			if(playerSlipList.Count != 0)
-			{
-				GameData.ProcessMobList(playerSlipList);
-				_previousPlayerSlipListProcessTime = now;
-			}
-		}
-
-		var timeSinceMobListProcess = (now - _previousMobProcessTime).TotalSeconds;
-		var timeSinceSlipListProcess = (now - _previousSlipListProcessTime).TotalSeconds;
-		
-		// Process monsters that move 5 times or less per second
-		if (timeSinceMobListProcess >= regularTick)
-		{
-			if (GameData.Level.ProcessMobs)
-			{
-				GameData.ProcessMobList(mobList);
-				_previousMobProcessTime = now;
-				GameData.Map.PingPongStep = (GameData.Map.PingPongStep + 1) % 2;
-				GameData.Map.SquareStep = (GameData.Map.SquareStep + 1) % 4;
-				ProcessButtonPresses();
-			}
-			CheckForInitializationByPlayer();
-		}
-
-		// Process monsters that move 10 times per second (slip list)
-		if (timeSinceSlipListProcess >= slipListTick)
-		{
-			if (GameData.Level.ProcessMobs)
-			{
-				GameData.ProcessMobList(slipList);
-			}
-			_previousSlipListProcessTime = now;
-		}
-	}
-
-
-	private static void ProcessButtonPresses()
-	{
-		Dictionary<GalaxyGauntlet.scripts.Color, int> buttonPresses = [];
-		foreach(var button in GameData.Map.ButtonsToProcess)
-		{
-			button.ProcessTick();
-			if(button.NewlyPressed)
-			{
-				if(false == buttonPresses.ContainsKey(button.Color))
-				{
-					buttonPresses[button.Color] = 0;
-				}
-				buttonPresses[button.Color]++;
-			}
-		}
+		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
+		HintLabel.Visible = (currentTile is HintTile2);
 	}
 
 
@@ -209,22 +171,32 @@ public partial class GameplayScreen : Node
 		{
 			GameData.Level.Timer = 0;
 		}
-		if(GameData.Map.TimeLimit != 0 && GameData.Level.Timer <= 0 && false == DialogWindow.Visible)
+		if(GameData.Map.TimeLimit != 0 && GameData.Level.Timer <= 0 && false == DialogWindow2.Visible)
 		{
-			GameData.Level.DeathMessage = Constants.DeathMessages.OutOfTime;
+			GameData.Level.DeathMessage = GGConstants.DeathMessages.OutOfTime;
 			OnPlayerDeath();
 		}
 	}
 
 
-	private void CheckForInitializationByPlayer()
+	private void CheckForInitialPlayerInput()
 	{
 		if(GameData.Level.ProcessMobs || !GameData.Level.AcceptingPlayerInput)
 		{
 			return;
 		}
 
-		Vector2I input = GetPlayerInput();
+		if(Input.IsActionJustPressed("step_increment"))
+		{
+			GameData.Level.SteppingOffset = (GameData.Level.SteppingOffset + 1) % 8;
+		}
+		else if(Input.IsActionJustPressed("step_toggle"))
+		{
+			GameData.Level.SteppingOffset = GameData.Level.SteppingOffset >= 4
+				? 0 : 4;
+		}
+
+		Vector2I input = GameData.GetPlayerInput();
 		if(input != Vector2.Zero)
 		{
 			GameData.Level.ProcessMobs = true;
@@ -232,8 +204,6 @@ public partial class GameplayScreen : Node
 
 			// The player gets a free starting move
 			DateTime now = DateTime.Now;
-			_previousSlipListProcessTime = now;
-			_previousMobProcessTime = now;
 		}
 	}
 
@@ -245,14 +215,14 @@ public partial class GameplayScreen : Node
 			return;
 		}
 
-		var currentTile = GameData.Map.GetTile(GameData.Level.PlayerCoordinate);
-		if(currentTile is ExitTile)
+		var currentTile = GameData.Map.GetTile2(GameData.Level.PlayerCoordinate);
+		if (currentTile is ExitTile2) // It is assumed that a socket is blocking the exit, enforcing a chip requirement
 		{
 			GameData.OnLevelComplete();
-			DialogWindow.ClearAllButtonEvents();
+			DialogWindow2.ClearAllButtonEvents();
 			string dialogText = GetLevelScoreMessage();
-			DialogWindow.ShowDialog(dialogText, DialogButtonType.OK);
-			DialogWindow.OKButtonPressed += OnLevelComplete;
+			DialogWindow2.ShowDialog(dialogText, DialogButtonType.OK);
+			DialogWindow2.OKButtonPressed += OnLevelComplete;
 		}
 	}
 
@@ -260,17 +230,17 @@ public partial class GameplayScreen : Node
 	private void OnPlayerDeath()
 	{
 		GameData.OnPlayerDeath();
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);
-		DialogWindow.OKButtonPressed += RestartLevel;
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog(GameData.Level.DeathMessage, DialogButtonType.OK);
+		DialogWindow2.OKButtonPressed += RestartLevel;
 		GameData.Archipelago.IsProcessingDeathLink = false;
 	}
 
 
 	private void OnLevelComplete()
 	{
-		DialogWindow.HideDialog();
-		switch(GameData.Level.GameMode)
+		DialogWindow2.HideDialog();
+		switch(GameData.GameMode)
 		{
 			case GameMode.Campaign:
 				var gameComplete = GameData.Level.OnNextLevel();
@@ -281,12 +251,12 @@ public partial class GameplayScreen : Node
 				break;
 
 			case GameMode.QuickPlay:
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 
 			case GameMode.Archipelago:
 				GameData.Archipelago.CheckForGoal();
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 		}
 	}
@@ -294,66 +264,36 @@ public partial class GameplayScreen : Node
 
 	private void OnGameComplete()
 	{
-		DialogWindow.ClearAllButtonEvents();
-		DialogWindow.ShowDialog("Complete!", DialogButtonType.OK);
-		SaveData.DeleteSaveSlot(Constants.SaveSlotNames.Autosave);
-		DialogWindow.OKButtonPressed += OnExit;
+		DialogWindow2.ClearAllButtonEvents();
+		DialogWindow2.ShowDialog("Complete!", DialogButtonType.OK);
+		SaveData.DeleteSaveSlot(GGConstants.SaveSlotNames.Autosave);
+		DialogWindow2.OKButtonPressed += OnExit;
 	}
 
 
 	private void RestartLevel()
 	{
+		DialogWindow2.HideDialog();
+		MapDisplay2.ClearChildren();
 		GameData.Level.RestartCount++;
 		GameData.LoadCurrentLevel();
 		GameData.Level.Timer = GameData.Map.TimeLimit + 0.999999;
-		DialogWindow.Visible = false;
 	}
 
 
 	private void OnExit()
 	{
-		switch(GameData.Level.GameMode)
+		DialogWindow2.HideDialog();
+		switch (GameData.GameMode)
 		{
 			case GameMode.Campaign:
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.TitleMenu);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.TitleMenu);
 				break;
 
 			case GameMode.QuickPlay:
 			case GameMode.Archipelago:
-				GetTree().ChangeSceneToFile(Constants.ScenePaths.LevelSelect);
+				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
-		}
-	}
-
-
-	private static Vector2I GetPlayerInput()
-	{
-		Vector2I input = Vector2I.Zero;
-		if (Input.IsActionPressed("player_up"))
-		{
-			input = new(0, -1);
-		}
-		if (Input.IsActionPressed("player_down"))
-		{
-			input = new(0, 1);
-		}
-		if (Input.IsActionPressed("player_left"))
-		{
-			input = new(-1, 0);
-		}
-		if (Input.IsActionPressed("player_right"))
-		{
-			input = new(1, 0);
-		}
-		return input;
-	}
-
-
-	private void OnHintLabelResized()
-	{
-		if(HintLabel.Size.X > 200)
-		{
-			HintLabel.SetSize(new(200, HintLabel.Size.Y));
 		}
 	}
 
@@ -373,13 +313,13 @@ public partial class GameplayScreen : Node
 		levelBonus = (int)(levelBonus * Mathf.Pow(0.8f, GameData.Level.RestartCount));
 		levelBonus = Mathf.Max(levelBonus, 500);
 
-		switch(GameData.Level.GameMode)
+		switch(GameData.GameMode)
 		{
 			case GameMode.Archipelago:
 			case GameMode.Campaign:
-				string saveSlotName = (GameData.Level.GameMode == GameMode.Archipelago)
-					? Constants.SaveSlotNames.Archipelago
-					: Constants.SaveSlotNames.Autosave;
+				string saveSlotName = (GameData.GameMode == GameMode.Archipelago)
+					? GGConstants.SaveSlotNames.Archipelago
+					: GGConstants.SaveSlotNames.Autosave;
 				var saveSlot = SaveData.GetSaveSlot(saveSlotName);
 				if(false == saveSlot.HighScores.ContainsKey(GameData.Level.CurrentLevelIndex))
 				{
@@ -396,10 +336,10 @@ public partial class GameplayScreen : Node
 				result += $"\nLevel Bonus: {levelBonus}";
 				result += $"\nLevel Score: {timeBonus + levelBonus}";
 				result += $"\nTotal Score: {saveSlot.HighScores.Sum(e => e.Value)}";
-				if(GameData.Level.GameMode == GameMode.Archipelago)
+				if(GameData.GameMode == GameMode.Archipelago)
 				{
 					string saveSlotJson = JsonSerializer.Serialize(saveSlot);
-					GameData.Archipelago.SetDataStorageKey(Constants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
+					GameData.Archipelago.SetDataStorageKey(GGConstants.Archipelago.SlotDataKeys.SaveData, saveSlotJson);
 				}
 				break;
 

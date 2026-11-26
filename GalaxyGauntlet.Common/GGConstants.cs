@@ -1,0 +1,459 @@
+namespace GalaxyGauntlet.Common
+{
+    public enum GameMode
+    {
+        /// <summary>
+        /// Standard gameplay mode, sequentially playing through every level in the directory.
+        /// </summary>
+        Campaign,
+
+        /// <summary>
+        /// Playing a selected level.
+        /// </summary>
+        QuickPlay,
+
+        /// <summary>
+        /// Playing in Archipelago mode.
+        /// </summary>
+        Archipelago
+    }
+
+    public static class GGConstants
+    {
+        public static string GameName = "Galaxy Gauntlet";
+
+        public static VersionNumber GameVersion = new("0.1.α");
+
+        public static class AudioBuses
+        {
+            public const string Master = nameof(Master);
+
+            public const string Music = nameof(Music);
+        }
+
+        public static class ScenePaths
+        {
+            public const string GameplayScreen = "res://screens/GameplayScreen/GameplayScreen.tscn";
+            public const string LevelSelect = "res://screens/LevelSelect/LevelSelect.tscn";
+            public const string SettingsMenu = "res://screens/SettingsMenu/SettingsMenu.tscn";
+            public const string TitleMenu = "res://screens/TitleMenu/TitleMenu.tscn";
+        }
+
+        public static class SaveSlotNames
+        {
+            public const string Autosave = "autosave";
+            public const string Archipelago = "archipelago";
+        }
+
+        public static class Settings
+        {
+            public const string GameConfigFilePath = "user://gamedata.config";
+
+            public const string GameDataConfigSection = "GameData";
+
+            public const string MasterVolume = nameof(MasterVolume);
+            
+            public const string MusicVolume = nameof(MusicVolume);
+
+            public const string WindowMagnifier = nameof(WindowMagnifier);
+
+            public const string ArchipelagoGameName = nameof(ArchipelagoGameName);
+
+            public const string ArchipelagoServer = nameof(ArchipelagoServer);
+
+            public const string ArchipelagoPort = nameof(ArchipelagoPort);
+
+            public const string ArchipelagoSlotName = nameof(ArchipelagoSlotName);
+
+            public const string ArchipelagoPassword = nameof(ArchipelagoPassword);
+        }
+
+        public static class Archipelago
+        {
+
+            public static class SlotDataKeys
+            {
+                public const string PlayerSprite = "player_sprite";
+                public const string LevelHash = "level_hash";
+                public const string DeathLink = "death_link";
+                public const string ScoreGoal = "score_goal";
+                public const string LevelCompletionGoal = "level_completion_goal";
+                public const string GameVersion = "game_version";
+                public const string IgnoreLevelFiles = "ignore_level_files";
+                public const string SaveData = "save_data";
+                public const string CruelTimeItems = "cruel_time_items";
+                public const string ChipLocationDisplay = "chip_location_display";
+                public const string MaximumChipLocationsPerLevel = "maximum_chip_locations_per_level";
+            }
+
+
+            public static class ItemNames
+            {
+                public const string SingleUseRedKey = "Single-Use Red Key";
+                public const string SingleUseBlueKey = "Single-Use Blue Key";
+                public const string SingleUseYellowKey = "Single-Use Yellow Key";
+                public const string SingleUseGreenKey = "Single-Use Green Key";
+                public const string SingleUseIceSkates = "Single-Use Ice Skates";
+                public const string SingleUseFireBoots = "Single-Use Fire Boots";
+                public const string SingleUseSuctionBoots = "Single-Use Suction Boots";
+                public const string SingleUseFlippers = "Single-Use Flippers";
+                public const string SingleUseHelmet = "Single-Use Helmet";
+                public const string SingleUseSecretEye = "Single-Use Secret Eye";
+                public const string TimeBonus = "Time Bonus";
+                public const string BigMap = "Big Map";
+                public const string Filler = "Filler";
+            }
+
+            public static class TrapNames {
+                public const string TimePenalty = "Time Penalty";
+                public const string TeethTrap = "Teeth";
+                public const string WalkerTrap = "Walker";
+                public const string BlobTrap = "Blob";
+                public const string ConfusionTrap = "Confusion";
+                public const string SmallMapTrap = "Small Map";
+            }
+
+
+            public static class PlayerSpriteIndexes
+            {
+                public const int Player = 0;
+                public const int Teeth = 1;
+                public const int BlueTank = 2;
+                public const int Glider = 3;
+                public const int Bug = 4;
+                public const int Paramecium = 5;
+                public const int Fireball = 6;
+                public const int Walker = 7;
+            }
+
+
+            public static class ChipLocationDisplayIndexes
+            {
+                public const int True = 0;
+                public const int Vague = 1;
+                public const int Hidden = 2;
+            }
+        }
+
+
+        public static class ByteCodes
+        {
+            public static class Entities
+            {
+                public const int None = 0x00;
+                public const int Floor = 0x01;
+                public const int Wall = 0x02;
+                public const int IceTile = 0x03;
+                public const int Ice_SW = 0x04;
+                public const int Ice_NW = 0x05;
+                public const int Ice_NE = 0x06;
+                public const int Ice_SE = 0x07;
+                public const int Water = 0x08;
+                public const int Fire = 0x09;
+                public const int ForceFloor_N = 0x0A;
+                public const int ForceFloor_E = 0x0B;
+                public const int ForceFloor_S = 0x0C;
+                public const int ForceFloor_W = 0x0D;
+                public const int GreenToggleWall = 0x0E;
+                public const int GreenToggleFloor = 0x0F;
+                public const int RedTeleporter = 0x10;
+                public const int BlueTeleporter = 0x11;
+                public const int YellowTeleporter = 0x12;
+                public const int GreenTeleporter = 0x13;
+                public const int Exit = 0x14;
+                public const int Slime = 0x15;
+                public const int Player = 0x16;
+                public const int DirtBlock = 0x17;
+                public const int Walker = 0x18;
+                public const int Glider = 0x19;
+                public const int IceBlock = 0x1A;
+                public const int ThinWall_S = 0x1B;
+                public const int ThinWall_E = 0x1C;
+                public const int ThinWall_SE = 0x1D;
+                public const int Gravel = 0x1E;
+                public const int GreenButton = 0x1F;
+                public const int BlueButton = 0x20;
+                public const int BlueTank = 0x21;
+                public const int RedDoor = 0x22;
+                public const int BlueDoor = 0x23;
+                public const int YellowDoor = 0x24;
+                public const int GreenDoor = 0x25;
+                public const int RedKey = 0x26;
+                public const int BlueKey = 0x27;
+                public const int YellowKey = 0x28;
+                public const int GreenKey = 0x29;
+                public const int Chip = 0x2A;
+                public const int ExtraChip = 0x2B;
+                public const int Socket = 0x2C;
+                public const int RecessedWall = 0x2D;
+                public const int HiddenWall = 0x2E;
+                public const int InvisibleWall = 0x2F;
+                public const int BlueWall = 0x30;
+                public const int FakeBlueWall = 0x31;
+                public const int Dirt = 0x32;
+                public const int Bug = 0x33;
+                public const int Paramecium = 0x34;
+                public const int Ball = 0x35;
+                public const int Blob = 0x36;
+                public const int Teeth = 0x37;
+                public const int Fireball = 0x38;
+                public const int RedButton = 0x39;
+                public const int BrownButton = 0x3A;
+                public const int IceSkates = 0x3B;
+                public const int SuctionBoots = 0x3C;
+                public const int FireBoots = 0x3D;
+                public const int Flippers = 0x3E;
+                public const int ToolThief = 0x3F;
+                public const int RedBomb = 0x40;
+                public const int TrapInactive = 0x41;
+                public const int TrapActive = 0x42;
+                public const int CloneMachine_V1 = 0x43;
+                public const int CloneMachine = 0x44;
+                public const int HintPanel = 0x45;
+                public const int ForceFloor_R = 0x46;
+                public const int GrayButton = 0x47;
+                public const int SwivelDoor_SW = 0x48;
+                public const int SwivelDoor_NW = 0x49;
+                public const int SwivelDoor_NE = 0x4A;
+                public const int SwivelDoor_SE = 0x4B;
+                public const int TimeBonus = 0x4C;
+                public const int Stopwatch = 0x4D;
+                public const int Transmogrifier = 0x4E;
+                public const int RailroadTrack = 0x4F;
+                public const int SteelWall = 0x50;
+                public const int TimeBomb = 0x51;
+                public const int Helmet = 0x52;
+                public const int Melinda = 0x56;
+                public const int TimidTeeth = 0x57;
+                public const int Explosion = 0x58;
+                public const int HikingBoots = 0x59;
+                public const int MaleOnlySign = 0x5A;
+                public const int FemaleOnlySign = 0x5B;
+                public const int LogicGate = 0x5C;
+                public const int PinkButton = 0x5E;
+                public const int FlameJet_Off = 0x5F;
+                public const int FlameJet_On = 0x60;
+                public const int OrangeButton = 0x61;
+                public const int LightningBolt = 0x62;
+                public const int YellowTank = 0x63;
+                public const int YellowTankButton = 0x64;
+                public const int MirrorPlayer = 0x65;
+                public const int MirrorMelinda = 0x66;
+                public const int BowlingBall = 0x68;
+                public const int Rover = 0x69;
+                public const int TimePenalty = 0x6A;
+                public const int CustomFloor = 0x6B;
+                public const int ThinWallOrCanopy = 0x6D;
+                public const int RailroadSign = 0x6F;
+                public const int CustomWall = 0x70;
+                public const int LetterTile = 0x71;
+                public const int PurpleToggleFloor = 0x72;
+                public const int PurpleToggleWall = 0x73;
+                public const int Modifier_8Bit = 0x76;
+                public const int Modifier_16Bit = 0x77;
+                public const int Modifier_32Bit = 0x78;
+                public const int PointFlag10 = 0x7A;
+                public const int PointFlag100 = 0x7B;
+                public const int PointFlag1000 = 0x7C;
+                public const int GreenWall = 0x7D;
+                public const int FakeGreenWall = 0x7E;
+                public const int NotAllowedSign = 0x7F;
+                public const int DoublePointFlag = 0x80;
+                public const int DirecitonalBlock = 0x81;
+                public const int FloorMimic = 0x82;
+                public const int GreenBomb = 0x83;
+                public const int GreenChip = 0x84;
+                public const int BlackButton = 0x87;
+                public const int OnOffSwitch_Off = 0x88;
+                public const int OnOffSwitch_On = 0x89;
+                public const int KeyThief = 0x8A;
+                public const int Ghost = 0x8B;
+                public const int SteelFoil = 0x8C;
+                public const int Turtle = 0x8D;
+                public const int SecretEye = 0x8E;
+                public const int Bribe = 0x8F;
+                public const int SpeedBoots = 0x90;
+                public const int Hook = 0x92;
+            }
+
+
+            public static class OrientationBytes
+            {
+                public const int North = 0x00;
+                public const int East = 0x01;
+                public const int South = 0x02;
+                public const int West = 0x03;
+            }
+
+
+            public static class ThinWallBits
+            {
+                public const int North = 0x01;
+                public const int East = 0x02;
+                public const int South = 0x04;
+                public const int West = 0x08;
+                public const int Canopy = 0x10;
+            }
+        }
+
+
+        public static class ZIndexes
+        {
+            public const int Tile = 0;
+            public const int Item = 6;
+            public const int Player = 9;
+            public const int Creature = 10;
+            public const int Canopy = 20;
+            public const int DialogWindow = 100;
+        }
+
+
+        public static class SpriteFrameIndexes
+        {
+            public const int RedDoor = 16;
+            public const int BlueDoor = 17;
+            public const int YellowDoor = 18;
+            public const int GreenDoor = 19;
+            public const int RedKey = 20;
+            public const int BlueKey = 21;
+            public const int YellowKey = 22;
+            public const int GreenKey = 23;
+            public const int DirtBlock = 24;
+            public const int DirtBlock_XRay = 25;
+            public const int Ice = 26;
+            public const int Ice_SE = 27;
+            public const int Ice_SW = 28;
+            public const int Ice_NE = 29;
+            public const int Ice_NW = 30;
+            public const int CloneMachine = 31;
+            public const int Floor = 32;
+            public const int Wall = 33;
+            public const int LetterPanel = 34;
+            public const int ToolThief = 35;
+            public const int Socket = 36;
+            public const int HintPanel = 37;
+            public const int Exit = 38;
+            public const int IceBlock = 42;
+            public const int IceBlock_XRay = 43;
+            public const int GreenChip = 57;
+            public const int ExtraChip = 58;
+            public const int Chip = 59;
+            public const int Bribe = 60;
+            public const int Canopy = 62;
+            public const int Canopy_XRay = 63;
+            public const int RedBomb = 69;
+            public const int GreenBomb = 70;
+            public const int NoSprite = 71;
+            public const int Flippers = 96;
+            public const int FireBoots = 97;
+            public const int IceSkates = 98;
+            public const int SuctionBoots = 99;
+            public const int BlueButton = 104;
+            public const int GreenButton = 105;
+            public const int RedButton = 106;
+            public const int BrownButton = 107;
+            public const int Bug_N = 112;
+            public const int Bug_E = 116;
+            public const int Bug_S = 120;
+            public const int Bug_W = 124;
+            public const int BlueTank_N = 128;
+            public const int BlueTank_E = 130;
+            public const int BlueTank_S = 132;
+            public const int BlueTank_W = 134;
+            public const int Glider_N = 136;
+            public const int Glider_E = 138;
+            public const int Glider_S = 140;
+            public const int Glider_W = 142;
+            public const int GreenToggleFloor = 144;
+            public const int ToggleWall = 152;
+            public const int TrapActive = 153;
+            public const int TrapInactive = 154;
+            public const int GrayButton = 155;
+            public const int Fireball_N = 156;
+            public const int Fireball_E = 157;
+            public const int Fireball_S = 158;
+            public const int Fireball_W = 159;
+            public const int BlueWall = 160;
+            public const int BlueTeleporter = 164;
+            public const int RecessedWall = 168;
+            public const int Gravel = 169;
+            public const int Ball = 170;
+            public const int Teeth_N = 176;
+            public const int Teeth_E = 179;
+            public const int Teeth_W = 182;
+            public const int SwivelDoor_SW = 185;
+            public const int SwivelDoor_NW = 186;
+            public const int SwivelDoor_NE = 187;
+            public const int SwivelDoor_SE = 188;
+            public const int TimePenalty = 191;
+            public const int Paramecium_N = 192;
+            public const int Paramecium_E = 195;
+            public const int Paramecium_S = 198;
+            public const int Paramecium_W = 201;
+            public const int Walker = 208;
+            public const int Helmet = 224;
+            public const int TimeToggle = 238;
+            public const int TimeBonus = 239;
+            public const int Blob = 240;
+            public const int DebugSprite = 256;
+            public const int SecretEye = 299;
+            public const int ForceFloor_N = 304;
+            public const int ForceFloor_S = 305;
+            public const int ForceFloor_E = 306;
+            public const int GreenTeleporter = 308;
+            public const int YellowTeleporter = 309;
+            public const int Transmogrifier = 316;
+            public const int ForceFloor_W = 322;
+            public const int RedTeleporter = 324;
+            public const int Slime = 328;
+            public const int ForceFloor_R = 336;
+            public const int Player_N = 392;
+            public const int Player_E = 393;
+            public const int Player_S = 394;
+            public const int Player_W = 395;
+            public const int Water = 396;
+            public const int Fire = 476;
+            public const int Dirt = 500;
+        }
+
+
+        public static class ThinWallSpriteFrameIndexes
+        {
+            public const int North_West = 0;
+            public const int North_East = 1;
+            public const int East_North = 2;
+            public const int East_South = 3;
+            public const int South_West = 4;
+            public const int South_East = 5;
+            public const int West_North = 6;
+            public const int West_South = 7;
+        }
+
+
+        public static class ArchipelagoItemSpriteIndexes
+        {
+            public const int Useful = 0;
+            public const int Progression = 1;
+            public const int Filler = 2;
+            public const int Trap = 3;
+        }
+
+
+        public static class DeathMessages
+        {
+            public static string MovingBlocks = "Ooops! Watch out for moving blocks!";
+
+            public static string OutOfTime = "Ooops! Out of time!";
+
+            public static string Monsters = "Ooops! Look out for creatures!";
+
+            public static string Bombs = "Ooops! Don't touch the bombs!";
+
+            public static string Fire = "Ooops! Don't step in the fire without fire boots!";
+
+            public static string Water = "Ooops! You can't swim without flippers!";
+
+            public static string Slime = "Ooops! Watch out for slime!";
+        }
+    }
+}
