@@ -221,6 +221,7 @@ namespace GalaxyGauntlet.scripts
 				Port = port;
 				SlotName = slotName;
 				Password = password;
+				GameData.SaveSettings();
 
 				// Load from Slot Data
 				await LoadGameSaveFromSlotData();
