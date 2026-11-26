@@ -25,15 +25,15 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    option_Fireball = 6",
                 "    option_Walker = 7",
                 "",
-                "class ChipsAsCheckProbability(Range):",
+                "class MaximumChipLocationsPerLevel(Range):",
                 "    \"\"\"",
-                "    Specifies the odds (out of 100) that a given chip item will be included as a location.",
-                "    Set this value to 0 to disable chips as checks.",
+                "    Specifies the maximum amount of chips in a level that can be used as Archipelago " +
+                "    locations. Set this value to 0 to disable using chip items as locations.",
                 "    \"\"\"",
-                "    display_name = \"Chip as Check Probability\"",
+                "    display_name = \"Maximum Chip Locations Per Level\"",
                 "    range_start = 0",
-                "    range_end = 100",
-                "    default = 0",
+                "    range_end = 15",
+                "    default = 4",
                 "",
                 "class ProportionOfFillerAsUsefulItems(Range):",
                 "    \"\"\"",
@@ -105,7 +105,6 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "@dataclass",
                 $"class {ClassPrefix}Options(PerGameCommonOptions):",
                 $"    {GGConstants.Archipelago.SlotDataKeys.PlayerSprite}: PlayerSpriteOption",
-                $"    chip_as_check_probability: ChipsAsCheckProbability",
                 $"    proportion_of_filler_as_useful_items: ProportionOfFillerAsUsefulItems",
                 $"    proportion_of_filler_as_traps: ProportionOfFillerAsTraps",
                 $"    {GGConstants.Archipelago.SlotDataKeys.ScoreGoal}: ScoreGoal",
@@ -113,6 +112,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 $"    {GGConstants.Archipelago.SlotDataKeys.DeathLink}: DeathLink",
                 $"    {GGConstants.Archipelago.SlotDataKeys.CruelTimeItems}: CruelTimeItems",
                 $"    {GGConstants.Archipelago.SlotDataKeys.ChipLocationDisplay}: ChipLocationDisplayOption",
+                $"    {GGConstants.Archipelago.SlotDataKeys.MaximumChipLocationsPerLevel}: MaximumChipLocationsPerLevel"
             ]);
             if(IncludeExtendedScoreChecks)
             {

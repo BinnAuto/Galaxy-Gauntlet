@@ -83,6 +83,7 @@ namespace GalaxyGauntlet.Common
                 public const string SaveData = "save_data";
                 public const string CruelTimeItems = "cruel_time_items";
                 public const string ChipLocationDisplay = "chip_location_display";
+                public const string MaximumChipLocationsPerLevel = "maximum_chip_locations_per_level";
             }
 
 
