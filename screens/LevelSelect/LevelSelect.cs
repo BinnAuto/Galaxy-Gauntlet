@@ -25,6 +25,7 @@ public partial class LevelSelect : Node2D
 
 	private CheckButton HideCompletedLevels;
 
+
     #region Godot Overrides
 
     public override void _Ready()
@@ -58,6 +59,7 @@ public partial class LevelSelect : Node2D
 
 			HideCompletedLevels = (CheckButton)ArchipelagoDisplay.GetNode(nameof(HideCompletedLevels));
 			HideCompletedLevels.Toggled += OnHideCompletedLevels;
+			HideCompletedLevels.ButtonPressed = true;
 
             BuildButtonList();
 
@@ -159,6 +161,7 @@ public partial class LevelSelect : Node2D
 				GridContainer.AddChild(levelFirstTryComplete);
 			}
 		}
+		FilterLevels();
 	}
 
 
