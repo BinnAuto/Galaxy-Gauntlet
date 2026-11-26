@@ -185,7 +185,7 @@ public partial class LevelSelect : Node2D
 
 	private void FilterLevels()
 	{
-		string searchTerm = LevelSearch.Text;
+		string searchTerm = LevelSearch.Text.Replace(" ", string.Empty);
 		bool hideCompletedLevels = false;
 		if(GameData.GameMode == GameMode.Archipelago)
 		{
