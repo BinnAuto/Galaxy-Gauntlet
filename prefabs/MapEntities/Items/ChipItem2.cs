@@ -33,14 +33,27 @@ public partial class ChipItem2(Vector2I coordinate) : MapItem2(coordinate)
                 return;
             }
 
-            int spriteFrameIndex = item switch
+            int spriteFrameIndex = GGConstants.ArchipelagoItemSpriteIndexes.Useful;
+            switch(GameData.Archipelago.ChipLocationDisplay)
             {
-                ItemFlags.Advancement => GGConstants.ArchipelagoItemSpriteIndexes.Progressive,
-                ItemFlags.Trap => GGConstants.ArchipelagoItemSpriteIndexes.Trap,
-                ItemFlags.None => GGConstants.ArchipelagoItemSpriteIndexes.Filler,
-                ItemFlags.NeverExclude => GGConstants.ArchipelagoItemSpriteIndexes.Helpful,
-                _ => GGConstants.ArchipelagoItemSpriteIndexes.Filler
-            };
+                case GGConstants.Archipelago.ChipLocationDisplayIndexes.True:
+                    spriteFrameIndex = item switch
+                    {
+                        ItemFlags.Advancement => GGConstants.ArchipelagoItemSpriteIndexes.Progression,
+                        ItemFlags.Trap => GGConstants.ArchipelagoItemSpriteIndexes.Trap,
+                        ItemFlags.None => GGConstants.ArchipelagoItemSpriteIndexes.Filler,
+                        ItemFlags.NeverExclude => GGConstants.ArchipelagoItemSpriteIndexes.Useful,
+                        _ => GGConstants.ArchipelagoItemSpriteIndexes.Filler
+                    };
+                    break;
+
+                case GGConstants.Archipelago.ChipLocationDisplayIndexes.Vague:
+                    break;
+
+                case GGConstants.Archipelago.ChipLocationDisplayIndexes.Hidden:
+                    return;
+            }
+
             ArchipelagoSprite = new()
             {
                 SpriteFrames = GameData.ArchipelagoSpriteFrames,

@@ -84,7 +84,13 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public bool EnableCruelTimeItems = false;
 
+		/// <summary>
+		/// Determines how a chip should display ingame if it is an Archipelago location.
+		/// </summary>
+		public long ChipLocationDisplay = 0;
+
 		public int NumLevelsCompleted = 0;
+
 		public long PlayerSpriteIndex = GGConstants.Archipelago.PlayerSpriteIndexes.Player;
 
 		/// <summary>
@@ -223,7 +229,8 @@ namespace GalaxyGauntlet.scripts
 				ConfigureDeathLink();
 				long cruelTimeItems = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.CruelTimeItems, 0);
 				EnableCruelTimeItems = (cruelTimeItems == 1);
-				await ScoutAPLocations();
+				ChipLocationDisplay = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.ChipLocationDisplay, GGConstants.Archipelago.ChipLocationDisplayIndexes.True);
+                await ScoutAPLocations();
 				FileLogger.QuietLogMessage("Successfully connected to Archipelago server");
 				InitialProcessingComplete = true;
 			}

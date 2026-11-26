@@ -82,6 +82,7 @@ namespace GalaxyGauntlet.Common
                 public const string IgnoreLevelFiles = "ignore_level_files";
                 public const string SaveData = "save_data";
                 public const string CruelTimeItems = "cruel_time_items";
+                public const string ChipLocationDisplay = "chip_location_display";
             }
 
 
@@ -122,6 +123,14 @@ namespace GalaxyGauntlet.Common
                 public const int Paramecium = 5;
                 public const int Fireball = 6;
                 public const int Walker = 7;
+            }
+
+
+            public static class ChipLocationDisplayIndexes
+            {
+                public const int True = 0;
+                public const int Vague = 1;
+                public const int Hidden = 2;
             }
         }
 
@@ -422,8 +431,8 @@ namespace GalaxyGauntlet.Common
 
         public static class ArchipelagoItemSpriteIndexes
         {
-            public const int Helpful = 0;
-            public const int Progressive = 1;
+            public const int Useful = 0;
+            public const int Progression = 1;
             public const int Filler = 2;
             public const int Trap = 3;
         }

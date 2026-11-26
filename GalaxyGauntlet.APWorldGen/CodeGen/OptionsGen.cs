@@ -13,7 +13,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "",
                 "class PlayerSpriteOption(Choice):",
                 "    \"\"\"",
-                "    Determines the sprite to use for Chip when displaying the player character",
+                "    Determines the sprite to use for Chip when displaying the player character.",
                 "    \"\"\"",
                 "    display_name = \"Player Sprite\"",
                 "    option_Chip = 0",
@@ -87,6 +87,18 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    received through Archipelago, effectively an auto-death.",
                 "    \"\"\"",
                 "    display_name = \"Cruel Time Items\"",
+                "",
+                "class ChipLocationDisplayOption(Choice):",
+                "    \"\"\"",
+                "    Determines how chip locations should appear in game.",
+                "     - Actual: The icon for uncollected items appears according to the item's type. Chips that are not locations display as regular chips.",
+                "     - Vague: All unvisited Archipelago locations appear as Helpful items. Chips that are not locations display as regular chips.",
+                "     - Hidden: All chips display as regular chips, whether they are Archipelago locations or not.",
+                "    \"\"\"",
+                "    display_name = \"Chip Location Display\"",
+                "    option_True = 0",
+                "    option_Vague = 1",
+                "    option_Hidden = 2",
                 ""
             ];
             fileLines.AddRange([
@@ -99,7 +111,8 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 $"    {GGConstants.Archipelago.SlotDataKeys.ScoreGoal}: ScoreGoal",
                 $"    {GGConstants.Archipelago.SlotDataKeys.LevelCompletionGoal}: LevelCompletionGoal",
                 $"    {GGConstants.Archipelago.SlotDataKeys.DeathLink}: DeathLink",
-                $"    {GGConstants.Archipelago.SlotDataKeys.CruelTimeItems}: CruelTimeItems"
+                $"    {GGConstants.Archipelago.SlotDataKeys.CruelTimeItems}: CruelTimeItems",
+                $"    {GGConstants.Archipelago.SlotDataKeys.ChipLocationDisplay}: ChipLocationDisplayOption",
             ]);
             if(IncludeExtendedScoreChecks)
             {
