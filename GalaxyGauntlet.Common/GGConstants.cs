@@ -75,7 +75,8 @@ namespace GalaxyGauntlet.Common
             {
                 public const string PlayerSprite = "player_sprite";
                 public const string LevelHash = "level_hash";
-                public const string DeathLink = "death_link";
+                public const string DeathLinkSendProbability = "death_link_send_probability";
+                public const string DeathLinkReceiveProbability = "death_link_receive_probability";
                 public const string ScoreGoal = "score_goal";
                 public const string LevelCompletionGoal = "level_completion_goal";
                 public const string GameVersion = "game_version";

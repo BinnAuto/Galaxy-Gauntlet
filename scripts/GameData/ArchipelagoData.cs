@@ -69,13 +69,13 @@ namespace GalaxyGauntlet.scripts
 		 */
 		#region Archipelago Data
 
-		/// <summary>
-		/// Is deathlink enabled for the current Archipelago session
-		/// </summary>
-		public bool DeathLinkEnabled = false;
+		public long DeathLinkSendProbability = 0;
+
+
+		public long DeathLinkReceiveProbability = 0;
 
 		/// <summary>
-		/// Is the game currently processing an incoming deathlink command? Prevents deathlink loops.
+		/// Is the game currently processing an incoming death link command? Prevents death link loops.
 		/// </summary>
 		public bool IsProcessingDeathLink = false;
 
@@ -360,16 +360,10 @@ namespace GalaxyGauntlet.scripts
 		{
 			DeathLinkService = Session.CreateDeathLinkService();
 			DeathLinkService.OnDeathLinkReceived += OnDeathLinkReceived;
-			long deathLinkSetting = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.DeathLink, 0);
-			DeathLinkEnabled = (deathLinkSetting == 1);
-			if (DeathLinkEnabled)
-			{
-				DeathLinkService.EnableDeathLink();
-			}
-			else
-			{
-				DeathLinkService.DisableDeathLink();
-			}
+			DeathLinkService.EnableDeathLink();
+
+			DeathLinkReceiveProbability = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.DeathLinkReceiveProbability, 0);
+			DeathLinkSendProbability = GetSlotDataKeyOrDefault<long>(GGConstants.Archipelago.SlotDataKeys.DeathLinkSendProbability, 0);
 		}
 
 
@@ -601,38 +595,56 @@ namespace GalaxyGauntlet.scripts
 		{
 			try
 			{
-				if (false == DeathLinkEnabled)
+				FileLogger.QuietLogMessage("Processing player death through death link system...");
+				if(DeathLinkSendProbability == 0)
 				{
-					IsProcessingDeathLink = false;
+					FileLogger.QuietLogMessage("death_link_send_probability is set to 0, no action done.");
 					return;
 				}
 
-				// Do not send a deathlink message if player is dying from a previous deathlink.
 				if (IsProcessingDeathLink)
 				{
+					FileLogger.QuietLogMessage("Current death was caused by an incoming death link message, no action done.");
 					return;
 				}
 
-				FileLogger.QuietLogMessage("Sending deathlink message to server");
-				DeathLinkData deathLinkData = new(SlotName);
+				RandomNumberGenerator rng = new();
+				double randomValue = 100 * rng.Randf();
+				if(randomValue > DeathLinkSendProbability)
+                {
+                    FileLogger.QuietLogMessage($"Outgoing message not sent. Generated value {randomValue} is greater than the set probability {DeathLinkSendProbability}.");
+                    return;
+				}
+
+                FileLogger.QuietLogMessage($"Sending death link message. Generated value {randomValue} is within the set probability {DeathLinkSendProbability}.");
+                DeathLinkData deathLinkData = new(SlotName);
 				DeathLinkService.SendDeathLink(deathLinkData);
 			}
 			catch (Exception e)
 			{
-				FileLogger.LogException("Error sending deathlink message to server", e);
+				FileLogger.LogException("Error sending death link message to server", e);
 			}
 		}
 
 
 		private void OnDeathLinkReceived(DeathLinkData deathLink)
 		{
-			FileLogger.QuietLogMessage("Deathlinkn packet received");
-			if (false == DeathLinkEnabled)
+			FileLogger.QuietLogMessage($"Death Link message received from {deathLink.Source}");
+			if(DeathLinkReceiveProbability == 0)
 			{
-				FileLogger.QuietLogMessage("Deathlink is disabled");
+				FileLogger.QuietLogMessage("death_link_receive_probability is set to 0, no action done.");
 				return;
 			}
 
+            RandomNumberGenerator rng = new();
+            double randomValue = 100 * rng.Randf();
+			if(randomValue > DeathLinkReceiveProbability)
+			{
+				FileLogger.QuietLogMessage($"Ignoring death link message. Generated value {randomValue} is greater than the set probability {DeathLinkReceiveProbability}.");
+				return;
+			}
+
+			FileLogger.QuietLogMessage($"Processing death link message. Generated value {randomValue} is within the set probability {DeathLinkReceiveProbability}.");
 			IsProcessingDeathLink = true;
 			string deathMessage = $"Ooops! {deathLink.Source} has died!";
 			OnDeathMessage.Invoke(deathMessage);
