@@ -984,7 +984,6 @@ public partial class MapCreature2(Vector2I coordinate) : MapObject2(coordinate)
 				{
 					return false;
 				}
-				// TODO: Teleporter check
 				return CanMakeMove(direction, flags | CanMakeMoveFlags.NoPushing);
 			}
 
