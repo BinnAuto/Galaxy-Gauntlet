@@ -112,6 +112,15 @@ namespace GalaxyGauntlet.scripts
 		private Dictionary<string, object> SlotData = [];
 		private Dictionary<long, ScoutedItemInfo> ScoutedItems = [];
 
+
+		public bool IsReleased
+		{
+			get
+			{
+				return Session.Locations.AllLocations.Count == Session.Locations.AllLocationsChecked.Count;
+			}
+		}
+
 		/// <summary>
 		/// Returns the total score required to meet the goal condition. A goal of 0 means this
 		/// goal is disabled.
@@ -408,6 +417,11 @@ namespace GalaxyGauntlet.scripts
 		/// </summary>
 		public void CheckForGoal()
 		{
+			if(IsReleased)
+			{
+				return;
+			}
+
 			if(ScoreGoal == 0 && LevelCompletionGoal == 0)
 			{
 				// No automatic goal.
