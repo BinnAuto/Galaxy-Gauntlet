@@ -60,6 +60,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
 
         public static void GenerateClassFiles(string stageHash)
         {
+            ClearOutputDirectory();
             FileLogger.LogMessage("Generating Python classes...");
             GenerateInitFile();
             GenerateItemClass();
@@ -69,6 +70,17 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             GenerateRegionsClass();
             GenerateRulesClass();
             GenerateWorldClass(stageHash);
+        }
+
+
+        public static void ClearOutputDirectory()
+        {
+            Directory.CreateDirectory(OutputPath);
+            var existingFiles = Directory.GetFiles(OutputPath, "*.py");
+            foreach(var file in existingFiles)
+            {
+                File.Delete(file);
+            }
         }
 
 

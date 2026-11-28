@@ -9,7 +9,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             FileLogger.QuietLogMessage("Creating items.py...");
             List<string> fileLines = [
                 "from __future__ import annotations",
-                "from .level_data import level_data, level_names, game_items",
+                "from .game_data import game_data, level_names, game_items",
                 "from typing import TYPE_CHECKING",
                 "from BaseClasses import Item, ItemClassification",
                 "import random",
@@ -58,7 +58,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
                 "    items:list[Item] = []",
                 "",
                 "    ## Add level unlock items",
-                "    for level in level_data[\"levels\"]:",
+                "    for level in game_data[\"levels\"]:",
                 "        level_name = f\"Map {level[\"level_number\"]} - {level[\"level_name\"]}\"",
                 $"        cc_item:{ClassPrefix}Item = {ClassPrefix}Item(level_name, ItemClassification.progression, item_name_to_id[level_name], world.player)",
                 "        all_items[level_name] = cc_item",

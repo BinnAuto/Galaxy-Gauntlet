@@ -6,9 +6,9 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
     {
         public static void GenerateLevelData()
         {
-            FileLogger.QuietLogMessage("Creating level_data.py...");
+            FileLogger.QuietLogMessage("Creating game_data.py...");
             List<string> levelData = [
-                "level_data = \\"
+                "game_data = \\"
             ];
             List<string> ingameItems = [
                 "game_items = {"
@@ -74,7 +74,7 @@ namespace GalaxyGauntlet.APWorldGen.CodeGen
             fileLines.AddRange(levelNames);
             fileLines.AddRange(requiredItems);
             fileLines.AddRange(chipItems);
-            WriteFileContents("level_data.py", fileLines);
+            WriteFileContents("game_data.py", fileLines);
             FileLogger.QuietLogMessage("File created");
         }
     }
