@@ -424,7 +424,17 @@ namespace GalaxyGauntlet.scripts
 			if (GameMode == GameMode.Archipelago)
 			{
 				string location = $"Complete Map {Level.CurrentLevelIndex + 1} - {Level.Name}";
-				Archipelago.SendLocationCheck(location);
+				long locationId = Archipelago.GetLocationIdByName(location);
+				if(locationId == -1)
+				{
+					return;
+				}
+
+				if(false == Archipelago.IsLocationChecked(locationId))
+				{
+					Archipelago.NumLevelsCompleted++;
+					Archipelago.SendLocationCheck(location);
+				}
 				if (Level.RestartCount == 0)
 				{
 					location += " (No Resets)";

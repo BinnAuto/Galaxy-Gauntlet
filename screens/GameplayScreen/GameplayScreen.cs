@@ -255,7 +255,6 @@ public partial class GameplayScreen : Node
 				break;
 
 			case GameMode.Archipelago:
-				GameData.Archipelago.CheckForGoal();
 				GetTree().ChangeSceneToFile(GGConstants.ScenePaths.LevelSelect);
 				break;
 		}

@@ -161,6 +161,10 @@ public partial class LevelSelect : Node2D
 				GridContainer.AddChild(levelFirstTryComplete);
 			}
 		}
+		if(GameData.GameMode == GameMode.Archipelago)
+		{
+			GameData.Archipelago.CheckForGoal();
+		}
 		FilterLevels();
 	}
 
